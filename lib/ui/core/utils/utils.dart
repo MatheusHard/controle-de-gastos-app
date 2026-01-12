@@ -43,12 +43,12 @@ import 'package:shared_preferences/shared_preferences.dart';
     String userJson = jsonEncode(user.toJson());
     await prefs.setString('user', userJson);
   }
-  //Salvar manter Conectado
+  ///Salvar manter Conectado
   static Future<void> salvarManterConectado(bool valor) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_boolKey, valor);
   }
-  //Ler manter Conectado
+  ///Ler manter Conectado
   static Future<bool> recuperarManterConectado() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_boolKey) ?? false; // false como default
@@ -64,6 +64,7 @@ import 'package:shared_preferences/shared_preferences.dart';
     }
     return null;
   }
+  ///Remover User
   static Future<void> removerUser() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('user');
@@ -154,7 +155,8 @@ import 'package:shared_preferences/shared_preferences.dart';
       }
       return data.toString();
   }
-  static SizedBox sizedBox(double largura, double altura) {
+
+  static SizedBox sizedBox({double largura = 0, double altura = 0}) {
     return SizedBox(
       width: largura,
       height: altura,
@@ -172,7 +174,20 @@ import 'package:shared_preferences/shared_preferences.dart';
         );
   }
   static Uint8List fileFromBase64String(String bytes)=> base64.decode(bytes);
+  static String base64DecodeString(String input) => utf8.decode(base64.decode(input));
+  static String base64EncodeString(String input) => base64.encode(utf8.encode(input));
 
+  static Color getColor(Set<WidgetState> states) {
+    const Set<WidgetState> interactiveStates = <WidgetState>{
+      WidgetState.pressed,
+      WidgetState.hovered,
+      WidgetState.focused,
+    };
+    if (states.any(interactiveStates.contains)) {
+      return Colors.blue;
+    }
+    return Colors.green;
+  }
 }
 
 
