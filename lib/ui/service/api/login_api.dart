@@ -1,8 +1,9 @@
-import 'package:controle_de_gastos_app/ui/feature/model/login.dart';
+import 'package:controle_de_gastos_app/ui/core/routes/app_routes.dart';
+import 'package:controle_de_gastos_app/ui/data/model/login.dart';
+import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:flutter/material.dart';
 import '../../core/configurations/dio/configs.dart';
 import '../../core/utils/utils.dart';
-import '../../feature/model/user.dart';
 
 class LoginApi {
 
@@ -40,6 +41,7 @@ LoginApi(BuildContext context){
               }else{
                 await Utils.removerUser();
               }
+              Navigator.pushNamed(_context!, AppRoutes.home);
 
             /*Navigator.push(
                 _context!

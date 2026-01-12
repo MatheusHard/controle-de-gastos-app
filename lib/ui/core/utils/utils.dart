@@ -1,8 +1,7 @@
-
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:controle_de_gastos_app/ui/feature/model/user.dart';
+import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
