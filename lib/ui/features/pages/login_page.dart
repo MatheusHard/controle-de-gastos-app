@@ -2,6 +2,7 @@ import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/buttons/login_button.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/inputs/email_field.dart';
+import 'package:controle_de_gastos_app/ui/service/api/login_api.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/gradients/app_gradients.dart';
@@ -35,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState (){
-    _loadUser;
+    _loadUser();
     _focusEmailNode = FocusNode();
     _focusPaswordNode = FocusNode();
     super.initState();
@@ -93,15 +94,13 @@ class _LoginPageState extends State<LoginPage> {
 
       ),
     );
-
-
   }
 
   ///********  METHODS  *********
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
       _isLoading = true;
-      _loadUser();
+      _logar();
     }
   }
   Future<void> _loadUser() async {
@@ -113,6 +112,10 @@ class _LoginPageState extends State<LoginPage> {
       _controllerPassword.text = _senha;
     }
     _loadConectado();
+  }
+
+  void _logar() async {
+    _isLoading = await LoginApi(context).login(_email, _senha, _isManterConectado);
   }
 
   Future<void> _loadConectado() async {
