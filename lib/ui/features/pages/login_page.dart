@@ -1,6 +1,8 @@
+import 'package:controle_de_gastos_app/ui/core/imgs/img_url.dart';
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/buttons/login_button.dart';
+import 'package:controle_de_gastos_app/ui/features/pages/components/images/logo_img.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/inputs/email_field.dart';
 import 'package:controle_de_gastos_app/ui/service/api/login_api.dart';
 import 'package:flutter/material.dart';
@@ -44,58 +46,67 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       key: _scaffoldKey,
       body: Center(
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              Text("usuario"),
-              Utils.sizedBox(altura: 30.0),
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 400, // Limita a largura para centralizar melhor
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  LogoImg(width: MediaQuery.of(context).size.width, tamanho: 3, url: ImgUrl.zap,),
 
-              /// Email
-              EmailField(
-                controller: _controllerEmail,
-                focusNode: _focusEmailNode,
-                onChanged: (value){
-                    setState(() {
-                      _email = value;
-                    });
-                },
+                  Utils.sizedBox(altura: 30.0),
+
+                  /// Email
+                  EmailField(
+                    controller: _controllerEmail,
+                    focusNode: _focusEmailNode,
+                    onChanged: (value) {
+                      setState(() {
+                        _email = value;
+                      });
+                    },
+                  ),
+
+                  /// Password
+                  PasswordField(
+                    controller: _controllerPassword,
+                    focusNode: _focusPaswordNode,
+                    obscured: _obscured,
+                    onToggleObscured: _toggleObscured,
+                    onChanged: (value) {
+                      setState(() {
+                        _senha = value;
+                      });
+                    },
+                  ),
+
+                  /// Botão de login
+                  LoginButton(
+                    onTap: _handleLogin,
+                    isLoading: _isLoading,
+                    label: "Acessar",
+                    icon: Icons.account_circle_rounded,
+                    gradient: AppGradients.loginGradient,
+                    textStyle: AppTextStyles.textLogin,
+                  ),
+                ],
               ),
-              /// Password
-              PasswordField(
-                controller: _controllerPassword,
-                focusNode: _focusPaswordNode,
-                obscured: _obscured,
-                onToggleObscured: _toggleObscured,
-                onChanged: (value) {
-                  setState(() {
-                    _senha = value;
-                  });
-                },
-              ),
-              LoginButton(
-                onTap: _handleLogin,
-                isLoading: _isLoading,
-                label: "Log In",
-                icon: Icons.account_circle_rounded,
-                gradient: AppGradients.loginGradient,
-                textStyle: AppTextStyles.textLogin,
-              ),
-            ],
+            ),
           ),
-        )
-
+        ),
       ),
     );
   }
-
   ///********  METHODS  *********
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
