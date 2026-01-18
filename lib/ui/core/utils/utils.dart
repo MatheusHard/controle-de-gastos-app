@@ -2,14 +2,19 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../enums/app_platform.dart';
 
   class Utils {
 
   static const String _boolKey = 'isLoggedIn';
   ///Servidor
   static String URL_UPLOAD = "uploads/";
+  static String URL_IMG_WEB = "images/";
+  static String URL_IMG_ANDROID = "assets/images/";
 
   ///Local
   //static String URL_WEB_SERVICE = "http://192.168.0.7:5001/api/";
@@ -187,7 +192,28 @@ import 'package:shared_preferences/shared_preferences.dart';
     }
     return Colors.green;
   }
-}
+  /// Função que retorna a plataforma usada pelo Codigo
+  static AppPlatform getCurrentPlatform() {
+    if (kIsWeb) {
+      return AppPlatform.web;
+    }
+
+    if (Platform.isAndroid) return AppPlatform.android;
+    if (Platform.isIOS) return AppPlatform.ios;
+    if (Platform.isWindows) return AppPlatform.windows;
+    if (Platform.isLinux) return AppPlatform.linux;
+    if (Platform.isMacOS) return AppPlatform.macos;
+    if (Platform.isFuchsia) return AppPlatform.fuchsia;
+
+    return AppPlatform.unknown;
+  }
+
+  static imgUrlFinish(String url){
+      AppPlatform plataforma = Utils.getCurrentPlatform();
+      String baseImg = plataforma == AppPlatform.android ? Utils.URL_IMG_ANDROID : Utils.URL_IMG_WEB;
+     return '''$baseImg$url''';
+    }
+  }
 
 
 

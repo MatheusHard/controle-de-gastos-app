@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/gradients/app_gradients.dart';
 import '../../core/styles/app_text_styles.dart';
+import 'components/checkboxes/manter_conectado_check.dart';
 import 'components/inputs/password_field.dart';
 
 
@@ -76,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                       });
                     },
                   ),
+                  Utils.sizedBox(altura: 30.0),
 
                   /// Password
                   PasswordField(
@@ -89,6 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                       });
                     },
                   ),
+                  Utils.sizedBox(altura: 30.0),
 
                   /// Botão de login
                   LoginButton(
@@ -99,6 +102,16 @@ class _LoginPageState extends State<LoginPage> {
                     gradient: AppGradients.loginGradient,
                     textStyle: AppTextStyles.textLogin,
                   ),
+                  ///Manter Conectado
+                  ManterConectadoCheck(
+                    value: _isManterConectado,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _isManterConectado = value!;
+                      });
+                    },
+                    
+                  )
                 ],
               ),
             ),
@@ -107,13 +120,17 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
   ///********  METHODS  *********
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
-      _isLoading = true;
+      setState(() {
+        _isLoading = true;
+      });
       _logar();
     }
   }
+
   Future<void> _loadUser() async {
     User? user = await Utils.recuperarUser();
     if(user != null){
@@ -126,8 +143,13 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _logar() async {
-    _isLoading = await LoginApi(context).login(_email, _senha, _isManterConectado);
+    bool result = await LoginApi(context).login(_email, _senha, _isManterConectado);
+
+    setState(() {
+      _isLoading = false;
+    });
   }
+
 
   Future<void> _loadConectado() async {
       _isManterConectado = await Utils.recuperarManterConectado();

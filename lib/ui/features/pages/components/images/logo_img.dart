@@ -1,3 +1,5 @@
+import 'package:controle_de_gastos_app/ui/core/enums/app_platform.dart';
+import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class LogoImg extends StatelessWidget {
@@ -14,6 +16,8 @@ class LogoImg extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    String imgFinal = Utils.imgUrlFinish(url);
     return Hero(
       tag: 'hero',
       child: Padding(
@@ -32,7 +36,7 @@ class LogoImg extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(50),
             child: Image.asset(
-             url,
+              imgFinal,
               fit: BoxFit.cover,
               width: width / tamanho,
             ),
