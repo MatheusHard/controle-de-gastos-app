@@ -5,6 +5,7 @@ import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 import '../enums/app_platform.dart';
 
@@ -212,6 +213,16 @@ import '../enums/app_platform.dart';
       AppPlatform plataforma = Utils.getCurrentPlatform();
       String baseImg = plataforma == AppPlatform.android ? Utils.URL_IMG_ANDROID : Utils.URL_IMG_WEB;
      return '''$baseImg$url''';
+    }
+
+    static String capitalizeFirstLetter(String text) {
+      if (text.isEmpty) return text;
+      return text[0].toUpperCase() + text.substring(1).toLowerCase();
+    }
+
+    static String mouthYearFormated(){
+      DateTime agora = DateTime.now();
+      return DateFormat("MM/yyyy").format(agora);
     }
   }
 

@@ -43,14 +43,11 @@ LoginApi(BuildContext context){
               }
               Navigator.pushNamed(_context!, AppRoutes.home);
 
-            /*Navigator.push(
-                _context!
-                //MaterialPageRoute(builder: (context) => HomePage(ScreenArgumentsUser(login)))
-            );*/
             return true;
           }
         }
       }catch(error){
+
         Utils.showDefaultSnackbar(_context!, '''Verifique suas credenciais!!!''');
         return false;
       }

@@ -39,6 +39,7 @@ dependencies:
   provider: ^6.1.5+1
   google_fonts: ^7.0.0
   flutter_gradient_colors: ^2.1.1
+  intl: ^0.20.2
 
 
 dev_dependencies:
