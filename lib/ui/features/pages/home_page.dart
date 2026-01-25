@@ -1,6 +1,7 @@
+import 'package:controle_de_gastos_app/ui/core/routes/app_routes.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/appbar/app_bar_usuario.dart';
+import 'package:controle_de_gastos_app/ui/features/pages/components/cards/card_gasto.dart';
 import 'package:flutter/material.dart';
-
 import '../../core/utils/utils.dart';
 import '../../data/model/user.dart';
 import 'components/cards/card_principal_item.dart';
@@ -37,7 +38,9 @@ class _HomePageState extends State<HomePage> {
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
           children: [
-            CardPrincipalItem(icon: Icons.receipt_long, label: "Faturas $mes_ano", onTap: () {}),
+            CardPrincipalItem(icon: Icons.receipt_long, label: "Faturas $mes_ano", onTap: () {
+              Navigator.pushNamed(context, AppRoutes.fatura);
+            }),
             CardPrincipalItem(icon: Icons.history_outlined, label: "Histórico", onTap: () {}),
             CardPrincipalItem(icon: Icons.dashboard, label: "DashBoarding", onTap: () {}),
             CardPrincipalItem(icon: Icons.credit_card, label: "Cartões", onTap: () {}),
@@ -57,6 +60,5 @@ class _HomePageState extends State<HomePage> {
       user = u;
     });
   }
-
 
 }

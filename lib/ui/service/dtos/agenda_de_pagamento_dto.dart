@@ -1,40 +1,32 @@
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
+import 'package:controle_de_gastos_app/ui/service/dtos/user_dto.dart';
 
-class Gasto {
+class AgendaDePagamentoDTO {
   int? id;
   String? createdAt;
   String? updatedAt;
-  String? vencimento;
-  String? descricao;
-  User? user;
+  UserDTO? user;
   bool? deletado;
   String? dataInicial;
   String? dataFinal;
-  double? valor;
 
-  Gasto(
+  AgendaDePagamentoDTO(
       {this.id,
         this.createdAt,
         this.updatedAt,
-        this.vencimento,
-        this.descricao,
         this.user,
         this.deletado,
         this.dataInicial,
-        this.dataFinal,
-        this.valor});
+        this.dataFinal});
 
-  Gasto.fromJson(Map<String, dynamic> json) {
+  AgendaDePagamentoDTO.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    vencimento = json['vencimento'];
-    descricao = json['descricao'];
-    user = json['user'];
+    user = json['user'] != null ? UserDTO.fromJson(json['user']) : null;
     deletado = json['deletado'];
     dataInicial = json['dataInicial'];
     dataFinal = json['dataFinal'];
-    valor = json['valor'];
   }
 
   Map<String, dynamic> toJson() {
@@ -42,13 +34,14 @@ class Gasto {
     data['id'] = id;
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
-    data['vencimento'] =vencimento;
-    data['descricao'] = descricao;
-    data['user'] = user;
+    if (user != null) {
+      data['user'] = user!.toJson();
+    }
     data['deletado'] = deletado;
     data['dataInicial'] = dataInicial;
     data['dataFinal'] = dataFinal;
-    data['valor'] = valor;
     return data;
   }
 }
+
+

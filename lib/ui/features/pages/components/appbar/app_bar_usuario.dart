@@ -50,8 +50,12 @@ class AppBarUser extends PreferredSize {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('''Olá ${Utils.capitalizeFirstLetter(user?.username ?? '')} $texto'''
-                  , style: AppTextStyles.titleAppBarUsuario(25, context),),
+                Flexible(
+                  child: Text('''Olá ${Utils.capitalizeFirstLetter(user?.username ?? '')} $texto''',
+                    style: AppTextStyles.titleAppBarUsuario(23, context),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],),
           ),
           Spacer(),
@@ -68,5 +72,4 @@ class AppBarUser extends PreferredSize {
       ),
     ),
   );
-
 }

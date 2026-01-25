@@ -224,6 +224,23 @@ import '../enums/app_platform.dart';
       DateTime agora = DateTime.now();
       return DateFormat("MM/yyyy").format(agora);
     }
+
+    static  Future<Map<String, String>> requestToken() async {
+      var token = await recuperarToken();
+      return { 'Authorization': 'Bearer $token' };
+    }
+    static String dateFirstOrLast(bool firstDay){
+
+      DateTime data;
+      DateTime now = DateTime.now();
+      if(firstDay){
+        data = DateTime(now.year, now.month, 1);
+      }else{
+        data = DateTime(now.year, now.month + 1, 0);
+      }
+      return data.toIso8601String().split('T').first;
+
+    }
   }
 
 
