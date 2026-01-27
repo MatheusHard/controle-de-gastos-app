@@ -1,4 +1,7 @@
 
+import 'dart:convert';
+
+import 'package:controle_de_gastos_app/ui/core/enums/status_pagamento_enum.dart';
 import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/cards/card_gasto.dart';
@@ -76,7 +79,7 @@ class _FaturaPageState extends State<FaturaPage> {
                 onTap: () {
                   Navigator.pushNamed(context, AppRoutes.fatura, arguments: fatura);
                 },
-                pago: fatura.deletado ?? false, //TODO
+                statusPagamento: fatura.statusPagamento ?? StatusPagamentoEnum.NAO_PAGO,
               ),
             );
           },
@@ -108,6 +111,7 @@ class _FaturaPageState extends State<FaturaPage> {
       listaGastos =  (list.isNotEmpty ? list[0].gastos : [])!;
       isLoading = false;
     });
-    print('lista $list ');
+    String jsonGastos = jsonEncode(listaGastos.map((gasto) => gasto.toJson()).toList());
+    print('listaGastos $jsonGastos ');
   }
 }

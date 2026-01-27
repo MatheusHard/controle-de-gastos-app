@@ -1,6 +1,5 @@
 import 'package:controle_de_gastos_app/ui/core/routes/app_routes.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/appbar/app_bar_usuario.dart';
-import 'package:controle_de_gastos_app/ui/features/pages/components/cards/card_gasto.dart';
 import 'package:flutter/material.dart';
 import '../../core/utils/utils.dart';
 import '../../data/model/user.dart';
