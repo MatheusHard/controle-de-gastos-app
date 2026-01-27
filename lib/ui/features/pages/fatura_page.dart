@@ -24,6 +24,7 @@ class _FaturaPageState extends State<FaturaPage> {
   User? user;
   List<AgendaDePagamento> listaFaturas = [];
   List<Gasto> listaGastos = [];
+
   bool isLoading = true;
 
   @override
@@ -52,7 +53,7 @@ class _FaturaPageState extends State<FaturaPage> {
             final fatura = listaGastos[index];
 
             return Dismissible(
-              key: ValueKey(fatura.id),
+              key: ValueKey(fatura.id), // precisa de chave única
               direction: DismissDirection.endToStart, // swipe da direita p/ esquerda
               background: Container(
                 alignment: Alignment.centerRight,
@@ -65,8 +66,6 @@ class _FaturaPageState extends State<FaturaPage> {
                   listaGastos.removeAt(index);
                 });
                 // aqui você pode chamar a API para remover no backend também
-                ///TODO
-                ///Delete gasto pela api
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text("${fatura.descricao} removida")),
                 );
@@ -75,9 +74,9 @@ class _FaturaPageState extends State<FaturaPage> {
                 icon: Icons.receipt_long,
                 label: fatura.descricao ?? "Sem nome",
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.fatura_cadastro, arguments: [fatura, listaFaturas[0]]);
+                  Navigator.pushNamed(context, AppRoutes.fatura, arguments: fatura);
                 },
-                pago: fatura.pago ?? false,
+                pago: fatura.deletado ?? false, //TODO
               ),
             );
           },
@@ -94,9 +93,11 @@ class _FaturaPageState extends State<FaturaPage> {
   }
 
   Future<void> _loadingFaturas() async {
+
     AgendaDePagamentoDTO filters = AgendaDePagamentoDTO();
-    filters.dataInicial = Utils.dateFirstOrLast(true);
-    filters.dataFinal   = Utils.dateFirstOrLast(false);
+    filters.dataInicial =   Utils.dateFirstOrLast(true);
+    filters.dataFinal = Utils.dateFirstOrLast(false);
+
     final u = UserDTO();
     u.id = user?.id;
     filters.user = u;
@@ -104,7 +105,7 @@ class _FaturaPageState extends State<FaturaPage> {
     final list = await AgendaDePagamentoApi(context).getListByFilter(filters);
     setState(() {
       listaFaturas = list;
-      listaGastos =  (list.isNotEmpty && list[0].gastos!.isNotEmpty ? list[0].gastos : [])!;
+      listaGastos =  (list.isNotEmpty ? list[0].gastos : [])!;
       isLoading = false;
     });
     print('lista $list ');

@@ -1,3 +1,4 @@
+import 'package:controle_de_gastos_app/ui/core/enums/status_pagamento_enum.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 
 class Gasto {
@@ -10,8 +11,7 @@ class Gasto {
   bool? deletado;
   String? dataInicial;
   String? dataFinal;
-  double? valor;
-  bool? pago = false;
+  StatusPagamentoEnum? statusPagamento;
 
   Gasto(
       {this.id,
@@ -23,8 +23,7 @@ class Gasto {
         this.deletado,
         this.dataInicial,
         this.dataFinal,
-        this.valor,
-        this.pago});
+        this.statusPagamento});
 
   Gasto.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -36,9 +35,9 @@ class Gasto {
     deletado = json['deletado'];
     dataInicial = json['dataInicial'];
     dataFinal = json['dataFinal'];
-    valor = json['valor'];
-    pago = json['pago'];
-  }
+    statusPagamento = json['statusPagamento'] != null
+        ? StatusPagamentoEnum.fromString(json['statusPagamento'])
+        : null;  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -51,8 +50,7 @@ class Gasto {
     data['deletado'] = deletado;
     data['dataInicial'] = dataInicial;
     data['dataFinal'] = dataFinal;
-    data['valor'] = valor;
-    data['pago'] = pago;
+    data['statusPagamento'] = statusPagamento?.toJson();
     return data;
   }
 }
