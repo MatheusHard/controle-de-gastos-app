@@ -11,6 +11,7 @@ class Gasto {
   String? dataInicial;
   String? dataFinal;
   double? valor;
+  bool? pago = false;
 
   Gasto(
       {this.id,
@@ -22,7 +23,8 @@ class Gasto {
         this.deletado,
         this.dataInicial,
         this.dataFinal,
-        this.valor});
+        this.valor,
+        this.pago});
 
   Gasto.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -35,6 +37,7 @@ class Gasto {
     dataInicial = json['dataInicial'];
     dataFinal = json['dataFinal'];
     valor = json['valor'];
+    pago = json['pago'];
   }
 
   Map<String, dynamic> toJson() {
@@ -49,6 +52,7 @@ class Gasto {
     data['dataInicial'] = dataInicial;
     data['dataFinal'] = dataFinal;
     data['valor'] = valor;
+    data['pago'] = pago;
     return data;
   }
 }

@@ -4,7 +4,7 @@ class CardGastoItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  final bool pago; // flag para definir cor
+  final bool pago;
 
   const CardGastoItem({
     Key? key,
