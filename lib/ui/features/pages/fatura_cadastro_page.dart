@@ -7,7 +7,8 @@ import '../../data/model/user.dart';
 import 'components/inputs/descricao_field.dart';
 
 class FaturaCadastroPage extends StatefulWidget {
-  const FaturaCadastroPage({super.key});
+  final Gasto? gasto;
+  const FaturaCadastroPage({super.key, this.gasto});
 
   @override
   State<FaturaCadastroPage> createState() => _FaturaCadastroPageState();
@@ -15,23 +16,21 @@ class FaturaCadastroPage extends StatefulWidget {
 
 class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
 
-  Gasto? gasto;
+  ///Variables
   User? user;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _controllerDescricao = TextEditingController();
+  final _controllerValor = TextEditingController();
+  final _controllerVencimento = TextEditingController();
   late FocusNode _focusDescricaoNode;
+  late FocusNode _focusValorNode;
 
   @override
   void initState() {
     super.initState();
     _initFocus();
     _loadingUser();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _initPage();
+    _loadingGasto();
   }
 
   @override
@@ -41,45 +40,52 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
       body: Form(
           key: _formKey,
           child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                DescricaoField(
-                  controller: _controllerDescricao,
-                  focusNode: _focusDescricaoNode,
-                  hintText: 'Descrição',
-                  icon: Icons.money,
-
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  DescricaoField(
+                    controller: _controllerDescricao,
+                    focusNode: _focusDescricaoNode,
+                    hintText: 'Descrição',
+                    icon: Icons.money,
+                    ),
+                ],
+              ),
             ),
           )
           ),
     );
   }
 
-  Future _initPage() async{
-    if (gasto == null) {
-      final g = ModalRoute.of(context)!.settings.arguments as Gasto?;
-      setState(() {
-        gasto = g;
-        _LoadingEdit(gasto);
-      });
+  ///****** METHODS ******
+
+  void _loadingGasto(){
+    if (widget.gasto != null) {
+      _controllerDescricao.text = widget.gasto?.descricao ?? "";
+      _controllerValor.text = (widget.gasto?.valor != null ? widget.gasto?.valor?.toStringAsFixed(2) : "")!;
+      _controllerVencimento.text = widget.gasto!.vencimento.toString();
+    }else{
+      _clearControllers();
     }
   }
-_LoadingEdit(Gasto? gasto){
-  _controllerDescricao.text  = gasto?.descricao ?? "";
-}
 
   Future<void> _loadingUser() async {
     final u = await Utils.recuperarUser();
     setState(() {
       user = u!;
       });
-    print(user);
   }
 
-  _initFocus(){
+  void _initFocus(){
     _focusDescricaoNode = FocusNode();
+    _focusValorNode = FocusNode();
+  }
+  void _clearControllers(){
+    _controllerDescricao.text = '';
+    _controllerValor.text = '';
+    _controllerVencimento.text = '';
   }
 }

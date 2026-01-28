@@ -7,8 +7,8 @@ void main() async {
     MaterialApp(
       title: 'Controle de Gastos',
       debugShowCheckedModeBanner: false,
-      routes: AppRoutes.routes,
       initialRoute: AppRoutes.login,
+      onGenerateRoute: AppRoutes.generateRoute,
     )
   );
 

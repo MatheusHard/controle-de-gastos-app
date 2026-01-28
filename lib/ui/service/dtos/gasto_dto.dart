@@ -1,7 +1,7 @@
 import 'package:controle_de_gastos_app/ui/core/enums/status_pagamento_enum.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 
-class Gasto {
+class GastoDTO {
   int? id;
   String? createdAt;
   String? updatedAt;
@@ -14,7 +14,7 @@ class Gasto {
   StatusPagamentoEnum? statusPagamento;
   double? valor;
 
-  Gasto(
+  GastoDTO(
       {this.id,
         this.createdAt,
         this.updatedAt,
@@ -27,7 +27,7 @@ class Gasto {
         this.statusPagamento,
         this.valor});
 
-  Gasto.fromJson(Map<String, dynamic> json) {
+  GastoDTO.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
