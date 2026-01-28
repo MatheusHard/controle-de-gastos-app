@@ -50,10 +50,10 @@ class _FaturaPageState extends State<FaturaPage> {
           ),
           itemCount: listaGastos.length,
           itemBuilder: (context, index) {
-            final fatura = listaGastos[index];
+            final gasto = listaGastos[index];
 
             return Dismissible(
-              key: ValueKey(fatura.id), // precisa de chave única
+              key: ValueKey(gasto.id), // precisa de chave única
               direction: DismissDirection.endToStart, // swipe da direita p/ esquerda
               background: Container(
                 alignment: Alignment.centerRight,
@@ -67,21 +67,24 @@ class _FaturaPageState extends State<FaturaPage> {
                 });
                 // aqui você pode chamar a API para remover no backend também
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("${fatura.descricao} removida")),
+                  SnackBar(content: Text("${gasto.descricao} removida")),
                 );
               },
               child: CardGastoItem(
                 icon: Icons.receipt_long,
-                label: fatura.descricao ?? "Sem nome",
+                label: gasto.descricao ?? "Sem nome",
                 onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.fatura, arguments: fatura);
+                  Navigator.pushNamed(context, AppRoutes.fatura_cadastro, arguments: gasto);
                 },
-                pago: fatura.deletado ?? false, //TODO
+                pago: gasto.deletado ?? false, //TODO
               ),
             );
           },
         )
       ),
+      floatingActionButton: FloatingActionButton.small(onPressed: (){
+        Navigator.pushNamed(context, AppRoutes.fatura_cadastro, arguments: null);
+      }),
     );
   }
   ///METHODS
@@ -105,7 +108,7 @@ class _FaturaPageState extends State<FaturaPage> {
     final list = await AgendaDePagamentoApi(context).getListByFilter(filters);
     setState(() {
       listaFaturas = list;
-      listaGastos =  (list.isNotEmpty ? list[0].gastos : [])!;
+      listaGastos =  (list.isNotEmpty && list[0].gastos!.isNotEmpty ? list[0].gastos : [])!;
       isLoading = false;
     });
     print('lista $list ');
