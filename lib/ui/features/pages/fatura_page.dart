@@ -83,6 +83,7 @@ class _FaturaPageState extends State<FaturaPage> {
           },
         )
       ),
+      // TODO
       floatingActionButton: FloatingActionButton.small(onPressed: (){
         Navigator.pushNamed(context, AppRoutes.fatura_cadastro, arguments: null);
       }),
@@ -116,19 +117,10 @@ class _FaturaPageState extends State<FaturaPage> {
   }
   void _atualizarStatusPagamento(){
     listaGastos.forEach((gasto) {
-      gasto.statusPagamento = gasto.pago == false ? _changeVencido(gasto.vencimento, gasto.statusPagamento) : gasto.statusPagamento;
+      gasto.statusPagamento = Utils.isVencido(gasto.vencimento) && gasto.pago! == false ? StatusPagamentoEnum.VENCIDO : gasto.statusPagamento;
     });
     setState(() {
       listaGastos;
     });
-  }
-
-  StatusPagamentoEnum? _changeVencido(String? vencimento, StatusPagamentoEnum? statusAtual){
-    bool flag = Utils.isVencido(vencimento);
-    if(flag){
-      return StatusPagamentoEnum.VENCIDO;
-    }else{
-      return statusAtual;
-    }
   }
 }

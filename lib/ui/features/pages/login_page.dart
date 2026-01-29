@@ -60,59 +60,62 @@ class _LoginPageState extends State<LoginPage> {
             ),
             child: Form(
               key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  LogoImg(width: MediaQuery.of(context).size.width, tamanho: 3, url: ImgUrl.zap,),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    LogoImg(width: MediaQuery.of(context).size.width, tamanho: 3, url: ImgUrl.zap,),
 
-                  Utils.sizedBox(altura: 30.0),
+                    Utils.sizedBox(altura: 30.0),
 
-                  /// Email
-                  EmailField(
-                    controller: _controllerEmail,
-                    focusNode: _focusEmailNode,
-                    onChanged: (value) {
-                      setState(() {
-                        _email = value;
-                      });
-                    },
-                  ),
-                  Utils.sizedBox(altura: 30.0),
+                    /// Email
+                    EmailField(
+                      controller: _controllerEmail,
+                      focusNode: _focusEmailNode,
+                      onChanged: (value) {
+                        setState(() {
+                          _email = value;
+                        });
+                      },
+                    ),
+                    Utils.sizedBox(altura: 30.0),
 
-                  /// Password
-                  PasswordField(
-                    controller: _controllerPassword,
-                    focusNode: _focusPaswordNode,
-                    obscured: _obscured,
-                    onToggleObscured: _toggleObscured,
-                    onChanged: (value) {
-                      setState(() {
-                        _senha = value;
-                      });
-                    },
-                  ),
-                  Utils.sizedBox(altura: 30.0),
+                    /// Password
+                    PasswordField(
+                      controller: _controllerPassword,
+                      focusNode: _focusPaswordNode,
+                      obscured: _obscured,
+                      onToggleObscured: _toggleObscured,
+                      onChanged: (value) {
+                        setState(() {
+                          _senha = value;
+                        });
+                      },
+                    ),
+                    Utils.sizedBox(altura: 30.0),
 
-                  /// Botão de login
-                  LoginButton(
-                    onTap: _handleLogin,
-                    isLoading: _isLoading,
-                    label: "Acessar",
-                    icon: Icons.account_circle_rounded,
-                    gradient: AppGradients.loginGradient,
-                    textStyle: AppTextStyles.textLogin,
-                  ),
-                  ///Manter Conectado
-                  ManterConectadoCheck(
-                    value: _isManterConectado,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _isManterConectado = value!;
-                      });
-                    },
-                    
-                  )
-                ],
+                    /// Botão de login
+                    LoginButton(
+                      onTap: _handleLogin,
+                      isLoading: _isLoading,
+                      label: "Acessar",
+                      icon: Icons.account_circle_rounded,
+                      gradient: AppGradients.loginGradient,
+                      textStyle: AppTextStyles.textLogin,
+                    ),
+                    ///Manter Conectado
+                    ManterConectadoCheck(
+                      value: _isManterConectado,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _isManterConectado = value!;
+                        });
+                      },
+
+                    )
+                  ],
+                ),
               ),
             ),
           ),
