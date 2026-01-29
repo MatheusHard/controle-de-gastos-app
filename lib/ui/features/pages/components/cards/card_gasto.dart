@@ -1,17 +1,18 @@
+import 'package:controle_de_gastos_app/ui/core/enums/status_pagamento_enum.dart';
 import 'package:flutter/material.dart';
 
 class CardGastoItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  final bool pago;
+  final StatusPagamentoEnum statusPagamento;
 
   const CardGastoItem({
     Key? key,
     required this.icon,
     required this.label,
     required this.onTap,
-    required this.pago,
+    required this.statusPagamento,
   }) : super(key: key);
 
   @override
@@ -21,7 +22,9 @@ class CardGastoItem extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         decoration: BoxDecoration(
-          color: pago ? Colors.green : Colors.red, // cor dinâmica
+          color: statusPagamento == StatusPagamentoEnum.PAGO ? Colors.green :
+                 statusPagamento == StatusPagamentoEnum.NAO_PAGO ? Colors.orange:
+                 Colors.red,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(

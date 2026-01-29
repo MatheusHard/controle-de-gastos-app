@@ -1,4 +1,5 @@
 
+import 'package:controle_de_gastos_app/ui/core/enums/status_pagamento_enum.dart';
 import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/cards/card_gasto.dart';
@@ -76,7 +77,7 @@ class _FaturaPageState extends State<FaturaPage> {
                 onTap: () {
                   Navigator.pushNamed(context, AppRoutes.fatura_cadastro, arguments: gasto);
                 },
-                pago: gasto.deletado ?? false, //TODO
+                statusPagamento: gasto.statusPagamento ?? StatusPagamentoEnum.NAO_PAGO,
               ),
             );
           },
@@ -111,6 +112,23 @@ class _FaturaPageState extends State<FaturaPage> {
       listaGastos =  (list.isNotEmpty && list[0].gastos!.isNotEmpty ? list[0].gastos : [])!;
       isLoading = false;
     });
-    print('lista $list ');
+    _atualizarStatusPagamento();
+  }
+  void _atualizarStatusPagamento(){
+    listaGastos.forEach((gasto) {
+      gasto.statusPagamento = gasto.pago == false ? _changeVencido(gasto.vencimento, gasto.statusPagamento) : gasto.statusPagamento;
+    });
+    setState(() {
+      listaGastos;
+    });
+  }
+
+  StatusPagamentoEnum? _changeVencido(String? vencimento, StatusPagamentoEnum? statusAtual){
+    bool flag = Utils.isVencido(vencimento);
+    if(flag){
+      return StatusPagamentoEnum.VENCIDO;
+    }else{
+      return statusAtual;
+    }
   }
 }

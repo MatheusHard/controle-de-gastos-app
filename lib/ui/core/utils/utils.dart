@@ -240,7 +240,22 @@ import '../enums/app_platform.dart';
       return data.toIso8601String().split('T').first;
 
     }
+
+  static bool isVencido(String? vencimento) {
+    if (vencimento == null) return false;
+
+    // Converter string para DateTime
+    DateTime dataVencimento = DateFormat("yyyy-MM-dd").parse(vencimento);
+
+    // Data de hoje (sem hora, só dia/mês/ano)
+    DateTime hoje = DateTime.now();
+    DateTime dataHoje = DateTime(hoje.year, hoje.month, hoje.day);
+
+    // Retorna true se o vencimento for antes de hoje
+    return dataVencimento.isBefore(dataHoje);
+
   }
+}
 
 
 

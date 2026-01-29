@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import '../../core/utils/utils.dart';
@@ -24,7 +26,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   final _controllerVencimento = TextEditingController();
   late FocusNode _focusDescricaoNode;
   late FocusNode _focusValorNode;
-
+    Gasto? gasto;
   @override
   void initState() {
     super.initState();
@@ -63,10 +65,12 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   ///****** METHODS ******
 
   void _loadingGasto(){
-    if (widget.gasto != null) {
-      _controllerDescricao.text = widget.gasto?.descricao ?? "";
-      _controllerValor.text = (widget.gasto?.valor != null ? widget.gasto?.valor?.toStringAsFixed(2) : "")!;
-      _controllerVencimento.text = widget.gasto!.vencimento.toString();
+    gasto = widget.gasto;
+    if (gasto != null) {
+      print( gasto!.statusPagamento);
+      _controllerDescricao.text = gasto?.descricao ?? "";
+      _controllerValor.text = (gasto?.valor != null ? gasto?.valor?.toStringAsFixed(2) : "")!;
+      _controllerVencimento.text = gasto!.vencimento.toString();
     }else{
       _clearControllers();
     }
