@@ -29,8 +29,6 @@ class AppBarUser extends PreferredSize {
         child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-
-
           ///Foto:
           ClipRRect(
             borderRadius: BorderRadius.circular(50),

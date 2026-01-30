@@ -4,6 +4,7 @@ import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/cards/card_gasto.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../core/routes/app_routes.dart';
 import '../../core/utils/utils.dart';
@@ -25,7 +26,7 @@ class _FaturaPageState extends State<FaturaPage> {
   User? user;
   List<AgendaDePagamento> listaFaturas = [];
   List<Gasto> listaGastos = [];
-
+  AgendaDePagamento  agendaMes = AgendaDePagamento();
   bool isLoading = true;
 
   @override
@@ -42,7 +43,11 @@ class _FaturaPageState extends State<FaturaPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? Center(
+              child: LoadingAnimationWidget.staggeredDotsWave(
+              color: Colors.blue,
+              size: 50,
+            ))
             : GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
@@ -111,6 +116,7 @@ class _FaturaPageState extends State<FaturaPage> {
     setState(() {
       listaFaturas = list;
       listaGastos =  (list.isNotEmpty && list[0].gastos!.isNotEmpty ? list[0].gastos : [])!;
+      agendaMes.id = (list.isNotEmpty ? list[0].id : 0)!;
       isLoading = false;
     });
     _atualizarStatusPagamento();
@@ -118,6 +124,7 @@ class _FaturaPageState extends State<FaturaPage> {
   void _atualizarStatusPagamento(){
     listaGastos.forEach((gasto) {
       gasto.statusPagamento = Utils.isVencido(gasto.vencimento) && gasto.pago! == false ? StatusPagamentoEnum.VENCIDO : gasto.statusPagamento;
+      gasto.agendaDePagamento = agendaMes;
     });
     setState(() {
       listaGastos;

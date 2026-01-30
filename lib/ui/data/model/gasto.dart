@@ -15,7 +15,7 @@ class Gasto {
   StatusPagamentoEnum? statusPagamento;
   double? valor;
   bool? pago = false;
-  AgendaDePagamento? agendaDePagamentos;
+  AgendaDePagamento? agendaDePagamento;
 
   Gasto(
       {this.id,
@@ -30,7 +30,7 @@ class Gasto {
         this.statusPagamento,
         this.valor,
         this.pago,
-        this.agendaDePagamentos
+        this.agendaDePagamento
       });
 
   Gasto.fromJson(Map<String, dynamic> json) {
@@ -48,7 +48,7 @@ class Gasto {
         : null;
     valor = json['valor'];
     pago = json['pago'];
-    agendaDePagamentos = json['agendaDePagamentos'];
+    agendaDePagamento = json['agendaDePagamento'] != null ? AgendaDePagamento.fromJson(json['agendaDePagamento']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -65,7 +65,9 @@ class Gasto {
     data['statusPagamento'] = statusPagamento?.toJson();
     data['valor'] = valor;
     data['pago'] = pago;
-    data['agendaDePagamentos'] = agendaDePagamentos;
+    if (agendaDePagamento != null) {
+      data['agendaDePagamento'] = agendaDePagamento!.toJson();
+    }
     return data;
   }
 }

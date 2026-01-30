@@ -1,11 +1,15 @@
 
 import 'dart:convert';
 
+import 'package:controle_de_gastos_app/ui/core/styles/app_text_styles.dart';
+import 'package:controle_de_gastos_app/ui/features/pages/components/appbar/app_bar_cadastro_gasto.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/gradients/app_gradients.dart';
 import '../../core/utils/utils.dart';
 import '../../data/model/gasto.dart';
 import '../../data/model/user.dart';
+import 'components/inputs/custom_field.dart';
 import 'components/inputs/descricao_field.dart';
 
 class FaturaCadastroPage extends StatefulWidget {
@@ -39,7 +43,18 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      appBar:AppBarCadastroGasto(
+        title: '',
+        onBack: () {
+          // ação personalizada para voltar
+        },
+        onClose: () {
+          // ação personalizada para fechar
+        }, gradient: AppGradients.cadastroPet,
+      ),
+
       body: Form(
+
           key: _formKey,
           child: SingleChildScrollView(
             child: Padding(
@@ -48,12 +63,28 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  DescricaoField(
+                  Utils.sizedBox(altura: 20.0, largura: 0),
+                  Text("Cadastre seu Gasto",
+                      style: AppTextStyles.textoSentimentoNegritoWhite( 20, context),),
+                  Utils.sizedBox(altura: 20.0, largura: 0),
+                  CustomField(
                     controller: _controllerDescricao,
                     focusNode: _focusDescricaoNode,
                     hintText: 'Descrição',
                     icon: Icons.money,
-                    ),
+                    keyboardType: TextInputType.text,
+                  ),
+                  Utils.sizedBox(altura: 20.0, largura: 0),
+
+                  // Campo numérico
+                  CustomField(
+                    controller: _controllerValor,
+                    focusNode: _focusValorNode,
+                    hintText: "Digite o valor",
+                    icon: Icons.monetization_on_outlined,
+                    keyboardType: TextInputType.number,
+                  ),
+
                 ],
               ),
             ),

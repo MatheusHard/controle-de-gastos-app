@@ -103,6 +103,8 @@ class _LoginPageState extends State<LoginPage> {
                       icon: Icons.account_circle_rounded,
                       gradient: AppGradients.loginGradient,
                       textStyle: AppTextStyles.textLogin,
+                      height: 55,
+                      radios: 20,
                     ),
                     ///Manter Conectado
                     ManterConectadoCheck(
