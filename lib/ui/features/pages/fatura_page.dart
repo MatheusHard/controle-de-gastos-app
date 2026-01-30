@@ -13,6 +13,7 @@ import '../../service/api/agenda_de_pagamento_api.dart';
 import '../../service/dtos/agenda_de_pagamento_dto.dart';
 import '../../service/dtos/user_dto.dart';
 import 'components/appbar/app_bar_usuario.dart';
+import 'components/buttons/custom_floating_action_button.dart';
 
 class FaturaPage extends StatefulWidget {
   const FaturaPage({super.key});
@@ -88,10 +89,15 @@ class _FaturaPageState extends State<FaturaPage> {
           },
         )
       ),
-      // TODO
-      floatingActionButton: FloatingActionButton.small(onPressed: (){
-        Navigator.pushNamed(context, AppRoutes.fatura_cadastro, arguments: null);
-      }),
+      floatingActionButton: CustomFloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(
+            context,
+            AppRoutes.fatura_cadastro,
+            arguments: null,
+          );
+        },
+      )
     );
   }
   ///METHODS

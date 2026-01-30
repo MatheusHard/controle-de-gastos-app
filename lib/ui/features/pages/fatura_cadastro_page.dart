@@ -4,11 +4,13 @@ import 'dart:convert';
 import 'package:controle_de_gastos_app/ui/core/styles/app_text_styles.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/appbar/app_bar_cadastro_gasto.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/gradients/app_gradients.dart';
 import '../../core/utils/utils.dart';
 import '../../data/model/gasto.dart';
 import '../../data/model/user.dart';
+import 'components/data/custom_date_picker_field.dart';
 import 'components/inputs/custom_field.dart';
 import 'components/inputs/descricao_field.dart';
 
@@ -30,7 +32,8 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   final _controllerVencimento = TextEditingController();
   late FocusNode _focusDescricaoNode;
   late FocusNode _focusValorNode;
-    Gasto? gasto;
+  Gasto? gasto;
+
   @override
   void initState() {
     super.initState();
@@ -64,9 +67,12 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Utils.sizedBox(altura: 20.0, largura: 0),
+
                   Text("Cadastre seu Gasto",
                       style: AppTextStyles.textoSentimentoNegritoWhite( 20, context),),
                   Utils.sizedBox(altura: 20.0, largura: 0),
+
+                  // Descrição
                   CustomField(
                     controller: _controllerDescricao,
                     focusNode: _focusDescricaoNode,
@@ -76,7 +82,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
 
-                  // Campo numérico
+                  // Valor
                   CustomField(
                     controller: _controllerValor,
                     focusNode: _focusValorNode,
@@ -84,7 +90,19 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                     icon: Icons.monetization_on_outlined,
                     keyboardType: TextInputType.number,
                   ),
+                  Utils.sizedBox(altura: 20.0, largura: 0),
 
+                  // Data Vencimento
+                  CustomDatePickerField(
+                    label: "Vencimento",
+                    initialDate: gasto?.vencimento != null
+                        ? DateTime.tryParse(gasto!.vencimento!) ?? DateTime.now()
+                        : DateTime.now(),
+                    onDateSelected: (date) {
+                      print("Data escolhida: $date");
+                      _controllerVencimento.text = DateFormat('dd/MM/yyyy').format(date);
+                    },
+                  ),
                 ],
               ),
             ),
@@ -95,14 +113,21 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
 
   ///****** METHODS ******
 
-  void _loadingGasto(){
+  void _loadingGasto() {
     gasto = widget.gasto;
     if (gasto != null) {
-      print( gasto!.statusPagamento);
       _controllerDescricao.text = gasto?.descricao ?? "";
-      _controllerValor.text = (gasto?.valor != null ? gasto?.valor?.toStringAsFixed(2) : "")!;
-      _controllerVencimento.text = gasto!.vencimento.toString();
-    }else{
+      _controllerValor.text = gasto?.valor != null ? gasto!.valor!.toStringAsFixed(2) : "";
+      //Vencimento
+      if (gasto!.vencimento != null && gasto!.vencimento!.isNotEmpty) {
+        try {
+          DateTime vencimentoDate = DateTime.tryParse(gasto!.vencimento!) ?? DateTime.now();
+          _controllerVencimento.text = DateFormat('dd/MM/yyyy').format(vencimentoDate);
+        } catch (e) {
+          _controllerVencimento.text = gasto!.vencimento!; // fallback
+        }
+      }
+    } else {
       _clearControllers();
     }
   }
