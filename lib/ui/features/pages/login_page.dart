@@ -1,7 +1,7 @@
 import 'package:controle_de_gastos_app/ui/core/imgs/img_url.dart';
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
-import 'package:controle_de_gastos_app/ui/features/pages/components/buttons/login_button.dart';
+import 'package:controle_de_gastos_app/ui/features/pages/components/buttons/normal_botton/login_button.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/images/logo_img.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/inputs/email_field.dart';
 import 'package:controle_de_gastos_app/ui/service/api/login_api.dart';
