@@ -16,6 +16,8 @@ class Gasto {
   double? valor;
   bool? pago = false;
   AgendaDePagamento? agendaDePagamento;
+  String? photoName;
+  String? imagemBase64;
 
   Gasto(
       {this.id,
@@ -30,7 +32,9 @@ class Gasto {
         this.statusPagamento,
         this.valor,
         this.pago,
-        this.agendaDePagamento
+        this.agendaDePagamento,
+        this.photoName,
+        this.imagemBase64
       });
 
   Gasto.fromJson(Map<String, dynamic> json) {
@@ -49,6 +53,8 @@ class Gasto {
     valor = json['valor'];
     pago = json['pago'];
     agendaDePagamento = json['agendaDePagamento'] != null ? AgendaDePagamento.fromJson(json['agendaDePagamento']) : null;
+    photoName = json['photoName'];
+    imagemBase64 = json['imagemBase64'];
   }
 
   Map<String, dynamic> toJson() {
@@ -68,6 +74,9 @@ class Gasto {
     if (agendaDePagamento != null) {
       data['agendaDePagamento'] = agendaDePagamento!.toJson();
     }
+    data['photoName'] = photoName;
+    data['imagemBase64'] = imagemBase64;
+
     return data;
   }
 }

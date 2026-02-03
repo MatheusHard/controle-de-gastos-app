@@ -44,6 +44,8 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   File? _imagem;
   final ImagePicker _picker = ImagePicker();
   var bytes;
+  bool _isEdit = false;
+  late DateTime _selectedVencimento;
 
   @override
   void initState() {
@@ -110,9 +112,9 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                         ? DateTime.tryParse(gasto!.vencimento!) ?? DateTime.now()
                         : DateTime.now(),
                     onDateSelected: (date) {
-                      print("Data escolhida: $date");
+                      _selectedVencimento = date;
                       _controllerVencimento.text = DateFormat('dd/MM/yyyy').format(date);
-                    },
+                      },
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
 
@@ -196,6 +198,8 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   void _loadingGasto() {
     gasto = widget.gasto;
     if (gasto != null) {
+      _selectedVencimento = (gasto!.vencimento != null  ? DateTime.tryParse(gasto!.vencimento!) : DateTime.now())!;
+      _isEdit = true;
       _controllerDescricao.text = gasto?.descricao ?? "";
       _controllerValor.text = gasto?.valor != null ? gasto!.valor!.toStringAsFixed(2) : "";
       //Vencimento
@@ -208,10 +212,24 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
         }
       }
     } else {
+      _isEdit = false;
       _clearControllers();
     }
   }
+  ///Retornar um cliente
+  Future<Gasto> _generateGasto() async {
 
+    Gasto g = Gasto();
+    g.descricao = _controllerDescricao.text;
+    g.valor = _controllerValor.text.isNotEmpty ? double.parse(_controllerValor.text) : 0;
+    g.vencimento = _selectedVencimento.toIso8601String();
+    g.createdAt = !_isEdit ? DateTime.now().toIso8601String() : gasto?.createdAt;
+    g.updatedAt = DateTime.now().toIso8601String();
+    g.imagemBase64 = await Utils.base64String(bytes);
+    g.photoName =  "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
+
+    return g;
+  }
   Future<void> _tirarFoto(StateSetter dialogSetState) async {
     var status = await Permission.camera.request();
     if (status.isGranted) {
@@ -221,7 +239,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
           _imagem = File(foto.path);
           bytes = _imagem?.readAsBytes();
         });
-        _loadingFildsByPhoto(foto);
+        ///_loadingFieldsByPhoto(foto); TODO
       }
     } else {
       print("Permissão de câmera negada");
@@ -231,7 +249,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     final u = await Utils.recuperarUser();
     setState(() {
       user = u!;
-      });
+    });
   }
 
   void _initFocus(){
@@ -242,8 +260,10 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     _controllerDescricao.text = '';
     _controllerValor.text = '';
     _controllerVencimento.text = '';
+    _imagem = null;
   }
-  _loadingFildsByPhoto(XFile? foto) async{
+
+  Future<void> _loadingFieldsByPhoto(XFile? foto) async{
     final inputImage = InputImage.fromFilePath(foto!.path);
     final textRecognizer = GoogleMlKit.vision.textRecognizer();
     final recognizedText = await textRecognizer.processImage(inputImage);
@@ -288,4 +308,5 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
 
     return null;
   }
+
 }
