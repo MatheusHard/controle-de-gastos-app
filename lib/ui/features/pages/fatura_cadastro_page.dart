@@ -14,10 +14,12 @@ import 'package:switch_button/switch_button.dart';
 
 import '../../core/colors/app_colors.dart';
 import '../../core/gradients/app_gradients.dart';
+import '../../core/imgs/img_url.dart';
 import '../../core/utils/utils.dart';
 import '../../data/model/gasto.dart';
 import '../../data/model/user.dart';
 import 'components/data/custom_date_picker_field.dart';
+import 'components/images/photo_gallery_img.dart';
 import 'components/inputs/custom_field.dart';
 import 'components/inputs/descricao_field.dart';
 
@@ -132,9 +134,13 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
 
                     //inactiveThumbColor: Colors.red,
                   ),
-                  widgetFoto(() => _tirarFoto(setState)),
+                  //widgetFoto(),
+                  PhotoGalleryImg(
+                    tirarFoto: _tirarFoto,
+                    getImage: _getImage,
+                    imagem: _imagem,
 
-
+                  )
                 ],
               ),
             ),
@@ -144,57 +150,133 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   }
 
   ///****** METHODS ******
-  widgetFoto(void Function() tirarFoto) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
+  widgetFoto() {
+    return Column(
       children: [
-        GestureDetector(
-            onTap: tirarFoto,
-            child: Container(
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius
-                      .circular(50)),
-              height: 70,
-              width: 70,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
+        _getImageWidget(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-                  const Center(child:
-                  Icon(
-                    Icons.camera_alt_rounded,
-                    color: AppColors.black,
-                    size: 35,),),
+          children: [
 
-                  Align(
-                      alignment: const Alignment(
-                          0, 2.0),
-                      child:
-                      Padding(
-                        padding: const EdgeInsets
-                            .only(bottom: 20),
-                        child: Text("Camera",
-                          style: AppTextStyles
-                              .bodyBold,),
+            GestureDetector(
+                onTap: _tirarFoto,
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius
+                          .circular(50)),
+                  height: 70,
+                  width: 70,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+
+                      const Center(child:
+                      Icon(
+                        Icons.camera_alt_rounded,
+                        color: AppColors.black,
+                        size: 35,),),
+
+                      Align(
+                          alignment: const Alignment(
+                              0, 2.0),
+                          child:
+                          Padding(
+                            padding: const EdgeInsets
+                                .only(bottom: 20),
+                            child: Text("Camera",
+                              style: AppTextStyles
+                                  .bodyBold,),
+                          )
                       )
-                  )
-                ],
-              ),
-            )
+                    ],
+                  ),
+                )
+            ),
+            GestureDetector(
+
+                child: Container(
+
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius
+                          .circular(50)),
+                  height: 70,
+                  width: 70,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+
+                      const Center(child:
+                      Icon(
+                        Icons.image_rounded,
+                        color: AppColors.black,
+                        size: 35,),),
+
+                      Align(
+                          alignment: const Alignment(
+                              0, 2.0),
+                          child:
+                          Padding(
+                            padding: const EdgeInsets
+                                .only(bottom: 20),
+                            child: Text("Galeria",
+                              style: AppTextStyles
+                                  .bodyBold,),
+                          ))
+                    ],
+                  ),
+                ),
+
+                onTap: () {
+                  _getImage(ImageSource.gallery);
+                } //
+            ),
+            ///Onde aparece a imagem
+           /* if (_imagem != null)
+              Image.file(
+                _imagem!,
+                key: ValueKey(_imagem!.path), // força reconstrução
+                width: 50,
+                height: 50,
+                fit: BoxFit.cover,
+              ),*/
+          ],
         ),
-        if (_imagem != null)
-          Image.file(
-            _imagem!,
-            key: ValueKey(_imagem!.path), // força reconstrução
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
-          ),
       ],
     );
   }
+  Future _getImage(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(
+        source: source,
+        maxHeight: 480,
+        maxWidth: 640,
+        imageQuality: 50);
+    setState(() {
+      if (pickedFile != null) {
+        _imagem = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
 
+  Widget _getImageWidget() {
+    if (_imagem != null) {
+      return Image.file(
+        _imagem!,
+        width: 250,
+        height: 250,
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Image.asset(
+        ImgUrl.no_image,
+        width: 250,
+        height: 250,
+        fit: BoxFit.cover,
+      );
+    }
+  }
   void _loadingGasto() {
     gasto = widget.gasto;
     if (gasto != null) {
@@ -230,15 +312,17 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
 
     return g;
   }
-  Future<void> _tirarFoto(StateSetter dialogSetState) async {
+  Future<void> _tirarFoto() async {
     var status = await Permission.camera.request();
     if (status.isGranted) {
       final XFile? foto = await _picker.pickImage(source: ImageSource.camera);
       if (foto != null) {
-        dialogSetState(() {
-          _imagem = File(foto.path);
-          bytes = _imagem?.readAsBytes();
-        });
+       setState(() {
+         _imagem = File(foto.path);
+         bytes = _imagem?.readAsBytes();
+       });
+
+
         ///_loadingFieldsByPhoto(foto); TODO
       }
     } else {
