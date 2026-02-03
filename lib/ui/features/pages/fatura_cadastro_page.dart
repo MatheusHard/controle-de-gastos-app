@@ -82,12 +82,11 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Utils.sizedBox(altura: 20.0, largura: 0),
-
                   Text("Cadastre seu Gasto",
                       style: AppTextStyles.textoSentimentoNegritoWhite( 20, context),),
                   Utils.sizedBox(altura: 20.0, largura: 0),
 
-                  // Descrição
+                  /// Descrição
                   CustomField(
                     controller: _controllerDescricao,
                     focusNode: _focusDescricaoNode,
@@ -97,7 +96,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
 
-                  // Valor
+                  /// Valor
                   CustomField(
                     controller: _controllerValor,
                     focusNode: _focusValorNode,
@@ -107,7 +106,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
 
-                  // Data Vencimento
+                  /// Vencimento
                   CustomDatePickerField(
                     label: "Vencimento",
                     initialDate: gasto?.vencimento != null
@@ -119,7 +118,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                       },
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
-
+                  /// Pago
                   CustomSwitchButton(
                     value: gasto?.pago ?? false,
                     onToggle: (value) {
@@ -128,13 +127,10 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                         print(value);
                       });
                     },
-
                     activeColor: Colors.green,
                     inactiveColor: Colors.red,
-
-                    //inactiveThumbColor: Colors.red,
                   ),
-                  //widgetFoto(),
+                  /// Imagem
                   PhotoGalleryImg(
                     tirarFoto: _tirarFoto,
                     getImage: _getImage,
@@ -150,133 +146,6 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   }
 
   ///****** METHODS ******
-  widgetFoto() {
-    return Column(
-      children: [
-        _getImageWidget(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-          children: [
-
-            GestureDetector(
-                onTap: _tirarFoto,
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius
-                          .circular(50)),
-                  height: 70,
-                  width: 70,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-
-                      const Center(child:
-                      Icon(
-                        Icons.camera_alt_rounded,
-                        color: AppColors.black,
-                        size: 35,),),
-
-                      Align(
-                          alignment: const Alignment(
-                              0, 2.0),
-                          child:
-                          Padding(
-                            padding: const EdgeInsets
-                                .only(bottom: 20),
-                            child: Text("Camera",
-                              style: AppTextStyles
-                                  .bodyBold,),
-                          )
-                      )
-                    ],
-                  ),
-                )
-            ),
-            GestureDetector(
-
-                child: Container(
-
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius
-                          .circular(50)),
-                  height: 70,
-                  width: 70,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-
-                      const Center(child:
-                      Icon(
-                        Icons.image_rounded,
-                        color: AppColors.black,
-                        size: 35,),),
-
-                      Align(
-                          alignment: const Alignment(
-                              0, 2.0),
-                          child:
-                          Padding(
-                            padding: const EdgeInsets
-                                .only(bottom: 20),
-                            child: Text("Galeria",
-                              style: AppTextStyles
-                                  .bodyBold,),
-                          ))
-                    ],
-                  ),
-                ),
-
-                onTap: () {
-                  _getImage(ImageSource.gallery);
-                } //
-            ),
-            ///Onde aparece a imagem
-           /* if (_imagem != null)
-              Image.file(
-                _imagem!,
-                key: ValueKey(_imagem!.path), // força reconstrução
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-              ),*/
-          ],
-        ),
-      ],
-    );
-  }
-  Future _getImage(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(
-        source: source,
-        maxHeight: 480,
-        maxWidth: 640,
-        imageQuality: 50);
-    setState(() {
-      if (pickedFile != null) {
-        _imagem = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  Widget _getImageWidget() {
-    if (_imagem != null) {
-      return Image.file(
-        _imagem!,
-        width: 250,
-        height: 250,
-        fit: BoxFit.cover,
-      );
-    } else {
-      return Image.asset(
-        ImgUrl.no_image,
-        width: 250,
-        height: 250,
-        fit: BoxFit.cover,
-      );
-    }
-  }
   void _loadingGasto() {
     gasto = widget.gasto;
     if (gasto != null) {
@@ -298,9 +167,8 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
       _clearControllers();
     }
   }
-  ///Retornar um cliente
-  Future<Gasto> _generateGasto() async {
 
+  Future<Gasto> _generateGasto() async {
     Gasto g = Gasto();
     g.descricao = _controllerDescricao.text;
     g.valor = _controllerValor.text.isNotEmpty ? double.parse(_controllerValor.text) : 0;
@@ -312,42 +180,67 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
 
     return g;
   }
+
+  // Print Photo
   Future<void> _tirarFoto() async {
     var status = await Permission.camera.request();
     if (status.isGranted) {
-      final XFile? foto = await _picker.pickImage(source: ImageSource.camera);
-      if (foto != null) {
+      final XFile? fotoFile = await _picker.pickImage(source: ImageSource.camera);
+      if (fotoFile != null) {
        setState(() {
-         _imagem = File(foto.path);
+         _imagem = File(fotoFile.path);
          bytes = _imagem?.readAsBytes();
        });
-
-
-        ///_loadingFieldsByPhoto(foto); TODO
+        _loadingFieldsByPhoto(fotoFile);
       }
     } else {
       print("Permissão de câmera negada");
     }
   }
+  // Capture Galley
+  Future _getImage(ImageSource source) async {
+    final galleryFile = await _picker.pickImage(
+        source: source,
+        maxHeight: 480,
+        maxWidth: 640,
+        imageQuality: 50);
+    setState(() {
+      if (galleryFile != null) {
+        _imagem = File(galleryFile.path);
+        _loadingFieldsByPhoto(galleryFile);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+  // Carregar User
   Future<void> _loadingUser() async {
     final u = await Utils.recuperarUser();
     setState(() {
       user = u!;
     });
   }
-
+  // Inicializar Focus
   void _initFocus(){
     _focusDescricaoNode = FocusNode();
     _focusValorNode = FocusNode();
   }
+  // Limpar Controllers
   void _clearControllers(){
     _controllerDescricao.text = '';
     _controllerValor.text = '';
     _controllerVencimento.text = '';
     _imagem = null;
   }
+  // Aqui serve para lê da imagem, caso capture as palavras chaves:
+  Future<void> _loadingFieldsByPhoto(XFile? foto) async {
+    final valor = await Utils.loadingFieldsByPhoto(foto, "valor");
+    setState(() {
+      _controllerValor.text = valor ?? "Não identificado";
+    });
+  }
 
-  Future<void> _loadingFieldsByPhoto(XFile? foto) async{
+  /*Future<void> _loadingFieldsByPhoto(XFile? foto) async{
     final inputImage = InputImage.fromFilePath(foto!.path);
     final textRecognizer = GoogleMlKit.vision.textRecognizer();
     final recognizedText = await textRecognizer.processImage(inputImage);
@@ -391,6 +284,6 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     }
 
     return null;
-  }
+  }*/
 
 }

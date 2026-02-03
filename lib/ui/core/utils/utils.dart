@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
@@ -255,7 +257,58 @@ import '../enums/app_platform.dart';
     return dataVencimento.isBefore(dataHoje);
 
   }
-}
+  /// Retorna o valor total extraído de uma foto usando OCR
+  static Future<String?> loadingFieldsByPhoto(XFile? foto, String typeInput) async {
+    if (foto == null) return null;
+
+    final inputImage = InputImage.fromFilePath(foto.path);
+    final textRecognizer = GoogleMlKit.vision.textRecognizer();
+    final recognizedText = await textRecognizer.processImage(inputImage);
+    await textRecognizer.close();
+
+    final valor = extrairValorTotal(recognizedText, typeInput);
+    return valor;
+  }
+
+  /// Função que tenta localizar um valor numérico próximo de "TOTAL" no texto
+  static String? extrairValorTotal(RecognizedText recognizedText, String typeInput) {
+    final regexValor = RegExp(r'(\d{1,3}(?:[.,]\d{3})*[.,]\d{2})');
+      for (var block in recognizedText.blocks) {
+        for (var line in block.lines) {
+          final texto = line.text.toUpperCase();
+          print("text"+texto);
+
+        //Capturar Valor
+        if (typeInput == "valor" && texto.contains("VALOR TOTAL") || texto.contains("VALOR A PAGAR")) {
+          final match = regexValor.firstMatch(texto);
+          if (match != null) {
+              return match.group(0);
+          }
+        }
+        //Capturar Valor
+        /*if (texto.contains("VALOR TOTAL") || texto.contains("VALOR A PAGAR")) {
+          final match = regexValor.firstMatch(texto);
+          if (match != null) {
+            return match.group(0);
+          }
+        }*/
+      }
+    }
+    // fallback: tenta encontrar a última linha com valor
+    for (var block in recognizedText.blocks.reversed) {
+      for (var line in block.lines.reversed) {
+        final match = regexValor.firstMatch(line.text);
+        if (match != null) {
+          return match.group(0);
+        }
+      }
+    }
+
+    return null;
+  }
+
+
+  }
 
 
 
