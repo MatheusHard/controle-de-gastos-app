@@ -16,6 +16,7 @@ class GastoDTO {
   String? dataFinal;
   StatusPagamentoEnum? statusPagamento;
   double? valor;
+  bool? pago = false;
   AgendaDePagamentoDTO? agendaDePagamento;
   String? photoName;
   String? imagemBase64;
@@ -34,7 +35,8 @@ class GastoDTO {
         this.valor,
         this.agendaDePagamento,
         this.photoName,
-        this.imagemBase64});
+        this.imagemBase64,
+        this.pago});
 
   GastoDTO.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -53,6 +55,8 @@ class GastoDTO {
     agendaDePagamento = json['agendaDePagamento'] != null ? AgendaDePagamentoDTO.fromJson(json['agendaDePagamento']) : null;
     photoName = json['photoName'];
     imagemBase64 = json['imagemBase64'];
+    pago = json['pago'];
+
   }
 
   Map<String, dynamic> toJson() {
@@ -73,6 +77,8 @@ class GastoDTO {
     }
     data['photoName'] = photoName;
     data['imagemBase64'] = imagemBase64;
+    data['pago'] = pago;
+
     return data;
   }
 }

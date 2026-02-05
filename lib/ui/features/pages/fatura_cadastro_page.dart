@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:controle_de_gastos_app/ui/core/enums/status_pagamento_enum.dart';
 import 'package:controle_de_gastos_app/ui/core/styles/app_text_styles.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/appbar/app_bar_cadastro_gasto.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/buttons/normal_button/custom_button.dart';
@@ -76,9 +77,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
           // ação personalizada para fechar
         }, gradient: AppGradients.redColor,
       ),
-
       body: Form(
-
           key: _formKey,
           child: SingleChildScrollView(
             child: Padding(
@@ -144,7 +143,6 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
 
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
-
                   CustomButton(
                     radios: 20,
                     height: 55,
@@ -152,14 +150,31 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                     icon: Icons.monetization_on,
                     isLoading: _isLoading,
                     onTap: () async {
-                      if(_isEdit) {
-                        await _addGasto(await _generateGasto(), context);
+                      setState(() {
+                        _isLoading = true; // ativa o loading
+                      });
+
+                      try {
+                        await _cadastroGasto(await _generateGasto(), context);
+                        final navigator = Navigator.of(context);
+                        if (mounted) {
+                          navigator.pop();
+                        }
+                      } catch (e) {
+                        // trate erros se necessário
+                        print("Erro ao cadastrar gasto: $e");
+                      } finally {
+                        if (mounted) {
+                          setState(() {
+                            _isLoading = false; // desativa o loading
+                          });
+                        }
                       }
                     },
                     label: 'Salvar',
                     textStyle: AppTextStyles.textLogin,
 
-                  )
+                  ),
                 ],
               ),
             ),
@@ -193,6 +208,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
 
   Future<GastoDTO> _generateGasto() async {
     GastoDTO g = GastoDTO();
+    g.id =  _isEdit &&  gasto?.id != null ? gasto?.id : null;
     g.descricao = _controllerDescricao.text;
     g.valor = _controllerValor.text.isNotEmpty ? double.parse(_controllerValor.text) : 0;
     g.vencimento = _selectedVencimento.toIso8601String();
@@ -205,6 +221,10 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     g.user = user;
     g.agendaDePagamento = agenda;
     g.deletado = gasto?.deletado ?? false;
+    g.statusPagamento = gasto!.pago == true ? StatusPagamentoEnum.PAGO :
+                        Utils.isVencido(gasto?.vencimento) ? StatusPagamentoEnum.VENCIDO :
+                        StatusPagamentoEnum.NAO_PAGO;
+    g.pago = gasto?.pago;
 
     return g;
   }
@@ -219,7 +239,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
          _imagem = File(fotoFile.path);
          bytes = _imagem?.readAsBytes();
        });
-        _loadingFieldsByPhoto(fotoFile);
+       // _loadingFieldsByPhoto(fotoFile);
       }
     } else {
       print("Permissão de câmera negada");
@@ -268,13 +288,12 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     });
   }
 
-  ///Add Cliente
-  Future<bool> _addGasto(GastoDTO g, BuildContext context) async {
-    return await GastoApi(context).addGasto(g);
-  }
-
-  ///Add Cliente
-  Future<bool> _updateGasto(GastoDTO g) async {
-    return await GastoApi(context).updateGasto(g, user?.id ?? 0);
+   ///Add Cliente
+  Future<bool> _cadastroGasto(GastoDTO g,  BuildContext context) async {
+    if(_isEdit) {
+      return await GastoApi(context).updateGasto(g, user?.id ?? 0);
+    }else{
+      return await GastoApi(context).addGasto(g);
+    }
   }
 }
