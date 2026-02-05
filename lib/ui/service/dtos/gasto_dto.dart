@@ -1,6 +1,9 @@
 import 'package:controle_de_gastos_app/ui/core/enums/status_pagamento_enum.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 
+import '../../data/model/agenda_de_pagamento.dart';
+import 'agenda_de_pagamento_dto.dart';
+
 class GastoDTO {
   int? id;
   String? createdAt;
@@ -13,6 +16,9 @@ class GastoDTO {
   String? dataFinal;
   StatusPagamentoEnum? statusPagamento;
   double? valor;
+  AgendaDePagamentoDTO? agendaDePagamento;
+  String? photoName;
+  String? imagemBase64;
 
   GastoDTO(
       {this.id,
@@ -25,7 +31,10 @@ class GastoDTO {
         this.dataInicial,
         this.dataFinal,
         this.statusPagamento,
-        this.valor});
+        this.valor,
+        this.agendaDePagamento,
+        this.photoName,
+        this.imagemBase64});
 
   GastoDTO.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -41,6 +50,9 @@ class GastoDTO {
         ? StatusPagamentoEnum.fromString(json['statusPagamento'])
         : null;
     valor = json['valor'];
+    agendaDePagamento = json['agendaDePagamento'] != null ? AgendaDePagamentoDTO.fromJson(json['agendaDePagamento']) : null;
+    photoName = json['photoName'];
+    imagemBase64 = json['imagemBase64'];
   }
 
   Map<String, dynamic> toJson() {
@@ -56,6 +68,11 @@ class GastoDTO {
     data['dataFinal'] = dataFinal;
     data['statusPagamento'] = statusPagamento?.toJson();
     data['valor'] = valor;
+    if (agendaDePagamento != null) {
+      data['agendaDePagamento'] = agendaDePagamento!.toJson();
+    }
+    data['photoName'] = photoName;
+    data['imagemBase64'] = imagemBase64;
     return data;
   }
 }

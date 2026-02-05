@@ -37,10 +37,10 @@ class AppGradients {
         Color(0xffffc3a0)
       ]);
 
-  static const cadastroPet =  LinearGradient(
+  static const redGradient =  LinearGradient(
       begin: Alignment.topCenter,
       end: AlignmentDirectional.bottomEnd,
-      colors: GradientColors.indigo );
+      colors: GradientColors.red );
 
   static const LinearGradient loginGradient = LinearGradient(
       begin: Alignment.topCenter,

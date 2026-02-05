@@ -16,7 +16,7 @@ class AppBarUser extends PreferredSize {
 
       height: 130,
       decoration:  BoxDecoration(
-        gradient: AppGradients.cadastroPet,
+        gradient: AppGradients.redColor,
         color: Colors.orange,
         boxShadow:  const [
           BoxShadow(blurRadius: 50.0)

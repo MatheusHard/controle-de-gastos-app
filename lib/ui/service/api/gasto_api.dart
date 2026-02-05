@@ -13,7 +13,7 @@ class GastoApi  {
 
   BuildContext? _context;
   final Configs _customDio = Configs();
-  final URL = "/gasto";
+  final URL = "/gastos";
   final FILTRAR = '/filtrar';
 
   GastoApi(BuildContext context) {
@@ -22,13 +22,19 @@ class GastoApi  {
 
   @override
   Future<bool> addGasto(GastoDTO gasto) async {
-    var token = await Utils.recuperarToken(); // Pegue do localStorage, SharedPreferences, etc.
-
     var response = await _customDio.dio.post(URL,
       data: gasto.toJson(),
-      options: Options(headers: await Utils.requestToken()),);
-
-    return true;
+        options: Options(headers: await Utils.requestToken()),
+      );
+    return response.statusCode == 200 || response.statusCode == 201;
+  }
+  
+  Future<bool> updateGasto(GastoDTO gasto, int userId) async {
+    var response = await _customDio.dio.put(URL,
+      data: gasto.toJson(),
+      options: Options(headers: await Utils.requestToken()),
+    );
+    return response.statusCode == 200;
   }
 
   Future<List<Gasto>> getList() async {
@@ -55,34 +61,6 @@ class GastoApi  {
     return [];
 
   }
-/*@override
-  Future<bool> updateCliente(Cliente cliente, int user_id) async {
-    var token = await Utils.recuperarToken(); // Pegue do localStorage, SharedPreferences, etc.
 
-    var response = await _customDio.dio.put(URL,
-      data: {
-        "id": cliente.id,
-        "name": cliente.name,
-        "createdAt": cliente.createdAt,
-        "updatedAt": cliente.updatedAt,
-        "name": cliente.name,
-        "cpf": "",
-        "email": cliente.email,
-        "telephone": cliente.telephone,
-        "deletado": cliente.deletado,
-        "user": {
-          "id":  user_id
-        },
-        "photoName": cliente.photoName,
-        "imagemBase64": cliente.imagemBase64
-      },
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $token',
-        },),
-    );
-    return response.statusCode == 200;
-  }
-*/
 
 }

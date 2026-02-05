@@ -4,7 +4,11 @@ import 'dart:io';
 
 import 'package:controle_de_gastos_app/ui/core/styles/app_text_styles.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/appbar/app_bar_cadastro_gasto.dart';
+import 'package:controle_de_gastos_app/ui/features/pages/components/buttons/normal_button/custom_button.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/buttons/switch_button/custom_switch_button.dart';
+import 'package:controle_de_gastos_app/ui/service/api/gasto_api.dart';
+import 'package:controle_de_gastos_app/ui/service/dtos/agenda_de_pagamento_dto.dart';
+import 'package:controle_de_gastos_app/ui/service/dtos/gasto_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
@@ -47,6 +51,8 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   final ImagePicker _picker = ImagePicker();
   var bytes;
   bool _isEdit = false;
+  bool _isLoading = false;
+
   late DateTime _selectedVencimento;
 
   @override
@@ -68,7 +74,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
         },
         onClose: () {
           // ação personalizada para fechar
-        }, gradient: AppGradients.cadastroPet,
+        }, gradient: AppGradients.redColor,
       ),
 
       body: Form(
@@ -136,6 +142,23 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                     getImage: _getImage,
                     imagem: _imagem,
 
+                  ),
+                  Utils.sizedBox(altura: 20.0, largura: 0),
+
+                  CustomButton(
+                    radios: 20,
+                    height: 55,
+                    gradient: AppGradients.redGradient,
+                    icon: Icons.monetization_on,
+                    isLoading: _isLoading,
+                    onTap: () async {
+                      if(_isEdit) {
+                        await _addGasto(await _generateGasto(), context);
+                      }
+                    },
+                    label: 'Salvar',
+                    textStyle: AppTextStyles.textLogin,
+
                   )
                 ],
               ),
@@ -168,8 +191,8 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     }
   }
 
-  Future<Gasto> _generateGasto() async {
-    Gasto g = Gasto();
+  Future<GastoDTO> _generateGasto() async {
+    GastoDTO g = GastoDTO();
     g.descricao = _controllerDescricao.text;
     g.valor = _controllerValor.text.isNotEmpty ? double.parse(_controllerValor.text) : 0;
     g.vencimento = _selectedVencimento.toIso8601String();
@@ -177,6 +200,11 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     g.updatedAt = DateTime.now().toIso8601String();
     g.imagemBase64 = await Utils.base64String(bytes);
     g.photoName =  "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
+    AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
+    agenda.id = gasto?.agendaDePagamento?.id;
+    g.user = user;
+    g.agendaDePagamento = agenda;
+    g.deletado = gasto?.deletado ?? false;
 
     return g;
   }
@@ -207,7 +235,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     setState(() {
       if (galleryFile != null) {
         _imagem = File(galleryFile.path);
-        _loadingFieldsByPhoto(galleryFile);
+        //_loadingFieldsByPhoto(galleryFile);
       } else {
         print('No image selected.');
       }
@@ -240,50 +268,13 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     });
   }
 
-  /*Future<void> _loadingFieldsByPhoto(XFile? foto) async{
-    final inputImage = InputImage.fromFilePath(foto!.path);
-    final textRecognizer = GoogleMlKit.vision.textRecognizer();
-    final recognizedText = await textRecognizer.processImage(inputImage);
-    await textRecognizer.close();
-
-    final valor = extrairValorTotal(recognizedText);
-
-    setState(() {
-    _controllerValor.text = valor ?? "Não identificado";
-      //carregando = false;
-    });
+  ///Add Cliente
+  Future<bool> _addGasto(GastoDTO g, BuildContext context) async {
+    return await GastoApi(context).addGasto(g);
   }
 
-  /// Função que tenta localizar um valor numérico próximo de "TOTAL" no texto
-  String? extrairValorTotal(RecognizedText recognizedText) {
-    final regexValor = RegExp(r'(\d{1,3}(?:[.,]\d{3})*[.,]\d{2})');
-
-    for (var block in recognizedText.blocks) {
-      for (var line in block.lines) {
-        final texto = line.text.toUpperCase();
-        print("text"+texto);
-
-        // Pode variar: TOTAL, VALOR A PAGAR, VALOR TOTAL, TOTAL R$, etc.
-        if (texto.contains("VALOR TOTAL") || texto.contains("VALOR A PAGAR")) {
-          final match = regexValor.firstMatch(texto);
-          if (match != null) {
-            return match.group(0);
-          }
-        }
-      }
-    }
-
-    // fallback: tenta encontrar a última linha com valor
-    for (var block in recognizedText.blocks.reversed) {
-      for (var line in block.lines.reversed) {
-        final match = regexValor.firstMatch(line.text);
-        if (match != null) {
-          return match.group(0);
-        }
-      }
-    }
-
-    return null;
-  }*/
-
+  ///Add Cliente
+  Future<bool> _updateGasto(GastoDTO g) async {
+    return await GastoApi(context).updateGasto(g, user?.id ?? 0);
+  }
 }

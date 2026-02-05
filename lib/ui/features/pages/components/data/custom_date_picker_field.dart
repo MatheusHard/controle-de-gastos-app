@@ -52,10 +52,18 @@ class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
     return TextField(
       controller: _controller,
       readOnly: true,
-      decoration: InputDecoration(
-        labelText: widget.label,
-        suffixIcon: const Icon(Icons.calendar_today),
-        border: const OutlineInputBorder(),
+      decoration:InputDecoration(
+        hintText: widget.label,
+        prefixIcon: Icon(Icons.calendar_today, color: Colors.black),
+        border: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.black),
+        ),
       ),
       onTap: () => _selectDate(context),
     );

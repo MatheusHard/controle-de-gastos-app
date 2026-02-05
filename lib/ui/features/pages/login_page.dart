@@ -1,7 +1,6 @@
 import 'package:controle_de_gastos_app/ui/core/imgs/img_url.dart';
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
-import 'package:controle_de_gastos_app/ui/features/pages/components/buttons/normal_botton/login_button.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/images/logo_img.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/inputs/email_field.dart';
 import 'package:controle_de_gastos_app/ui/service/api/login_api.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/gradients/app_gradients.dart';
 import '../../core/styles/app_text_styles.dart';
+import 'components/buttons/normal_button/login_button.dart';
 import 'components/checkboxes/manter_conectado_check.dart';
 import 'components/inputs/password_field.dart';
 
@@ -101,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                       isLoading: _isLoading,
                       label: "Acessar",
                       icon: Icons.account_circle_rounded,
-                      gradient: AppGradients.loginGradient,
+                      gradient: AppGradients.redGradient,
                       textStyle: AppTextStyles.textLogin,
                       height: 55,
                       radios: 20,
