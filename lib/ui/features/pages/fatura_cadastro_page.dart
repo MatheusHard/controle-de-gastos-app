@@ -129,13 +129,12 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                     onToggle: (value) {
                       setState(() {
                         gasto?.pago = value;
-                        print(value);
                       });
                     },
                     activeColor: Colors.green,
                     inactiveColor: Colors.red,
                   ),
-                  /// Imagem
+                  /// Foto/Galeria Imagem
                   PhotoGalleryImg(
                     tirarFoto: _tirarFoto,
                     getImage: _getImage,
@@ -143,6 +142,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
 
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
+                  /// Salvar
                   CustomButton(
                     radios: 20,
                     height: 55,

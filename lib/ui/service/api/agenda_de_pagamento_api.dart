@@ -14,6 +14,7 @@ class AgendaDePagamentoApi  {
   final Configs _customDio = Configs();
   final URL = "/agendasdepagamento";
   final FILTRAR = '/filtrar';
+  final FIND_ONE = '/findOne';
 
   AgendaDePagamentoApi(BuildContext context) {
     _context = context;
@@ -84,6 +85,20 @@ class AgendaDePagamentoApi  {
     return [];
 
   }
+
+  Future<AgendaDePagamento?> getOneByFilter(AgendaDePagamentoDTO filtros) async {
+    var response = await _customDio.dio.post(
+      URL+FIND_ONE,
+      data: 	filtros.toJson(),
+      options: Options( headers: await Utils.requestToken()),);
+    if (response.statusCode == 200) {
+      var resposta = response.data;
+      AgendaDePagamento fatura =  AgendaDePagamento.fromJson(resposta);
+      return fatura;
+    }
+    return null;
+  }
+}
   /*@override
   Future<bool> updateCliente(Cliente cliente, int user_id) async {
     var token = await Utils.recuperarToken(); // Pegue do localStorage, SharedPreferences, etc.
@@ -114,4 +129,3 @@ class AgendaDePagamentoApi  {
   }
 */
 
-}

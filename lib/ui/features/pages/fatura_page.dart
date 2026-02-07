@@ -3,6 +3,7 @@ import 'package:controle_de_gastos_app/ui/core/enums/status_pagamento_enum.dart'
 import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:controle_de_gastos_app/ui/features/pages/components/cards/card_gasto.dart';
+import 'package:controle_de_gastos_app/ui/service/dtos/gasto_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -10,6 +11,7 @@ import '../../core/routes/app_routes.dart';
 import '../../core/utils/utils.dart';
 import '../../data/model/user.dart';
 import '../../service/api/agenda_de_pagamento_api.dart';
+import '../../service/api/gasto_api.dart';
 import '../../service/dtos/agenda_de_pagamento_dto.dart';
 import '../../service/dtos/user_dto.dart';
 import 'components/appbar/app_bar_usuario.dart';
@@ -68,11 +70,12 @@ class _FaturaPageState extends State<FaturaPage> {
                 color: Colors.red,
                 child: const Icon(Icons.delete, color: Colors.white),
               ),
-              onDismissed: (direction) {
+              onDismissed: (direction) async {
                 setState(() {
                   listaGastos.removeAt(index);
                 });
                 // aqui você pode chamar a API para remover no backend também
+                await _deletarGasto(await _generateDelGasto(gasto), context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text("${gasto.descricao} removida")),
                 );
@@ -113,17 +116,19 @@ class _FaturaPageState extends State<FaturaPage> {
     AgendaDePagamentoDTO filters = AgendaDePagamentoDTO();
     filters.dataInicial =   Utils.dateFirstOrLast(true);
     filters.dataFinal = Utils.dateFirstOrLast(false);
-
+    filters.deletado = false;
     final u = UserDTO();
     u.id = user?.id;
     filters.user = u;
 
     final list = await AgendaDePagamentoApi(context).getListByFilter(filters);
+    final fatura = await AgendaDePagamentoApi(context).getOneByFilter(filters);
     setState(() {
       listaFaturas = list;
       listaGastos =  (list.isNotEmpty && list[0].gastos!.isNotEmpty ? list[0].gastos : [])!;
       agendaMes.id = (list.isNotEmpty ? list[0].id : 0)!;
       isLoading = false;
+      print('fatura'+fatura!.id.toString());
     });
     _atualizarStatusPagamento();
   }
@@ -137,4 +142,29 @@ class _FaturaPageState extends State<FaturaPage> {
     });
     print(listaFaturas);
   }
+  ///Add Cliente
+  Future<bool> _deletarGasto(GastoDTO g,  BuildContext context) async {
+      return await GastoApi(context).updateGasto(g, user?.id ?? 0);
+    }
+  Future<GastoDTO> _generateDelGasto(Gasto gasto) async {
+    GastoDTO g = GastoDTO();
+    g.id =  gasto.id;
+    g.descricao = gasto.descricao;
+    g.valor = gasto.valor;
+    g.vencimento = gasto.vencimento;
+    g.createdAt = gasto.createdAt;
+    g.updatedAt = DateTime.now().toIso8601String();
+    g.imagemBase64 = null;
+    g.photoName =  null;
+    AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
+    agenda.id = gasto.agendaDePagamento?.id;
+    g.user = user;
+    g.agendaDePagamento = agenda;
+    g.deletado = true;
+    g.statusPagamento = gasto.statusPagamento;
+    g.pago = gasto.pago;
+
+    return g;
+  }
+
 }
