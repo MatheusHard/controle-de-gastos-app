@@ -27,16 +27,15 @@ class FaturaPage extends StatefulWidget {
 class _FaturaPageState extends State<FaturaPage> {
 
   User? user;
-  List<AgendaDePagamento> listaFaturas = [];
+  AgendaDePagamento faturasAtual = AgendaDePagamento();
   List<Gasto> listaGastos = [];
-  AgendaDePagamento  agendaMes = AgendaDePagamento();
   bool isLoading = true;
 
   @override
   void initState () {
     super.initState();
     _loadingUser();
-    _loadingFaturas();
+    _loadingFaturaAtual();
   }
 
   @override
@@ -111,7 +110,7 @@ class _FaturaPageState extends State<FaturaPage> {
     });
   }
 
-  Future<void> _loadingFaturas() async {
+  Future<void> _loadingFaturaAtual() async {
 
     AgendaDePagamentoDTO filters = AgendaDePagamentoDTO();
     filters.dataInicial =   Utils.dateFirstOrLast(true);
@@ -121,28 +120,52 @@ class _FaturaPageState extends State<FaturaPage> {
     u.id = user?.id;
     filters.user = u;
 
-    final list = await AgendaDePagamentoApi(context).getListByFilter(filters);
-    final fatura = await AgendaDePagamentoApi(context).getOneByFilter(filters);
+    await _getOrAddFatura(filters);
+
     setState(() {
-      listaFaturas = list;
-      listaGastos =  (list.isNotEmpty && list[0].gastos!.isNotEmpty ? list[0].gastos : [])!;
-      agendaMes.id = (list.isNotEmpty ? list[0].id : 0)!;
+      faturasAtual;
+      listaGastos;
       isLoading = false;
-      print('fatura'+fatura!.id.toString());
-    });
+      });
     _atualizarStatusPagamento();
   }
+
+  Future<void> _getOrAddFatura(AgendaDePagamentoDTO filters) async {
+    // Pegar fatura do mês atual
+    final fatura = await AgendaDePagamentoApi(context).getOneByFilter(filters);
+    if(fatura == null){
+      faturasAtual = (await AgendaDePagamentoApi(context).addAgendaDePagamento(await _generateFatura()))!;
+    }else{
+      faturasAtual = fatura;
+    }
+    await _getGastos();
+  }
+
+  Future<AgendaDePagamentoDTO> _generateFatura() async {
+    String dataAtual = DateTime.now().toIso8601String();
+    AgendaDePagamentoDTO a = AgendaDePagamentoDTO();
+    a.id =   null;
+    a.deletado = false;
+    a.updatedAt = dataAtual;
+    a.createdAt = dataAtual;
+    UserDTO u = UserDTO();
+    u.id = user?.id;
+    a.user = u;
+
+    return a;
+  }
+
   void _atualizarStatusPagamento(){
     listaGastos.forEach((gasto) {
       gasto.statusPagamento = Utils.isVencido(gasto.vencimento) && gasto.pago! == false ? StatusPagamentoEnum.VENCIDO : gasto.statusPagamento;
-      gasto.agendaDePagamento = agendaMes;
+      gasto.agendaDePagamento = faturasAtual;
     });
     setState(() {
       listaGastos;
     });
-    print(listaFaturas);
   }
-  ///Add Cliente
+
+  ///Delete Gasto
   Future<bool> _deletarGasto(GastoDTO g,  BuildContext context) async {
       return await GastoApi(context).updateGasto(g, user?.id ?? 0);
     }
@@ -167,4 +190,9 @@ class _FaturaPageState extends State<FaturaPage> {
     return g;
   }
 
+  Future<void> _getGastos() async {
+    GastoDTO filters = GastoDTO();
+    filters.agendaDePagamento = AgendaDePagamentoDTO(id: faturasAtual.id);
+    listaGastos = await GastoApi(context).getListByFilter(filters);
+  }
 }

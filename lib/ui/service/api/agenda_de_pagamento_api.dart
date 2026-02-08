@@ -20,34 +20,13 @@ class AgendaDePagamentoApi  {
     _context = context;
   }
 
-  /*@override
-  Future<bool> addCliente(Cliente cliente, int user_id) async {
-    var token = await Utils.recuperarToken(); // Pegue do localStorage, SharedPreferences, etc.
-
+  Future<AgendaDePagamento?> addAgendaDePagamento(AgendaDePagamentoDTO agenda) async {
     var response = await _customDio.dio.post(URL,
-      data: {
-        "name": cliente.name,
-        "createdAt": cliente.createdAt,
-        "updatedAt": cliente.updatedAt,
-        "name": cliente.name,
-        "cpf": "",
-        "email": cliente.email,
-        "telephone": cliente.telephone,
-        "deletado": cliente.deletado,
-        "user": {
-          "id":  user_id
-        },
-        "photoName": cliente.photoName,
-        "imagemBase64": cliente.imagemBase64
-      },
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $token',
-        },),
+      data: agenda.toJson(),
+      options: Options(headers: await Utils.requestToken()),
     );
-
-    return true;
-  }*/
+    return response.data != null ? AgendaDePagamento.fromJson(response.data) : null;
+  }
 
   Future<List<AgendaDePagamento>> getList() async {
     var response = await _customDio.dio.get(URL,

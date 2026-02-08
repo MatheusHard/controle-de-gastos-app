@@ -23,7 +23,6 @@ class GastoApi {
     _context = context;
   }
 
-  @override
   Future<bool> addGasto(GastoDTO gasto) async {
     var response = await _customDio.dio.post(URL,
       data: gasto.toJson(),
@@ -54,7 +53,21 @@ class GastoApi {
     return [];
   }
 
-  Future<List<AgendaDePagamento>> getListByFilter(GastoDTO filtros) async {
+  Future<List<Gasto>> getListByFilter(GastoDTO filtros) async {
+    var response = await _customDio.dio.post(
+      URL + FILTRAR,
+      data: filtros.toJson(),
+      options: Options(headers: await Utils.requestToken()),);
+    if (response.statusCode == 200) {
+      var lista = response.data;
+      List<Gasto> gastos = (lista as List).map((json) =>
+          Gasto.fromJson(json)).toList();
+      return gastos;
+    }
+    return [];
+  }
+
+  Future<List<AgendaDePagamento>> getListByFilter2(GastoDTO filtros) async {
     var response = await _customDio.dio.post(
       URL + FILTRAR,
       data: filtros.toJson(),
