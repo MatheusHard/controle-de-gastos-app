@@ -64,16 +64,16 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar:AppBarCadastroGasto(
         title: '',
         onBack: () {
-          // ação personalizada para voltar
+          Navigator.pop(context);
         },
         onClose: () {
-          // ação personalizada para fechar
-        }, gradient: AppGradients.redColor,
+          Navigator.pop(context);
+          },
+        gradient: AppGradients.redColor,
       ),
       body: Form(
           key: _formKey,
@@ -137,7 +137,6 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                     tirarFoto: _tirarFoto,
                     getImage: _getImage,
                     imagem: _imagem,
-
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
                   /// Salvar
@@ -148,40 +147,47 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                     icon: Icons.monetization_on,
                     isLoading: _isLoading,
                     onTap: () async {
-                      setState(() {
-                        _isLoading = true; // ativa o loading
-                      });
-
-                      try {
-                        await _cadastroGasto(await _generateGasto(), context);
-                        final navigator = Navigator.of(context);
-                        if (mounted) {
-                          navigator.pop();
-                        }
-                      } catch (e) {
-                        // trate erros se necessário
-                        print("Erro ao cadastrar gasto: $e");
-                      } finally {
-                        if (mounted) {
-                          setState(() {
-                            _isLoading = false; // desativa o loading
-                          });
-                        }
-                      }
+                      await _salvarGasto(
+                        navigator: Navigator.of(context),
+                        scaffoldMessenger: ScaffoldMessenger.of(context),
+                      );
                     },
                     label: 'Salvar',
                     textStyle: AppTextStyles.textLogin,
-
                   ),
                 ],
               ),
             ),
           )
-          ),
-    );
+        ),
+      );
   }
 
   ///****** METHODS ******
+
+  //Save Gasto
+  Future<void> _salvarGasto({required NavigatorState navigator, required ScaffoldMessengerState scaffoldMessenger,}) async {
+
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      await _cadastroGasto(await _generateGasto());
+      if (!mounted) return;
+      navigator.pop();
+    } catch (e) {
+      if (!mounted) return;
+      scaffoldMessenger.showSnackBar(
+        SnackBar(content: Text('Erro ao cadastrar o gasto: $e')),
+      );
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+  //Carregar Gasto
   void _loadingGasto() {
     gasto = widget.gasto;
     if (gasto != null) {
@@ -211,7 +217,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     g.vencimento = _selectedVencimento.toIso8601String();
     g.createdAt = !_isEdit ? DateTime.now().toIso8601String() : gasto?.createdAt;
     g.updatedAt = DateTime.now().toIso8601String();
-    g.imagemBase64 = await Utils.base64String(bytes);
+    g.imagemBase64 = bytes != null ? await Utils.base64String(bytes) : null;
     g.photoName =  "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
     AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
     agenda.id = gasto?.agendaDePagamento?.id;
@@ -225,7 +231,6 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
 
     return g;
   }
-
   // Print Photo
   Future<void> _tirarFoto() async {
     var status = await Permission.camera.request();
@@ -285,7 +290,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     });
   }
   //Add Cliente
-  Future<bool> _cadastroGasto(GastoDTO g,  BuildContext context) async {
+  Future<bool> _cadastroGasto(GastoDTO g) async {
     if(_isEdit) {
       return await GastoApi(context).updateGasto(g, user?.id ?? 0);
     }else{

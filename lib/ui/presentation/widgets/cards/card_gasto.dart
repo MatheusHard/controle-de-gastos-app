@@ -24,8 +24,7 @@ class CardGastoItem extends StatelessWidget {
       case StatusPagamentoEnum.NAO_PAGO:
         return Colors.orange.shade600;
       case StatusPagamentoEnum.VENCIDO:
-      default:
-        return Colors.red.shade600;
+      return Colors.red.shade600;
     }
   }
 
@@ -37,8 +36,8 @@ class CardGastoItem extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        width: 120,
-        height: 120,
+        //width: 120,
+        //height: 120,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),

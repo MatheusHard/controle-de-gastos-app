@@ -147,7 +147,6 @@ class _LoginPageState extends State<LoginPage> {
 
   void _logar() async {
     bool result = await LoginApi(context).login(_email, _senha, _isManterConectado);
-
     setState(() {
       _isLoading = false;
     });

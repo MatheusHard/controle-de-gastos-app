@@ -47,9 +47,7 @@ LoginApi(BuildContext context){
           }
         }
       }catch(error){
-
         Utils.showDefaultSnackbar(_context!, '''Verifique suas credenciais!!! $error''');
-
         return false;
       }
     return true;
