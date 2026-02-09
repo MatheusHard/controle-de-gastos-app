@@ -2,6 +2,7 @@ import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 
 import '../../core/constants/enums/status_pagamento_enum.dart';
+import '../dtos/user_dto.dart';
 
 class Gasto {
   int? id;
@@ -44,7 +45,7 @@ class Gasto {
     updatedAt = json['updatedAt'];
     vencimento = json['vencimento'];
     descricao = json['descricao'];
-    user = json['user'];
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
     deletado = json['deletado'];
     dataInicial = json['dataInicial'];
     dataFinal = json['dataFinal'];
