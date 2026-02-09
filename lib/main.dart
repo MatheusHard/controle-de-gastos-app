@@ -1,4 +1,4 @@
-import 'package:controle_de_gastos_app/ui/core/routes/app_routes.dart';
+import 'package:controle_de_gastos_app/ui/core/constants/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -9,7 +9,6 @@ void main() async {
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoutes.login,
       onGenerateRoute: AppRoutes.generateRoute,
-      // 🔑 Adicione estas linhas:
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

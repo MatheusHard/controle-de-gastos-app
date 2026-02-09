@@ -1,9 +1,9 @@
-import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
-
 import '../../core/constants/enums/status_pagamento_enum.dart';
+import '../../data/model/agenda_de_pagamento.dart';
+import 'agenda_de_pagamento_dto.dart';
 
-class Gasto {
+class GastoDTO {
   int? id;
   String? createdAt;
   String? updatedAt;
@@ -16,11 +16,11 @@ class Gasto {
   StatusPagamentoEnum? statusPagamento;
   double? valor;
   bool? pago = false;
-  AgendaDePagamento? agendaDePagamento;
+  AgendaDePagamentoDTO? agendaDePagamento;
   String? photoName;
   String? imagemBase64;
 
-  Gasto(
+  GastoDTO(
       {this.id,
         this.createdAt,
         this.updatedAt,
@@ -32,13 +32,12 @@ class Gasto {
         this.dataFinal,
         this.statusPagamento,
         this.valor,
-        this.pago,
         this.agendaDePagamento,
         this.photoName,
-        this.imagemBase64
-      });
+        this.imagemBase64,
+        this.pago});
 
-  Gasto.fromJson(Map<String, dynamic> json) {
+  GastoDTO.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
@@ -52,10 +51,11 @@ class Gasto {
         ? StatusPagamentoEnum.fromString(json['statusPagamento'])
         : null;
     valor = json['valor'];
-    pago = json['pago'];
-    agendaDePagamento = json['agendaDePagamento'] != null ? AgendaDePagamento.fromJson(json['agendaDePagamento']) : null;
+    agendaDePagamento = json['agendaDePagamento'] != null ? AgendaDePagamentoDTO.fromJson(json['agendaDePagamento']) : null;
     photoName = json['photoName'];
     imagemBase64 = json['imagemBase64'];
+    pago = json['pago'];
+
   }
 
   Map<String, dynamic> toJson() {
@@ -71,12 +71,12 @@ class Gasto {
     data['dataFinal'] = dataFinal;
     data['statusPagamento'] = statusPagamento?.toJson();
     data['valor'] = valor;
-    data['pago'] = pago;
     if (agendaDePagamento != null) {
       data['agendaDePagamento'] = agendaDePagamento!.toJson();
     }
     data['photoName'] = photoName;
     data['imagemBase64'] = imagemBase64;
+    data['pago'] = pago;
 
     return data;
   }

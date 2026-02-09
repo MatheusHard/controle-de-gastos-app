@@ -1,0 +1,168 @@
+import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
+import 'package:controle_de_gastos_app/ui/data/model/user.dart';
+import 'package:flutter/material.dart';
+import '../../../core/constants/imgs/img_url.dart';
+import '../../../core/theme/gradients/app_gradients.dart';
+import '../../../core/theme/styles/app_text_styles.dart';
+import '../../../data/api/login_api.dart';
+import '../../widgets/buttons/normal_button/login_button.dart';
+import '../../widgets/checkboxes/manter_conectado_check.dart';
+import '../../widgets/images/logo_img.dart';
+import '../../widgets/inputs/email_field.dart';
+import '../../widgets/inputs/password_field.dart';
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+
+  /// ******* CAMPOS *******
+  bool _isManterConectado = false;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  late FocusNode _focusEmailNode;
+  late FocusNode _focusPaswordNode;
+  late String _email;
+  late String _senha;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final textFieldFocusNode = FocusNode();
+  final _controllerEmail = TextEditingController();
+  final _controllerPassword = TextEditingController();
+
+  bool _obscured = true;
+  bool _isLoading = false;
+
+  @override
+  void initState (){
+    _loadUser();
+    _focusEmailNode = FocusNode();
+    _focusPaswordNode = FocusNode();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
+
+    return Scaffold(
+      key: _scaffoldKey,
+      body: Center(
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 400, // Limita a largura para centralizar melhor
+            ),
+            child: Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    LogoImg(width: MediaQuery.of(context).size.width, tamanho: 3, url: ImgUrl.zap,),
+
+                    Utils.sizedBox(altura: 30.0),
+
+                    /// Email
+                    EmailField(
+                      controller: _controllerEmail,
+                      focusNode: _focusEmailNode,
+                      onChanged: (value) {
+                        setState(() {
+                          _email = value;
+                        });
+                      },
+                    ),
+                    Utils.sizedBox(altura: 30.0),
+
+                    /// Password
+                    PasswordField(
+                      controller: _controllerPassword,
+                      focusNode: _focusPaswordNode,
+                      obscured: _obscured,
+                      onToggleObscured: _toggleObscured,
+                      onChanged: (value) {
+                        setState(() {
+                          _senha = value;
+                        });
+                      },
+                    ),
+                    Utils.sizedBox(altura: 30.0),
+
+                    /// Botão de login
+                    LoginButton(
+                      onTap: _handleLogin,
+                      isLoading: _isLoading,
+                      label: "Acessar",
+                      icon: Icons.account_circle_rounded,
+                      gradient: AppGradients.redGradient,
+                      textStyle: AppTextStyles.textLogin,
+                      height: 55,
+                      radios: 20,
+                    ),
+                    ///Manter Conectado
+                    ManterConectadoCheck(
+                      value: _isManterConectado,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _isManterConectado = value!;
+                        });
+                      },
+
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  ///********  METHODS  *********
+  void _handleLogin() {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+      _logar();
+    }
+  }
+
+  Future<void> _loadUser() async {
+    User? user = await Utils.recuperarUser();
+    if(user != null){
+      _email = user.username ?? "";
+      _senha = user.password ?? "";
+      _controllerEmail.text = _email;
+      _controllerPassword.text = _senha;
+    }
+    _loadConectado();
+  }
+
+  void _logar() async {
+    bool result = await LoginApi(context).login(_email, _senha, _isManterConectado);
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _loadConectado() async {
+      _isManterConectado = await Utils.recuperarManterConectado();
+    setState(() {
+      _isManterConectado;
+    });
+  }
+
+  void _toggleObscured() {
+    setState(() {
+      _obscured = !_obscured;
+    });
+  }
+}

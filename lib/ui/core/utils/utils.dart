@@ -7,8 +7,7 @@ import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-
-import '../enums/app_platform.dart';
+import '../constants/enums/app_platform.dart';
 
   class Utils {
 
