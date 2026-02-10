@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import '../constants/enums/app_platform.dart';
+import '../notifications/notifications.dart';
 
   class Utils {
 
@@ -306,7 +307,14 @@ import '../constants/enums/app_platform.dart';
     return null;
   }
 
-
+  //Notificação
+  static void exibirNotificacao({required String titulo, required String corpo}) async {
+    await Notifications.showNotification(
+      id: 0,
+      title: titulo,
+      body: corpo,
+    );
+  }
   }
 
 
