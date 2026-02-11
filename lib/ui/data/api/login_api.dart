@@ -13,11 +13,8 @@ LoginApi(BuildContext context){
   _context = context;
 }
 
-  @override
   Future<bool> login(String username, String password, bool isChecked) async {
-
     var customDio = Configs();
-
     String userBase64 = Utils.base64EncodeString(username);
     String passwordBase64 = Utils.base64EncodeString(password);
 
@@ -26,11 +23,10 @@ LoginApi(BuildContext context){
           "username": userBase64,
           "password": passwordBase64
         });
-
         if(response.statusCode == 200){
           Login login = Login.fromJson(response.data);
 
-          ///Salvar Sessão
+            ///Salvar Sessão
             if(login.token != null){
               await Utils.salvarToken(login.token ?? "");
               if(isChecked){
@@ -42,12 +38,11 @@ LoginApi(BuildContext context){
                 await Utils.removerUser();
               }
               Navigator.pushNamed(_context!, AppRoutes.home);
-
             return true;
           }
         }
       }catch(error){
-        Utils.showDefaultSnackbar(_context!, '''Verifique suas credenciais!!! $error''');
+        Utils.showDefaultSnackbar(_context!, '''Erro ao logar -> $error''');
         return false;
       }
     return true;

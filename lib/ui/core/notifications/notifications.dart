@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart'; // útil para pedir permissões
 
@@ -33,7 +32,7 @@ class Notifications {
       channelDescription: 'Canal para notificações básicas',
       importance: Importance.max,
       priority: Priority.high,
-    );
+      );
 
     const NotificationDetails notificationDetails =
     NotificationDetails(android: androidDetails);

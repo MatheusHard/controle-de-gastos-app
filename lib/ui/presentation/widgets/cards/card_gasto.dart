@@ -17,32 +17,42 @@ class CardGastoItem extends StatelessWidget {
     required this.statusPagamento,
   }) : super(key: key);
 
-  Color _getStatusColor() {
+  Map<String, dynamic> _getStatusProperties() {
     switch (statusPagamento) {
       case StatusPagamentoEnum.PAGO:
-        return Colors.green.shade600;
+        return {
+          'color': Colors.green.shade600,
+          'icon': Icons.check_circle_outline,
+        };
       case StatusPagamentoEnum.NAO_PAGO:
-        return Colors.orange.shade600;
+        return {
+          'color': Colors.orange.shade600,
+          'icon': Icons.warning,
+        };
       case StatusPagamentoEnum.VENCIDO:
-      return Colors.red.shade600;
-    }
+        return {
+          'color': Colors.red.shade600,
+          'icon': Icons.not_interested_outlined,
+        };
+      }
   }
+
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = _getStatusColor();
+    final statusProps = _getStatusProperties();
+    final statusColor = statusProps['color'];
+    final iconStatusPg = statusProps['icon'];
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        //width: 120,
-        //height: 120,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: statusColor.withOpacity(0.4), // borda suave
+            color: statusColor.withOpacity(0.4),
             width: 2,
           ),
           boxShadow: [
@@ -56,6 +66,17 @@ class CardGastoItem extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Stack(
           children: [
+            // Imagem no canto inferior esquerdo
+            Positioned(
+              left: 8,
+              bottom: 8,
+              child: Icon(
+                iconStatusPg,
+                size: 22,
+                color: statusColor,
+              ),
+            ),
+
             // Ícone fixo no canto superior esquerdo
             Align(
               alignment: Alignment.topLeft,
@@ -65,6 +86,7 @@ class CardGastoItem extends StatelessWidget {
                 color: statusColor,
               ),
             ),
+
             // Texto centralizado
             Center(
               child: Text(
@@ -73,7 +95,7 @@ class CardGastoItem extends StatelessWidget {
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
-              )
+              ),
             ),
           ],
         ),
