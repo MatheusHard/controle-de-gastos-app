@@ -174,14 +174,13 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     try {
       await _cadastroGasto(await _generateGasto());
       if (!mounted) return;
-      navigator.pop();
+      navigator.pop(true);
     } catch (e) {
       if (!mounted) return;
       scaffoldMessenger.showSnackBar(
         SnackBar(content: Text('Erro ao cadastrar o gasto: $e')),
       );
     } finally {
-      if (!mounted) return;
       setState(() {
         _isLoading = false;
       });

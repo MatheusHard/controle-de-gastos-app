@@ -81,8 +81,17 @@ class _FaturaPageState extends State<FaturaPage> {
               child: CardGastoItem(
                 icon: Icons.receipt_long,
                 label: gasto.descricao ?? "Sem nome",
-                onTap: () {
-                  Navigator.pushNamed(context, AppRoutes.fatura_cadastro, arguments: gasto);
+                onTap: () async {
+                  final resultado = await Navigator.pushNamed(
+                    context,
+                    AppRoutes.fatura_cadastro,
+                    arguments: gasto,
+                  );
+                  if (resultado == true) {
+                    await _getGastos();
+                    _atualizarStatusPagamento();
+                    setState(() {});
+                  }
                 },
                 statusPagamento: gasto.statusPagamento ?? StatusPagamentoEnum.NAO_PAGO,
               ),
@@ -91,14 +100,20 @@ class _FaturaPageState extends State<FaturaPage> {
         )
       ),
       floatingActionButton: CustomFloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(
+        onPressed: () async {
+          final resultado = await Navigator.pushNamed(
             context,
             AppRoutes.fatura_cadastro,
             arguments: null,
           );
+          if (resultado == true) {
+            // recarrega lista do backend
+            await _getGastos();
+            _atualizarStatusPagamento();
+            setState(() {});
+          }
         },
-      )
+      ),
     );
   }
 
@@ -152,10 +167,10 @@ class _FaturaPageState extends State<FaturaPage> {
   }
   //Atualizar Status de pagamento
   void _atualizarStatusPagamento(){
-    listaGastos.forEach((gasto) {
+    for (var gasto in listaGastos) {
       gasto.statusPagamento = Utils.isVencido(gasto.vencimento) && gasto.pago! == false ? StatusPagamentoEnum.VENCIDO : gasto.statusPagamento;
       gasto.agendaDePagamento = faturasAtual;
-    });
+    }
     setState(() {
       listaGastos;
     });

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/enums/status_pagamento_enum.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
+import '../../../core/utils/utils.dart';
 
 class CardGastoItem extends StatelessWidget {
   final IconData icon;
@@ -17,30 +18,10 @@ class CardGastoItem extends StatelessWidget {
     required this.statusPagamento,
   }) : super(key: key);
 
-  Map<String, dynamic> _getStatusProperties() {
-    switch (statusPagamento) {
-      case StatusPagamentoEnum.PAGO:
-        return {
-          'color': Colors.green.shade600,
-          'icon': Icons.check_circle_outline,
-        };
-      case StatusPagamentoEnum.NAO_PAGO:
-        return {
-          'color': Colors.orange.shade600,
-          'icon': Icons.warning,
-        };
-      case StatusPagamentoEnum.VENCIDO:
-        return {
-          'color': Colors.red.shade600,
-          'icon': Icons.not_interested_outlined,
-        };
-      }
-  }
-
-
   @override
   Widget build(BuildContext context) {
-    final statusProps = _getStatusProperties();
+
+    final statusProps = Utils.getStatusProperties(statusPagamento);
     final statusColor = statusProps['color'];
     final iconStatusPg = statusProps['icon'];
 

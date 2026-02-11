@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import '../constants/enums/app_platform.dart';
+import '../constants/enums/status_pagamento_enum.dart';
 import '../notifications/notifications.dart';
 
   class Utils {
@@ -315,7 +316,27 @@ import '../notifications/notifications.dart';
       body: corpo,
     );
   }
+
+  static Map<String, dynamic> getStatusProperties(StatusPagamentoEnum statusPagamento) {
+    switch (statusPagamento) {
+      case StatusPagamentoEnum.PAGO:
+        return {
+          'color': Colors.green.shade600,
+          'icon': Icons.check_circle_outline,
+        };
+      case StatusPagamentoEnum.NAO_PAGO:
+        return {
+          'color': Colors.orange.shade600,
+          'icon': Icons.warning,
+        };
+      case StatusPagamentoEnum.VENCIDO:
+        return {
+          'color': Colors.red.shade600,
+          'icon': Icons.not_interested_outlined,
+        };
+    }
   }
+}
 
 
 
