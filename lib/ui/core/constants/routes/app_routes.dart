@@ -20,8 +20,10 @@ class AppRoutes {
       case fatura:
         return MaterialPageRoute(builder: (_) => FaturaPage());
       case fatura_cadastro:
-        final gasto = settings.arguments as Gasto?;
-        return MaterialPageRoute(builder: (_) => FaturaCadastroPage(gasto: gasto));
+        final args = settings.arguments as Map<String, dynamic>;
+        final gasto = args['gasto'] as Gasto?;
+        final isEdit = args['isEdit'] as bool;
+        return MaterialPageRoute(builder: (_) => FaturaCadastroPage(gasto: gasto, isEdit: isEdit),);
       default:
         return MaterialPageRoute(builder: (_) => HomePage());
     }

@@ -28,7 +28,8 @@ import '../../widgets/inputs/custom_field.dart';
 
 class FaturaCadastroPage extends StatefulWidget {
   final Gasto? gasto;
-  const FaturaCadastroPage({super.key, this.gasto});
+  final bool isEdit;
+  const FaturaCadastroPage({super.key, this.gasto, required this.isEdit});
 
   @override
   State<FaturaCadastroPage> createState() => _FaturaCadastroPageState();
@@ -51,6 +52,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   var bytes;
   bool _isEdit = false;
   bool _isLoading = false;
+  bool _isPago = false;
 
   late DateTime _selectedVencimento;
 
@@ -123,10 +125,10 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                   Utils.sizedBox(altura: 20.0, largura: 0),
                   /// Pago
                   CustomSwitchButton(
-                    value: gasto?.pago ?? false,
+                    value: gasto?.pago ?? _isPago,
                     onToggle: (value) {
                       setState(() {
-                        gasto?.pago = value;
+                        _isPago = value;
                       });
                     },
                     activeColor: Colors.green,
@@ -189,7 +191,9 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   //Carregar Gasto
   void _loadingGasto() {
     gasto = widget.gasto;
-    if (gasto != null) {
+    _isEdit = widget.isEdit;
+
+    if (_isEdit) {
       _selectedVencimento = (gasto!.vencimento != null  ? DateTime.tryParse(gasto!.vencimento!) : DateTime.now())!;
       _isEdit = true;
       _controllerDescricao.text = gasto?.descricao ?? "";
@@ -203,7 +207,6 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
         }
       }
     } else {
-      _isEdit = false;
       _clearControllers();
     }
   }
@@ -223,10 +226,10 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     g.user = user;
     g.agendaDePagamento = agenda;
     g.deletado = gasto?.deletado ?? false;
-    g.statusPagamento = gasto!.pago == true ? StatusPagamentoEnum.PAGO :
+    g.statusPagamento = _isPago ? StatusPagamentoEnum.PAGO :
                         Utils.isVencido(gasto?.vencimento) ? StatusPagamentoEnum.VENCIDO :
                         StatusPagamentoEnum.NAO_PAGO;
-    g.pago = gasto?.pago;
+    g.pago = _isPago;
 
     return g;
   }

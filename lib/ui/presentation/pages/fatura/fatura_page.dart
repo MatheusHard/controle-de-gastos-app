@@ -26,7 +26,7 @@ class FaturaPage extends StatefulWidget {
 class _FaturaPageState extends State<FaturaPage> {
 
   User? user;
-  AgendaDePagamento faturasAtual = AgendaDePagamento();
+  AgendaDePagamento faturaAtual = AgendaDePagamento();
   List<Gasto> listaGastos = [];
   bool isLoading = true;
 
@@ -85,7 +85,10 @@ class _FaturaPageState extends State<FaturaPage> {
                   final resultado = await Navigator.pushNamed(
                     context,
                     AppRoutes.fatura_cadastro,
-                    arguments: gasto,
+                    arguments: {
+                      'gasto': gasto,
+                      'isEdit': true,
+                    },
                   );
                   if (resultado == true) {
                     await _getGastos();
@@ -101,11 +104,15 @@ class _FaturaPageState extends State<FaturaPage> {
       ),
       floatingActionButton: CustomFloatingActionButton(
         onPressed: () async {
+          Gasto gasto = Gasto();
+          gasto.agendaDePagamento = faturaAtual;
           final resultado = await Navigator.pushNamed(
             context,
             AppRoutes.fatura_cadastro,
-            arguments: null,
-          );
+            arguments: {
+              'gasto': gasto,
+              'isEdit': false,
+            },          );
           if (resultado == true) {
             // recarrega lista do backend
             await _getGastos();
@@ -137,7 +144,7 @@ class _FaturaPageState extends State<FaturaPage> {
     await _getOrAddFatura(filters);
     _atualizarStatusPagamento();
       setState(() {
-        faturasAtual;
+        faturaAtual;
         listaGastos;
         isLoading = false;
       });
@@ -146,9 +153,9 @@ class _FaturaPageState extends State<FaturaPage> {
   Future<void> _getOrAddFatura(AgendaDePagamentoDTO filters) async {
     final fatura = await AgendaDePagamentoApi(context).getOneByFilter(filters);
     if(fatura == null){
-      faturasAtual = (await AgendaDePagamentoApi(context).addAgendaDePagamento(await _generateFatura()))!;
+      faturaAtual = (await AgendaDePagamentoApi(context).addAgendaDePagamento(await _generateFatura()))!;
     }else{
-      faturasAtual = fatura;
+      faturaAtual = fatura;
     }
     await _getGastos();
   }
@@ -169,7 +176,7 @@ class _FaturaPageState extends State<FaturaPage> {
   void _atualizarStatusPagamento(){
     for (var gasto in listaGastos) {
       gasto.statusPagamento = Utils.isVencido(gasto.vencimento) && gasto.pago! == false ? StatusPagamentoEnum.VENCIDO : gasto.statusPagamento;
-      gasto.agendaDePagamento = faturasAtual;
+      gasto.agendaDePagamento = faturaAtual;
     }
     setState(() {
       listaGastos;
@@ -202,7 +209,7 @@ class _FaturaPageState extends State<FaturaPage> {
   //Get Gastos
   Future<void> _getGastos() async {
     GastoDTO filters = GastoDTO();
-    filters.agendaDePagamento = AgendaDePagamentoDTO(id: faturasAtual.id);
+    filters.agendaDePagamento = AgendaDePagamentoDTO(id: faturaAtual.id);
     listaGastos = await GastoApi(context).getListByFilter(filters);
   }
 }
