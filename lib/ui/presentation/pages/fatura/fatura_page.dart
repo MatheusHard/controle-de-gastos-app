@@ -3,8 +3,11 @@ import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/enums/status_pagamento_enum.dart';
 import '../../../core/constants/routes/app_routes.dart';
+import '../../../core/theme/gradients/app_gradients.dart';
+import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/utils/utils.dart';
 import '../../../data/api/agenda_de_pagamento_api.dart';
 import '../../../data/api/gasto_api.dart';
@@ -106,6 +109,7 @@ class _FaturaPageState extends State<FaturaPage> {
         onPressed: () async {
           Gasto gasto = Gasto();
           gasto.agendaDePagamento = faturaAtual;
+          //context.read<ThemeProvider>().setGradient(AppGradients.darkBlueGradient); // TODO
           final resultado = await Navigator.pushNamed(
             context,
             AppRoutes.fatura_cadastro,

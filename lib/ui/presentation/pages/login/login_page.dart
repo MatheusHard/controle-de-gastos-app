@@ -1,8 +1,10 @@
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/imgs/img_url.dart';
 import '../../../core/theme/gradients/app_gradients.dart';
+import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
 import '../../../data/api/login_api.dart';
 import '../../widgets/buttons/normal_button/login_button.dart';
@@ -99,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                       isLoading: _isLoading,
                       label: "Acessar",
                       icon: Icons.account_circle_rounded,
-                      gradient: AppGradients.redGradient,
+                      gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider
                       textStyle: AppTextStyles.textLogin,
                       height: 55,
                       radios: 20,

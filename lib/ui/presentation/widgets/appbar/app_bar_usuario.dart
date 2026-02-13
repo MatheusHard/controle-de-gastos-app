@@ -1,3 +1,4 @@
+import 'package:controle_de_gastos_app/ui/core/constants/imgs/img_url.dart';
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +11,10 @@ class AppBarUser extends PreferredSize {
   AppBarUser(User? user, String texto, BuildContext context, {Key? key}):super(key: key,
 
     preferredSize: const Size.fromHeight(200),
-
     child: Container(
-
       height: 130,
       decoration:  BoxDecoration(
-        gradient: AppGradients.redColor,
+        gradient: AppGradients.blackPurpleGradient, // TODO vir das configs theme
         color: Colors.orange,
         boxShadow:  const [
           BoxShadow(blurRadius: 50.0)
@@ -29,12 +28,19 @@ class AppBarUser extends PreferredSize {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ///Foto:
-          ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child:  Image.asset(
-              'assets/images/usuario.png',
-              height: MediaQuery.of(context).size.width / 10,
-              //   width: MediaQuery.of(context).size.width / 10,
+          GestureDetector(
+            onTap: () {
+              // Ação ao clicar na foto
+              print("user clicada!"); //TODO fazer page UserEdit
+
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Image.asset(
+                ImgUrl.user, // TODO imagem vir da api cadastro usuario
+                height: MediaQuery.of(context).size.width / 10,
+                // width: MediaQuery.of(context).size.width / 10,
+              ),
             ),
           ),
           const SizedBox(
@@ -62,7 +68,7 @@ class AppBarUser extends PreferredSize {
             // when pressed menu button
             onPressed: () {
               ///SlideDrawer.of(context)?.toggle()
-              print('menuBar');
+              print('menuBar'); //TODO fazer tutorial de ajuda
             },
           ),
         ],

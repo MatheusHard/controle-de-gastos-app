@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -145,8 +146,8 @@ import '../notifications/notifications.dart';
   );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
-  static Future<String> base64String(Future<Uint8List> bytes) async {
-    return base64Encode(await bytes);
+  static Future<String> base64String(Uint8List bytes) async {
+    return base64Encode(bytes);
   }
   static String formatarDateTime(DateTime? data){
       if(data != null ){
@@ -335,6 +336,35 @@ import '../notifications/notifications.dart';
           'icon': Icons.not_interested_outlined,
         };
     }
+  }
+  // Compactar a imagem vinda da foto
+  static Future<Uint8List?> compressImageBytes(
+      File file, {
+        int maxSizeKB = 100,
+        int minQuality = 10,
+        int initialQuality = 50,
+        int minWidth = 800,
+        int minHeight = 800,
+      }) async {
+    Uint8List? compressedBytes = await FlutterImageCompress.compressWithFile(
+      file.path,
+      minWidth: minWidth,
+      minHeight: minHeight,
+      quality: initialQuality,
+    );
+    if (compressedBytes == null) return null;
+    int quality = initialQuality;
+    while (compressedBytes != null && compressedBytes.length > maxSizeKB * 1024 && quality > minQuality) {
+      quality -= 10;
+      compressedBytes = await FlutterImageCompress.compressWithFile(
+        file.path,
+        minWidth: minWidth,
+        minHeight: minHeight,
+        quality: quality,
+      );
+      if (compressedBytes == null) break;
+    }
+    return compressedBytes;
   }
 }
 

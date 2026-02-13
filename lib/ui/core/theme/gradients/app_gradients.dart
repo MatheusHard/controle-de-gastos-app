@@ -76,6 +76,35 @@ static const sol =
   tileMode: TileMode.mirror,
   );
 
+  static const LinearGradient blackGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color(0xFF000000), // preto puro
+      Color(0xFF1C1C1C), // cinza bem escuro
+      Color(0xFF2E2E2E), // cinza médio
+    ],
+  );
+
+  static const LinearGradient darkBlueGradient = LinearGradient(
+    colors: [
+      Color(0xFF0F2027), // azul quase preto
+      Color(0xFF203A43), // azul petróleo
+      Color(0xFF2C5364), // azul profundo
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient blackPurpleGradient = LinearGradient(
+    colors: [
+      Color(0xFF000000), // preto
+      Color(0xFF2C003E), // roxo bem escuro
+      Color(0xFF5A189A), // roxo mais vivo
+    ],
+    stops: [0.0, 0.5, 1.0],
+    transform: GradientRotation(pi / 4),
+  );
 
 
 }

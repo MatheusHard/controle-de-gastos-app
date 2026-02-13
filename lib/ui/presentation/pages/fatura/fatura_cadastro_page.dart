@@ -8,10 +8,12 @@ import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:switch_button/switch_button.dart';
 
 import '../../../core/constants/enums/status_pagamento_enum.dart';
 import '../../../core/theme/gradients/app_gradients.dart';
+import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
 import '../../../core/utils/utils.dart';
 import '../../../data/api/gasto_api.dart';
@@ -67,15 +69,15 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:AppBarCadastroGasto(
+      appBar: AppBarCadastroGasto(
         title: '',
         onBack: () {
           Navigator.pop(context);
         },
         onClose: () {
           Navigator.pop(context);
-          },
-        gradient: AppGradients.redColor,
+        },
+        gradient: AppGradients.blackPurpleGradient, // TODO vir do THEME configs
       ),
       body: Form(
           key: _formKey,
@@ -90,7 +92,6 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                   Text("Cadastre seu Gasto",
                       style: AppTextStyles.textoSentimentoNegritoWhite( 20, context),),
                   Utils.sizedBox(altura: 20.0, largura: 0),
-
                   /// Descrição
                   CustomField(
                     controller: _controllerDescricao,
@@ -100,7 +101,6 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                     keyboardType: TextInputType.text,
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
-
                   /// Valor
                   CustomField(
                     controller: _controllerValor,
@@ -110,7 +110,6 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                     keyboardType: TextInputType.number,
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
-
                   /// Vencimento
                   CustomDatePickerField(
                     label: "Vencimento",
@@ -145,7 +144,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                   CustomButton(
                     radios: 20,
                     height: 55,
-                    gradient: AppGradients.redGradient,
+                    gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider
                     icon: Icons.monetization_on,
                     isLoading: _isLoading,
                     onTap: () async {
@@ -182,6 +181,8 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
       scaffoldMessenger.showSnackBar(
         SnackBar(content: Text('Erro ao cadastrar o gasto: $e')),
       );
+      print('Erro ao cadastrar o gasto: $e');
+
     } finally {
       setState(() {
         _isLoading = false;
@@ -239,11 +240,17 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     if (status.isGranted) {
       final XFile? fotoFile = await _picker.pickImage(source: ImageSource.camera);
       if (fotoFile != null) {
-       setState(() {
-         _imagem = File(fotoFile.path);
-         bytes = _imagem?.readAsBytes();
-       });
-       // _loadingFieldsByPhoto(fotoFile); TODO
+        final File originalFile = File(fotoFile.path);
+        final compressedBytes = await Utils.compressImageBytes(originalFile); // Compactar a foto
+        if (compressedBytes != null) {
+          setState(() {
+            _imagem = originalFile;
+            bytes = compressedBytes; // já comprimidos
+          });
+          print("Foto comprimida: ${bytes!.length / 1024} KB");
+        } else {
+          print("Falha ao comprimir a imagem");
+        }
       }
     } else {
       print("Permissão de câmera negada");
