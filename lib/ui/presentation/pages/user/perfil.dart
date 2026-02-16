@@ -43,68 +43,80 @@ class _PerfilPageState extends State<PerfilPage> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Utils.sizedBox(altura: 20.0, largura: 0),
-            Text("Dados de Usuario",
-              style: AppTextStyles.textoSentimentoNegritoWhite( 20, context),),
-            Utils.sizedBox(altura: 20.0, largura: 0),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: Image.asset(
-                ImgUrl.user, // TODO imagem vir da api cadastro usuario
-                height: MediaQuery.of(context).size.width / 5,
-                // width: MediaQuery.of(context).size.width / 10,
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Utils.sizedBox(altura: 20.0, largura: 0),
+                  //Titulo
+                  Text("Dados de Usuario", style: AppTextStyles.textoSentimentoNegritoWhite( 20, context),),
+                  Utils.sizedBox(altura: 20.0, largura: 0),
+                  //Foto
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: Image.asset(
+                      ImgUrl.user, // TODO imagem vir da api cadastro usuario
+                      height: MediaQuery.of(context).size.width / 5,
+                      // width: MediaQuery.of(context).size.width / 10,
+                    ),
+                  ),
+                ],
               ),
             ),
             Utils.sizedBox(altura: 20.0, largura: 0),
+            //UserName
             Text("Usuario: ${user?.username ?? ""}", style: AppTextStyles.textoSentimentoNegritoWhite(27, context)),            Utils.sizedBox(altura: 20.0, largura: 0),
-            Text("E-mail: ${user?.email ?? ""}" , style: AppTextStyles.textoSentimentoNegritoWhite( 27, context)),
-            Utils.sizedBox(altura: 10.0, largura: 0),            ExpansionTile(
-              title: Text(
-                "Gradientes disponíveis",
-                style: AppTextStyles.textoSentimentoNegritoWhite(22, context),
-              ),
-              children: [
-                SizedBox(
-                  height: 300,
-                  child: GridView.builder(
-                    itemCount: gradients.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
-                    itemBuilder: (context, index) {
-                      final entry = gradients[index];
-                      final isSelected = selectedIndex == index;
+            //E-mail
+            Text("E-mail: ${user?.email ?? ""}" , style: AppTextStyles.textoSentimentoNegritoWhite(27, context)),
+            Utils.sizedBox(altura: 10.0, largura: 0),
+            //Cores Theme
+            ListTileTheme(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+              child: ExpansionTile(
+                title: Text("Cores disponíveis", style: AppTextStyles.textoSentimentoNegritoWhite(27, context),),
+                children: [
+                  SizedBox(
+                    height: 300,
+                    child: GridView.builder(
+                      itemCount: gradients.length,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemBuilder: (context, index) {
+                        final entry = gradients[index];
+                        final isSelected = selectedIndex == index;
 
-                      return InkWell(
-                        onTap: () {
-                          setState(() {
-                            selectedIndex = index;
-                            context.read<ThemeProvider>().setGradient(entry.value); //Setar o gradiente
-                          });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: entry.value,
-                            borderRadius: BorderRadius.circular(12),
-                            border: isSelected
-                                ? Border.all(
-                              color: Colors.green,
-                              width: 3,
-                            )
-                                : null,
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = index;
+                              context.read<ThemeProvider>().setGradient(entry.value); //Setar o gradiente
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: entry.value,
+                              borderRadius: BorderRadius.circular(12),
+                              border: isSelected
+                                  ? Border.all(
+                                color: Colors.green,
+                                width: 3,
+                              )
+                                  : null,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(""),
                           ),
-                          alignment: Alignment.center,
-                          child: Text(""),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
