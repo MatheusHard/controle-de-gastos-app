@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    LogoImg(width: MediaQuery.of(context).size.width, tamanho: 3, url: ImgUrl.zap,),
+                    LogoImg(width: MediaQuery.of(context).size.width, tamanho: 3, url: ImgUrl.gasto_financeiro,),
 
                     Utils.sizedBox(altura: 30.0),
 

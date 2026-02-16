@@ -19,5 +19,5 @@ class ImgUrl {
   static String get no_camera_icon => "assets/images/no_camera_icon.png";
   static String get no_image => "assets/images/no_image.png";
   static String get user => "assets/images/usuario.png";
-
+  static String get gasto_financeiro => "gasto_financeiro.png";
 }
