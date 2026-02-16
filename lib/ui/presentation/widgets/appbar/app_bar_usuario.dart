@@ -2,8 +2,10 @@ import 'package:controle_de_gastos_app/ui/core/constants/imgs/img_url.dart';
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../../core/theme/gradients/app_gradients.dart';
+import '../../../core/constants/routes/app_routes.dart';
+import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
 
 
@@ -14,7 +16,7 @@ class AppBarUser extends PreferredSize {
     child: Container(
       height: 130,
       decoration:  BoxDecoration(
-        gradient: AppGradients.blackPurpleGradient, // TODO vir das configs theme
+        gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider
         color: Colors.orange,
         boxShadow:  const [
           BoxShadow(blurRadius: 50.0)
@@ -30,9 +32,7 @@ class AppBarUser extends PreferredSize {
           ///Foto:
           GestureDetector(
             onTap: () {
-              // Ação ao clicar na foto
-              print("user clicada!"); //TODO fazer page UserEdit
-
+              Navigator.pushNamed(context, AppRoutes.perfil);
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(50),

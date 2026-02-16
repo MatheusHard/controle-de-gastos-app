@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class AppBarCadastroGasto extends StatelessWidget implements PreferredSizeWidget {
+class AppBarBack extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onBack;
   final VoidCallback? onClose;
   final Gradient gradient;
   final double radios;
 
-  const AppBarCadastroGasto({
+  const AppBarBack({
     Key? key,
     required this.title,
     this.onBack,

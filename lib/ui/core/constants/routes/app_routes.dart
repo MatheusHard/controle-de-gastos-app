@@ -1,3 +1,4 @@
+import 'package:controle_de_gastos_app/ui/presentation/pages/user/perfil.dart';
 import 'package:flutter/material.dart';
 import '../../../data/model/gasto.dart';
 import '../../../presentation/pages/fatura/fatura_cadastro_page.dart';
@@ -10,6 +11,7 @@ class AppRoutes {
   static const String login = '/login_page';
   static const String fatura = '/fatura_page';
   static const String fatura_cadastro = '/fatura_cadastro_page';
+  static const String perfil = '/perfil_page';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -24,6 +26,8 @@ class AppRoutes {
         final gasto = args['gasto'] as Gasto?;
         final isEdit = args['isEdit'] as bool;
         return MaterialPageRoute(builder: (_) => FaturaCadastroPage(gasto: gasto, isEdit: isEdit),);
+      case perfil:
+        return MaterialPageRoute(builder: (_) => PerfilPage());
       default:
         return MaterialPageRoute(builder: (_) => HomePage());
     }

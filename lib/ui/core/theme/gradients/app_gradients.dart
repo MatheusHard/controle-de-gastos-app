@@ -106,5 +106,22 @@ static const sol =
     transform: GradientRotation(pi / 4),
   );
 
+  /// Função que retorna todos os gradientes com seus nomes
+  static Map<String, LinearGradient> getAllGradients() {
+    return {
+      "Box Pet Gradient": boxPetGradient,
+      "Button Sentimento": buttonSentimento,
+      "Red Color": redColor,
+      "Pet Fêmea": petFemea,
+      "Red Gradient": redGradient,
+      "Login Gradient": loginGradient,
+      "Linear": linear,
+      "Sol": sol,
+      "Black Gradient": blackGradient,
+      "Dark Blue Gradient": darkBlueGradient,
+      "Black Purple Gradient": blackPurpleGradient,
+    };
+  }
+
 
 }
