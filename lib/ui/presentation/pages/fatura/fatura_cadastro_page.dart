@@ -21,7 +21,7 @@ import '../../../data/dtos/agenda_de_pagamento_dto.dart';
 import '../../../data/dtos/gasto_dto.dart';
 import '../../../data/model/gasto.dart';
 import '../../../data/model/user.dart';
-import '../../widgets/appbar/app_bar_cadastro_gasto.dart';
+import '../../widgets/appbar/app_bar_back.dart';
 import '../../widgets/buttons/normal_button/custom_button.dart';
 import '../../widgets/buttons/switch_button/custom_switch_button.dart';
 import '../../widgets/data/custom_date_picker_field.dart';
@@ -69,7 +69,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarCadastroGasto(
+      appBar: AppBarBack(
         title: '',
         onBack: () {
           Navigator.pop(context);
@@ -77,7 +77,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
         onClose: () {
           Navigator.pop(context);
         },
-        gradient: AppGradients.blackPurpleGradient, // TODO vir do THEME configs
+        gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
       ),
       body: Form(
           key: _formKey,
