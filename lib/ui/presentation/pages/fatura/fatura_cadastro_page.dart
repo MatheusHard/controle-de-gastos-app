@@ -124,9 +124,10 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                   Utils.sizedBox(altura: 20.0, largura: 0),
                   /// Pago
                   CustomSwitchButton(
-                    value: gasto?.pago ?? _isPago,
+                    value: _isPago,
                     onToggle: (value) {
                       setState(() {
+                        print("object"+value.toString());
                         _isPago = value;
                       });
                     },
@@ -195,6 +196,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     _isEdit = widget.isEdit;
 
     if (_isEdit) {
+      _isPago = gasto?.pago ?? false; // ✅ inicializa aqui
       _selectedVencimento = (gasto!.vencimento != null  ? DateTime.tryParse(gasto!.vencimento!) : DateTime.now())!;
       _isEdit = true;
       _controllerDescricao.text = gasto?.descricao ?? "";

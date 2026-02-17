@@ -4,18 +4,53 @@ import 'package:controle_de_gastos_app/ui/core/theme/provider/theme_provider.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:workmanager/workmanager.dart';
 
-void main() async {
+
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+      await chamarApi();
+
+    return Future.value(true);
+  });
+}
+
+
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Notifications.initNotifications();
 
+  await Workmanager().initialize(
+    callbackDispatcher,
+    isInDebugMode: true, // útil para ver logs
+  );
+
+  await Workmanager().registerOneOffTask(
+    "chamadaApiTask",
+    "chamadaApi",
+    initialDelay: Duration(seconds: 10), // teste rápido
+  );
+
+
+
+
+
+
   runApp(
     ChangeNotifierProvider(
-      create: (_) => ThemeProvider(), // Provider do tema
+      create: (_) => ThemeProvider(),
       child: const MyApp(),
     ),
   );
 }
+
+@pragma('vm:entry-point') // ADICIONE ISSO AQUI TAMBÉM
+Future<void> chamarApi() async {
+  print("WORKER RODOU COM SUCESSO");
+}
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -35,10 +70,11 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('pt', 'BR'), // português Brasil
-        Locale('en', 'US'), // inglês (fallback)
+        Locale('pt', 'BR'),
+        Locale('en', 'US'),
       ],
-
     );
   }
 }
+
+
