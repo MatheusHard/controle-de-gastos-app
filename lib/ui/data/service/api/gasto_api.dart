@@ -1,13 +1,9 @@
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
-import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
-import '../../core/configs/dio/configs.dart';
-import '../../data/model/agenda_de_pagamento.dart';
-import '../dtos/gasto_dto.dart';
-
+import '../../../core/configs/dio/configs.dart';
+import '../../dtos/gasto_dto.dart';
 
 class GastoApi {
 

@@ -2,8 +2,9 @@ import 'package:controle_de_gastos_app/ui/core/configs/dio/configs.dart';
 import 'package:controle_de_gastos_app/ui/data/model/login.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:flutter/material.dart';
-import '../../core/constants/routes/app_routes.dart';
-import '../../core/utils/utils.dart';
+
+import '../../../core/constants/routes/app_routes.dart';
+import '../../../core/utils/utils.dart';
 
 class LoginApi {
 

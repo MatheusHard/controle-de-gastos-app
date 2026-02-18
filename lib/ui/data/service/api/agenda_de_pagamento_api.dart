@@ -3,8 +3,8 @@ import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-import '../../core/configs/dio/configs.dart';
-import '../dtos/agenda_de_pagamento_dto.dart';
+import '../../../core/configs/dio/configs.dart';
+import '../../dtos/agenda_de_pagamento_dto.dart';
 
 
 class AgendaDePagamentoApi  {
