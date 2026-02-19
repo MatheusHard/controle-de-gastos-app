@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_background_service_android/flutter_background_service_android.dart';
+//import 'package:flutter_background_service/flutter_background_service.dart';
+//import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 
-class AppBackgroundService {
+/*class AppBackgroundService {
 
   static Future<void> initializeService() async {
     final service = FlutterBackgroundService();
@@ -36,4 +36,4 @@ void onStart(ServiceInstance service) async {
   Timer.periodic(const Duration(seconds: 10), (timer) async {
     print("🔥 BACKGROUND RODANDO");
   });
-}
+}*/
