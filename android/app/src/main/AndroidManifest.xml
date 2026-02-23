@@ -17,9 +17,9 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>-->
 
     <application
-        android:label="controle_de_gastos_app"
+        android:label="App Gastos"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/gasto_img">
         <activity
             android:name=".MainActivity"
             android:requestLegacyExternalStorage="true"
