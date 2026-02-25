@@ -366,6 +366,10 @@ import '../notifications/notifications.dart';
     }
     return compressedBytes;
   }
+  // Texto Reduzido
+  static String textoDinamico({required int inicio, required  int qtdCaracters, required String value}){
+    return value.toString().substring(inicio, value.toString().length > qtdCaracters ? qtdCaracters : value.toString().length);
+  }
 }
 
 

@@ -18,7 +18,6 @@ LoginApi(BuildContext context){
     var customDio = Configs();
     String userBase64 = Utils.base64EncodeString(username);
     String passwordBase64 = Utils.base64EncodeString(password);
-
     try{
         var response = await customDio.dio.post("/login", data: {
           "username": userBase64,
@@ -27,7 +26,7 @@ LoginApi(BuildContext context){
         if(response.statusCode == 200){
           Login login = Login.fromJson(response.data);
 
-            ///Salvar Sessão
+            // Salvar Sessão
             if(login.token != null){
               await Utils.salvarToken(login.token ?? "");
               if(isChecked){
@@ -43,7 +42,7 @@ LoginApi(BuildContext context){
           }
         }
       }catch(error){
-        Utils.showDefaultSnackbar(_context!, '''Erro ao logar -> $error''');
+        Utils.showDefaultSnackbar(_context!,'''Erro: ${Utils.textoDinamico(inicio: 0, qtdCaracters: 20, value: error.toString())}''');
         return false;
       }
     return true;
