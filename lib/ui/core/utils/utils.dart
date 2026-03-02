@@ -8,6 +8,7 @@ import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import '../configs/dio/configs.dart';
 import '../constants/enums/app_platform.dart';
 import '../constants/enums/status_pagamento_enum.dart';
 import '../notifications/notifications.dart';
@@ -16,7 +17,7 @@ import '../notifications/notifications.dart';
 
   static const String _boolKey = 'isLoggedIn';
   ///Servidor
-  static String URL_UPLOAD = "uploads/";
+  static String URL_UPLOAD = 'uploads/';
   static String URL_IMG_WEB = "images/";
   static String URL_IMG_ANDROID = "assets/images/";
 

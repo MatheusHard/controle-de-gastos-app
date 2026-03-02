@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 
 
+import 'package:controle_de_gastos_app/ui/core/constants/imgs/img_url.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,6 +13,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:switch_button/switch_button.dart';
 
+import '../../../core/configs/dio/configs.dart';
 import '../../../core/constants/enums/status_pagamento_enum.dart';
 import '../../../core/theme/gradients/app_gradients.dart';
 import '../../../core/theme/provider/theme_provider.dart';
@@ -55,17 +58,23 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   bool _isEdit = false;
   bool _isLoading = false;
   bool _isPago = false;
+  final Configs _customDio = Configs();
+  String?  toke ;
 
   late DateTime _selectedVencimento;
 
   @override
   void initState() {
     super.initState();
+    _loadToken();
     _initFocus();
     _loadingUser();
     _loadingGasto();
   }
-
+  Future<void> _loadToken() async {
+    toke = await Utils.recuperarToken();
+    setState(() {});
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,7 +136,6 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                     value: _isPago,
                     onToggle: (value) {
                       setState(() {
-                        print("object"+value.toString());
                         _isPago = value;
                       });
                     },
@@ -135,11 +143,22 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                     inactiveColor: Colors.red,
                   ),
                   /// Foto/Galeria Imagem
-                  PhotoGalleryImg(
+                  PhotoGalleryNetworkImg(
                     tirarFoto: _tirarFoto,
                     getImage: _getImage,
                     imagem: _imagem,
+                    url: getUrlImg(gasto?.photoName ?? '')
                   ),
+               /* CircleAvatar(
+                  backgroundImage: gasto?.photoName != null
+                      ? NetworkImage(
+                    'http://192.168.0.18:8080/uploads/foto_31771340921672.jpg',
+                    headers: {
+                      "Authorization": "Bearer $toke",
+                    },
+                  )
+                      : AssetImage(ImgUrl.semfoto) as ImageProvider,
+                ),*/
                   Utils.sizedBox(altura: 20.0, largura: 0),
                   /// Salvar
                   CustomButton(
@@ -166,7 +185,42 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   }
 
   ///****** METHODS ******
+  String getUrlImg(String photoName){
+    Configs conf = Configs();
+    String BASE_URL = conf.dio.options.baseUrl;
+    return "$BASE_URL/${Utils.URL_UPLOAD}$photoName";
+  }
+  Future<void> _carregarImagemDaNet() async {
+    if (gasto?.photoName == null) return;
 
+    try {
+      final token = await Utils.recuperarToken();
+
+      final response = await HttpClient()
+          .getUrl(Uri.parse(
+          'http://192.168.0.10:8080/uploads/${gasto!.photoName}'))
+          .then((request) {
+        request.headers.set("Authorization", "Bearer $token");
+        return request.close();
+      });
+
+      if (response.statusCode == 200) {
+        final bytes = await consolidateHttpClientResponseBytes(response);
+
+        final tempDir = await Directory.systemTemp.createTemp();
+        final file = File('${tempDir.path}/${gasto!.photoName}');
+        await file.writeAsBytes(bytes);
+
+        setState(() {
+          _imagem = file;
+        });
+      } else {
+        print("Erro ao baixar imagem: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Erro ao carregar imagem da net: $e");
+    }
+  }
   //Save Gasto
   Future<void> _salvarGasto({required NavigatorState navigator, required ScaffoldMessengerState scaffoldMessenger,}) async {
 
@@ -196,6 +250,8 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     _isEdit = widget.isEdit;
 
     if (_isEdit) {
+      _carregarImagemDaNet();
+
       _isPago = gasto?.pago ?? false; // ✅ inicializa aqui
       _selectedVencimento = (gasto!.vencimento != null  ? DateTime.tryParse(gasto!.vencimento!) : DateTime.now())!;
       _isEdit = true;
