@@ -279,7 +279,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     g.createdAt = !_isEdit ? DateTime.now().toIso8601String() : gasto?.createdAt;
     g.updatedAt = DateTime.now().toIso8601String();
     g.imagemBase64 = bytes != null ? await Utils.base64String(bytes) : null;
-    g.photoName =  "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
+    g.photoName =  !_isEdit ? "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg" : gasto?.photoName;
     AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
     agenda.id = gasto?.agendaDePagamento?.id;
     g.user = user;

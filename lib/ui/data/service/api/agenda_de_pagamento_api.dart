@@ -53,7 +53,7 @@ class AgendaDePagamentoApi  {
       URL+FIND_ONE,
       data: 	filtros.toJson(),
       options: Options(headers: await Utils.requestToken()),);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 && response.data != null && response.data != "") {
       return AgendaDePagamento.fromJson(response.data);
     }
     return null;
