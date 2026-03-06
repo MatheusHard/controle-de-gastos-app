@@ -250,7 +250,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     _isEdit = widget.isEdit;
 
     if (_isEdit) {
-      _carregarImagemDaNet();
+      //_carregarImagemDaNet();
 
       _isPago = gasto?.pago ?? false; // ✅ inicializa aqui
       _selectedVencimento = (gasto!.vencimento != null  ? DateTime.tryParse(gasto!.vencimento!) : DateTime.now())!;
