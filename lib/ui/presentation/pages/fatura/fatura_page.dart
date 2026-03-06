@@ -210,6 +210,7 @@ class _FaturaPageState extends State<FaturaPage> {
   //Get Gastos
   Future<void> _getGastos() async {
     GastoDTO filters = GastoDTO();
+    filters.deletado = false;
     filters.agendaDePagamento = AgendaDePagamentoDTO(id: faturaAtual.id);
     listaGastos = await GastoApi(context).getListByFilter(filters);
   }
