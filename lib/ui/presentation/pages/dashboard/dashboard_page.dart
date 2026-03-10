@@ -1,4 +1,19 @@
+import 'package:controle_de_gastos_app/ui/core/theme/provider/theme_provider.dart';
+import 'package:controle_de_gastos_app/ui/data/dtos/dashboarding/totais_mensais_response.dart';
+import 'package:controle_de_gastos_app/ui/data/dtos/gasto_dto.dart';
+import 'package:controle_de_gastos_app/ui/data/dtos/user_dto.dart';
+import 'package:controle_de_gastos_app/ui/data/service/api/dashboard_api.dart';
+import 'package:controle_de_gastos_app/ui/presentation/widgets/appbar/app_bar_back.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+
+import '../../../core/theme/styles/app_text_styles.dart';
+import '../../../core/utils/utils.dart';
+import '../../../data/dtos/dashboarding/gastos_data.dart';
+import '../../../data/dtos/dashboarding/gastos_mensais.dart';
+import '../../../data/model/user.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -8,12 +23,90 @@ class DashBoardPage extends StatefulWidget {
 }
 
 class _DashBoardPageState extends State<DashBoardPage> {
+  
+  User? user;
+  late TotaisMensaisResponse dashboardObject;
+  late List<GastosMensais>? listaMensal = [];
+  late double? totaGeral = 0;
+
+  @override
+  void initState() {
+    _loadingUser();
+    _loadDashBoarding();
+    super.initState();
+  }
+
+  Future<void> _loadDashBoarding() async {
+    GastoDTO filters = GastoDTO();
+    filters.deletado = false;
+    final u = User();
+    u.id = user?.id;
+    filters.user = u;
+
+    dashboardObject =  (await DashBoardApi(context).getTotais(filters))!;
+
+    setState(() {
+      listaMensal = dashboardObject.totaisPorMes;
+      totaGeral = dashboardObject.somaTotal;
+    });
+  }
+  //Carregar User
+  Future<void> _loadingUser() async {
+    final u = await Utils.recuperarUser();
+    setState(() {
+      user = u;
+    });
+  }
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text("DASH"),
+    return Scaffold(
+      appBar: AppBarBack(
+        title: '',
+        onBack: ()  => Navigator.pop(context),
+        onClose: () => Navigator.pop(context),
+        gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Utils.sizedBox(altura: 20.0, largura: 0),
+              Text("DashBoarding",style: AppTextStyles.textoSentimentoNegritoWhite( 20, context),),
+
+              ///Gráfico por mês
+              SfCartesianChart(
+                primaryXAxis: CategoryAxis(),
+                primaryYAxis: NumericAxis(
+                  numberFormat: NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$'),
+                ),
+                title: ChartTitle(text: 'Gastos mensais'),
+                legend: Legend(isVisible: true),
+                tooltipBehavior: TooltipBehavior(
+                  enable: true,
+                  format: 'Mês: point.x\nValor: R\$ point.y',
+                ),
+                series: <LineSeries<GastosMensais, String>>[
+                  LineSeries<GastosMensais, String>(
+                    dataSource: listaMensal,
+                    xValueMapper: (GastosMensais gastos, _) => gastos.mesAbreviado,
+                    yValueMapper: (GastosMensais gastos, _) => gastos.total,
+                    name: 'Gastos',
+                    dataLabelSettings: const DataLabelSettings(isVisible: true),
+                  ),
+                ],
+              ),
+              ///OTHETTTT
+              Text('Total Geral: $totaGeral')
+            ],
+          ),
+        ),
+      )
     );
   }
 }
+
 
 
