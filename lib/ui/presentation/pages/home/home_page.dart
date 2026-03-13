@@ -42,7 +42,9 @@ class _HomePageState extends State<HomePage> {
               Navigator.pushNamed(context, AppRoutes.fatura);
             }),
             CardPrincipalItem(icon: Icons.history_outlined, label: "Histórico", onTap: () {}),
-            CardPrincipalItem(icon: Icons.dashboard, label: "DashBoarding", onTap: () {}),
+            CardPrincipalItem(icon: Icons.dashboard, label: "DashBoarding", onTap: () {
+              Navigator.pushNamed(context, AppRoutes.dashboard);
+            }),
             CardPrincipalItem(icon: Icons.credit_card, label: "Cartões", onTap: () {}),
             CardPrincipalItem(icon: Icons.attach_money, label: "Empréstimos", onTap: () {}),
             CardPrincipalItem(icon: Icons.trending_up, label: "Faça render", onTap: () {}),

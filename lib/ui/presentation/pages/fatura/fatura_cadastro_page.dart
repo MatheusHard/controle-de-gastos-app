@@ -80,12 +80,8 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     return Scaffold(
       appBar: AppBarBack(
         title: '',
-        onBack: () {
-          Navigator.pop(context);
-        },
-        onClose: () {
-          Navigator.pop(context);
-        },
+        onBack: ()  => Navigator.pop(context),
+        onClose: () => Navigator.pop(context),
         gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
       ),
       body: Form(
