@@ -4,6 +4,7 @@ import 'package:controle_de_gastos_app/ui/data/dtos/gasto_dto.dart';
 import 'package:controle_de_gastos_app/ui/data/dtos/user_dto.dart';
 import 'package:controle_de_gastos_app/ui/data/service/api/dashboard_api.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/appbar/app_bar_back.dart';
+import 'package:controle_de_gastos_app/ui/presentation/widgets/cards/card_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -98,8 +99,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   ),
                 ],
               ),
-              ///OTHETTTT
-              Text('Total Geral: $totaGeral')
+              ///Card Total
+              CardDashboard(title: 'Total Geral',value: totaGeral, icon: Icons.monetization_on_sharp,)
             ],
           ),
         ),
