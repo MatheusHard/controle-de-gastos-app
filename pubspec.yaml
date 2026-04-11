@@ -52,6 +52,7 @@ dependencies:
   flutter_image_compress: ^2.4.0
   workmanager: ^0.9.0+3
   android_alarm_manager_plus: ^4.0.3
+  syncfusion_flutter_charts: ^32.2.8
 
 dev_dependencies:
   flutter_test:

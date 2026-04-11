@@ -1,14 +1,18 @@
 
+import 'dart:convert';
 import 'dart:io';
 
 
 import 'package:flutter/material.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:switch_button/switch_button.dart';
 
 import '../../../core/constants/enums/status_pagamento_enum.dart';
+import '../../../core/theme/gradients/app_gradients.dart';
 import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
 import '../../../core/utils/utils.dart';
@@ -47,6 +51,7 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
   File? _imagem;
   final ImagePicker _picker = ImagePicker();
   var bytes;
+  bool _isEdit = false;
   bool _isLoading = false;
   bool _isPago = false;
 
@@ -65,8 +70,12 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
     return Scaffold(
       appBar: AppBarBack(
         title: '',
-        onBack:  () => Navigator.pop(context),
-        onClose: () => Navigator.pop(context),
+        onBack: () {
+          Navigator.pop(context);
+        },
+        onClose: () {
+          Navigator.pop(context);
+        },
         gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
       ),
       body: Form(
