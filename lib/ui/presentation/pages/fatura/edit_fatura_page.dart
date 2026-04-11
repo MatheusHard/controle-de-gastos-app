@@ -1,18 +1,15 @@
 
-import 'dart:convert';
 import 'dart:io';
 
 
 import 'package:flutter/material.dart';
-import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:switch_button/switch_button.dart';
 
+import '../../../core/configs/dio/configs.dart';
 import '../../../core/constants/enums/status_pagamento_enum.dart';
-import '../../../core/theme/gradients/app_gradients.dart';
 import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
 import '../../../core/utils/utils.dart';
@@ -28,16 +25,15 @@ import '../../widgets/data/custom_date_picker_field.dart';
 import '../../widgets/images/photo_gallery_img.dart';
 import '../../widgets/inputs/custom_field.dart';
 
-class FaturaCadastroPage extends StatefulWidget {
+class EditFaturaPage extends StatefulWidget {
   final Gasto? gasto;
-  final bool isEdit;
-  const FaturaCadastroPage({super.key, this.gasto, required this.isEdit});
+  const EditFaturaPage({super.key, this.gasto});
 
   @override
-  State<FaturaCadastroPage> createState() => _FaturaCadastroPageState();
+  State<EditFaturaPage> createState() => _EditFaturaPageState();
 }
 
-class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
+class _EditFaturaPageState extends State<EditFaturaPage> {
 
   ///Variables
   User? user;
@@ -52,7 +48,6 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   File? _imagem;
   final ImagePicker _picker = ImagePicker();
   var bytes;
-  bool _isEdit = false;
   bool _isLoading = false;
   bool _isPago = false;
 
@@ -71,12 +66,8 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     return Scaffold(
       appBar: AppBarBack(
         title: '',
-        onBack: () {
-          Navigator.pop(context);
-        },
-        onClose: () {
-          Navigator.pop(context);
-        },
+        onBack: () => Navigator.pop(context),
+        onClose: () =>  Navigator.pop(context),
         gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
       ),
       body: Form(
@@ -89,8 +80,8 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Utils.sizedBox(altura: 20.0, largura: 0),
-                  Text("Cadastre seu Gasto",
-                      style: AppTextStyles.textoSentimentoNegritoWhite( 20, context),),
+                  Text("Atualize seu Gasto",
+                    style: AppTextStyles.textoSentimentoNegritoWhite( 20, context),),
                   Utils.sizedBox(altura: 20.0, largura: 0),
                   /// Descrição
                   CustomField(
@@ -119,7 +110,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                     onDateSelected: (date) {
                       _selectedVencimento = date;
                       _controllerVencimento.text = DateFormat('dd/MM/yyyy').format(date);
-                      },
+                    },
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
                   /// Pago
@@ -135,10 +126,11 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
                     inactiveColor: Colors.red,
                   ),
                   /// Foto/Galeria Imagem
-                  PhotoGalleryImg(
+                  PhotoGalleryNetworkImg(
                     tirarFoto: _tirarFoto,
                     getImage: _getImage,
                     imagem: _imagem,
+                    url: getUrlImg(gasto?.photoName ?? '')
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
                   /// Salvar
@@ -161,8 +153,8 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
               ),
             ),
           )
-        ),
-      );
+      ),
+    );
   }
 
   ///****** METHODS ******
@@ -174,7 +166,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
       _isLoading = true;
     });
     try {
-      await _cadastroGasto(await _generateGasto());
+      await _updateGasto(await _generateGasto());
       if (!mounted) return;
       navigator.pop(true);
     } catch (e) {
@@ -193,12 +185,9 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   //Carregar Gasto
   void _loadingGasto() {
     gasto = widget.gasto;
-    _isEdit = widget.isEdit;
 
-    if (_isEdit) {
       _isPago = gasto?.pago ?? false; // ✅ inicializa aqui
       _selectedVencimento = (gasto!.vencimento != null  ? DateTime.tryParse(gasto!.vencimento!) : DateTime.now())!;
-      _isEdit = true;
       _controllerDescricao.text = gasto?.descricao ?? "";
       _controllerValor.text = gasto?.valor != null ? gasto!.valor!.toStringAsFixed(2) : "";
       if (gasto!.vencimento != null && gasto!.vencimento!.isNotEmpty) {
@@ -209,18 +198,16 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
           _controllerVencimento.text = gasto!.vencimento!;
         }
       }
-    } else {
-      _clearControllers();
-    }
+
   }
   // Gerar obj Gasto
   Future<GastoDTO> _generateGasto() async {
     GastoDTO g = GastoDTO();
-    g.id =  _isEdit &&  gasto?.id != null ? gasto?.id : null;
+    g.id =  gasto?.id;
     g.descricao = _controllerDescricao.text;
     g.valor = _controllerValor.text.isNotEmpty ? double.parse(_controllerValor.text) : 0;
     g.vencimento = _selectedVencimento.toIso8601String();
-    g.createdAt = !_isEdit ? DateTime.now().toIso8601String() : gasto?.createdAt;
+    g.createdAt = gasto?.createdAt;
     g.updatedAt = DateTime.now().toIso8601String();
     g.imagemBase64 = bytes != null ? await Utils.base64String(bytes) : null;
     g.photoName =  "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
@@ -230,11 +217,16 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     g.agendaDePagamento = agenda;
     g.deletado = gasto?.deletado ?? false;
     g.statusPagamento = _isPago ? StatusPagamentoEnum.PAGO :
-                        Utils.isVencido(gasto?.vencimento) ? StatusPagamentoEnum.VENCIDO :
-                        StatusPagamentoEnum.NAO_PAGO;
+    Utils.isVencido(gasto?.vencimento) ? StatusPagamentoEnum.VENCIDO :
+    StatusPagamentoEnum.NAO_PAGO;
     g.pago = _isPago;
 
     return g;
+  }
+  String getUrlImg(String photoName){
+    Configs conf = Configs();
+    String BASE_URL = conf.dio.options.baseUrl;
+    return "$BASE_URL/${Utils.URL_UPLOAD}$photoName";
   }
   // Print Photo
   Future<void> _tirarFoto() async {
@@ -261,19 +253,30 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
   // Capture Galley
   Future _getImage(ImageSource source) async {
     final galleryFile = await _picker.pickImage(
-        source: source,
-        maxHeight: 480,
-        maxWidth: 640,
-        imageQuality: 50);
-    setState(() {
-      if (galleryFile != null) {
-        _imagem = File(galleryFile.path);
-        //_loadingFieldsByPhoto(galleryFile); TODO
+      source: source,
+      maxHeight: 480,
+      maxWidth: 640,
+      imageQuality: 50,
+    );
+
+    if (galleryFile != null) {
+      final File originalFile = File(galleryFile.path);
+      final compressedBytes = await Utils.compressImageBytes(originalFile);
+
+      if (compressedBytes != null) {
+        setState(() {
+          _imagem = originalFile;
+          bytes = compressedBytes; // salva os bytes comprimidos
+        });
+        print("Imagem da galeria comprimida: ${bytes!.length / 1024} KB");
       } else {
-        print('No image selected.');
+        print("Falha ao comprimir a imagem da galeria");
       }
-    });
+    } else {
+      print('Nenhuma imagem selecionada.');
+    }
   }
+
   // Carregar User
   Future<void> _loadingUser() async {
     final u = await Utils.recuperarUser();
@@ -301,11 +304,7 @@ class _FaturaCadastroPageState extends State<FaturaCadastroPage> {
     });
   }
   //Add Cliente
-  Future<bool> _cadastroGasto(GastoDTO g) async {
-    if(_isEdit) {
+  Future<bool> _updateGasto(GastoDTO g) async {
       return await GastoApi(context).updateGasto(g, user?.id ?? 0);
-    }else{
-      return await GastoApi(context).addGasto(g);
     }
-  }
 }

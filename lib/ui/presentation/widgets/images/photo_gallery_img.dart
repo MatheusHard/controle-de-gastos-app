@@ -1,20 +1,91 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/constants/imgs/img_url.dart';
+import '../../../core/utils/utils.dart';
 
-class PhotoGalleryImg extends StatelessWidget {
+class PhotoGalleryNetworkImg extends StatefulWidget {
   final VoidCallback tirarFoto;
   final Function(ImageSource source) getImage;
   final File? imagem;
+  final String? url;
 
-  const PhotoGalleryImg({
+  const PhotoGalleryNetworkImg({
     Key? key,
     required this.tirarFoto,
     required this.getImage,
     this.imagem,
+    this.url,
   }) : super(key: key);
+
+  @override
+  State<PhotoGalleryNetworkImg> createState() => _PhotoGalleryImgState();
+}
+
+class _PhotoGalleryImgState extends State<PhotoGalleryNetworkImg> {
+  late Future<Map<String, String>> tokenFuture;
+
+  String? photoName;
+  String? url;
+
+  @override
+  void initState() {
+    super.initState();
+    tokenFuture = _getToken();
+  }
+
+  Future<Map<String, String>> _getToken() async {
+    return await Utils.requestToken();
+  }
+
+
+  Widget _getImageWidget() {
+    if (widget.imagem != null) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Image.file(
+          widget.imagem!,
+          width: 250,
+          height: 250,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else {
+      return FutureBuilder<Map<String, String>>(
+        future: tokenFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Image.asset(
+              ImgUrl.no_image,
+              width: 250,
+              height: 250,
+              fit: BoxFit.cover,
+            );
+          } else {
+            final headers = snapshot.data ?? {};
+            return Image(
+              image: NetworkImage('${widget.url}?${DateTime.now().millisecondsSinceEpoch}', headers: headers,),
+              width: 250,
+              height: 250,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  ImgUrl.no_image,
+                  width: 250,
+                  height: 250,
+                  fit: BoxFit.cover,
+                );
+              },
+            );
+          }
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,38 +98,17 @@ class PhotoGalleryImg extends StatelessWidget {
             _buildButton(
               icon: Icons.camera_alt_rounded,
               label: "Camera",
-              onTap: tirarFoto,
+              onTap: widget.tirarFoto,
             ),
             _buildButton(
               icon: Icons.image_rounded,
               label: "Galeria",
-              onTap: () => getImage(ImageSource.gallery),
+              onTap: () => widget.getImage(ImageSource.gallery),
             ),
-           ],
+          ],
         ),
       ],
     );
-  }
-
-  Widget _getImageWidget() {
-    if (imagem != null) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Image.file(
-          imagem!,
-          width: 250,
-          height: 250,
-          fit: BoxFit.cover,
-        ),
-      );
-    } else {
-      return Image.asset(
-        ImgUrl.no_image,
-        width: 250,
-        height: 250,
-        fit: BoxFit.cover,
-      );
-    }
   }
 
   Widget _buildButton({
@@ -79,11 +129,7 @@ class PhotoGalleryImg extends StatelessWidget {
           clipBehavior: Clip.none,
           children: [
             Center(
-              child: Icon(
-                icon,
-                color: Colors.black,
-                size: 35,
-              ),
+              child: Icon(icon, color: Colors.black, size: 35),
             ),
             Align(
               alignment: const Alignment(0, 2.0),

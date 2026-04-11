@@ -84,10 +84,9 @@ class _FaturaPageState extends State<FaturaPage> {
                 onTap: () async {
                   final resultado = await Navigator.pushNamed(
                     context,
-                    AppRoutes.fatura_cadastro,
+                    AppRoutes.edit_fatura,
                     arguments: {
                       'gasto': gasto,
-                      'isEdit': true,
                     },
                   );
                   if (resultado == true) {
@@ -109,10 +108,9 @@ class _FaturaPageState extends State<FaturaPage> {
           //context.read<ThemeProvider>().setGradient(AppGradients.darkBlueGradient); // TODO
           final resultado = await Navigator.pushNamed(
             context,
-            AppRoutes.fatura_cadastro,
+            AppRoutes.add_fatura,
             arguments: {
               'gasto': gasto,
-              'isEdit': false,
             },          );
           if (resultado == true) {
             // recarrega lista do backend

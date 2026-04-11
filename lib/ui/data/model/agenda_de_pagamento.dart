@@ -43,9 +43,7 @@ class AgendaDePagamento {
     data['id'] = id;
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
-    if (user != null) {
-      data['user'] = user!.toJson();
-    }
+    if (user != null) data['user'] = user!.toJson();
     data['deletado'] = deletado;
     if (gastos != null) {
       data['gastos'] = gastos!.map((v) => v.toJson()).toList();
