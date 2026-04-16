@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
-import 'package:controle_de_gastos_app/ui/core/notifications/notifications.dart';
+import 'package:controle_de_gastos_app/ui/data/service/worker/task/gastos_task.dart';
 import 'package:flutter/material.dart';
+
+import '../notifications/notifications.dart';
 
 @pragma('vm:entry-point')
 class AlarmManager {
@@ -46,13 +48,7 @@ class AlarmManager {
     print("🔥 EXECUTANDO TAREFA DAS 20:00");
 
     // Aqui você coloca:
-    // - Verificar vencimentos
-    // - Chamar API
-    // - Enviar notificação
-    await Notifications.showNotification(
-        id: 10,
-        title: "COnta vencida",
-        body: "Sua conta: Energia de Rs 200.00, vence em: 18/02/2026");
+    await GastosTask.contasVencidasDoDiaTask();
 
     // Reagenda para o próximo dia
     await _scheduleDailyAt20();

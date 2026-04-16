@@ -40,7 +40,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
   Future<void> _loadDashBoarding() async {
     GastoDTO filters = GastoDTO();
     filters.deletado = false;
-    final u = User();
+    UserDTO u = UserDTO();
     u.id = user?.id;
     filters.user = u;
 

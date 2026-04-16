@@ -183,7 +183,7 @@ class _FaturaPageState extends State<FaturaPage> {
   }
   //Deletar Gasto
   Future<bool> _deletarGasto(GastoDTO g,  BuildContext context) async {
-      return await GastoApi(context).updateGasto(g, user?.id ?? 0);
+      return await GastoApi().updateGasto(g, user?.id ?? 0);
   }
   //Gerar obj delete Gasto
   Future<GastoDTO> _generateDelGasto(Gasto gasto) async {
@@ -198,7 +198,9 @@ class _FaturaPageState extends State<FaturaPage> {
     g.photoName =  null;
     AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
     agenda.id = gasto.agendaDePagamento?.id;
-    g.user = user;
+    UserDTO u = UserDTO();
+    u.id = user?.id;
+    g.user = u;
     g.agendaDePagamento = agenda;
     g.deletado = true;
     g.statusPagamento = gasto.statusPagamento;
@@ -210,6 +212,6 @@ class _FaturaPageState extends State<FaturaPage> {
     GastoDTO filters = GastoDTO();
     filters.deletado = false;
     filters.agendaDePagamento = AgendaDePagamentoDTO(id: faturaAtual.id);
-    listaGastos = await GastoApi(context).getListByFilter(filters);
+    listaGastos = await GastoApi().getListByFilter(filters);
   }
 }

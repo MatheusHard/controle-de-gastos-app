@@ -1,6 +1,5 @@
-import 'package:controle_de_gastos_app/ui/data/model/user.dart';
+import 'package:controle_de_gastos_app/ui/data/dtos/user_dto.dart';
 import '../../core/constants/enums/status_pagamento_enum.dart';
-import '../../data/model/agenda_de_pagamento.dart';
 import 'agenda_de_pagamento_dto.dart';
 
 class GastoDTO {
@@ -9,7 +8,7 @@ class GastoDTO {
   String? updatedAt;
   String? vencimento;
   String? descricao;
-  User? user;
+  UserDTO? user;
   bool? deletado;
   String? dataInicial;
   String? dataFinal;

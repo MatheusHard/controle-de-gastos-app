@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/routes/app_routes.dart';
-import '../../../core/notifications/notifications.dart';
 import '../../../core/utils/utils.dart';
 import '../../../data/model/user.dart';
 import '../../widgets/appbar/app_bar_usuario.dart';

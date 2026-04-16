@@ -15,6 +15,7 @@ import '../../../core/theme/styles/app_text_styles.dart';
 import '../../../core/utils/utils.dart';
 import '../../../data/dtos/agenda_de_pagamento_dto.dart';
 import '../../../data/dtos/gasto_dto.dart';
+import '../../../data/dtos/user_dto.dart';
 import '../../../data/model/gasto.dart';
 import '../../../data/model/user.dart';
 import '../../../data/service/api/gasto_api.dart';
@@ -213,7 +214,9 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
     g.photoName =  "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
     AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
     agenda.id = gasto?.agendaDePagamento?.id;
-    g.user = user;
+    UserDTO u = UserDTO();
+    u.id = user?.id;
+    g.user = u;
     g.agendaDePagamento = agenda;
     g.deletado = gasto?.deletado ?? false;
     g.statusPagamento = _isPago ? StatusPagamentoEnum.PAGO :
@@ -305,6 +308,6 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
   }
   //Add Cliente
   Future<bool> _updateGasto(GastoDTO g) async {
-      return await GastoApi(context).updateGasto(g, user?.id ?? 0);
+      return await GastoApi().updateGasto(g, user?.id ?? 0);
     }
 }

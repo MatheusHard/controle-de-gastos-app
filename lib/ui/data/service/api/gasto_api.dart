@@ -7,15 +7,12 @@ import '../../dtos/gasto_dto.dart';
 
 class GastoApi {
 
-  BuildContext? _context;
   final Configs _customDio = Configs();
   final URL = "/gastos";
   final FILTRAR = '/filtrar';
   final FIND_ONE = '/findOne';
 
-  GastoApi(BuildContext context) {
-    _context = context;
-  }
+  GastoApi() {}
   //Add
   Future<bool> addGasto(GastoDTO gasto) async {
     var response = await _customDio.dio.post(URL,

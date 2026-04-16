@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 
+import 'package:controle_de_gastos_app/ui/data/dtos/user_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
@@ -221,7 +222,9 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
     g.photoName =  "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
     AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
     agenda.id = gasto?.agendaDePagamento?.id;
-    g.user = user;
+    UserDTO u = UserDTO();
+    u.id = user?.id;
+    g.user = u;
     g.agendaDePagamento = agenda;
     g.deletado = gasto?.deletado ?? false;
     g.statusPagamento = _isPago ? StatusPagamentoEnum.PAGO :
@@ -308,7 +311,6 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
   }
   //Add Cliente
   Future<bool> _cadastroGasto(GastoDTO g) async {
-      return await GastoApi(context).addGasto(g);
-
+      return await GastoApi().addGasto(g);
   }
 }
