@@ -22,8 +22,8 @@ class AlarmManager {
       now.year,
       now.month,
       now.day,
-      21,
-      48,
+      8,
+      0,
     );
 
     // Se já passou das 20h hoje, agenda para amanhã
