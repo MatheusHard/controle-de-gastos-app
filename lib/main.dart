@@ -6,10 +6,30 @@ import 'package:controle_de_gastos_app/ui/data/service/worker/alarm_manager.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:share_handler/share_handler.dart';
 
 @pragma('vm:entry-point')
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final ShareHandlerPlatform _shareHandler = ShareHandler.instance;
+  SharedMedia? _sharedMedia;
+
+  _sharedMedia = _shareHandler.sharedMedia;
+
+// Caso o app já esteja aberto
+  _shareHandler.sharedMediaStream.listen((media) {
+      _sharedMedia = media;
+
+  });
+
+
+  final media = _sharedMedia!;
+
+  if (media.content?.isNotEmpty == true) {
+    print('Texto recebido:\n\n${media.content}');
+  }
+
 
   ///Serviços
   await Notifications.initNotifications();
@@ -22,6 +42,10 @@ Future<void> main() async {
       child: const MyApp(),
     ),
   );
+}
+
+extension on ShareHandlerPlatform {
+  SharedMedia? get sharedMedia => null;
 }
 
 class MyApp extends StatelessWidget {
