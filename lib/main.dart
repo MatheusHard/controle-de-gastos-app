@@ -12,25 +12,6 @@ import 'package:share_handler/share_handler.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final ShareHandlerPlatform _shareHandler = ShareHandler.instance;
-  SharedMedia? _sharedMedia;
-
-  _sharedMedia = _shareHandler.sharedMedia;
-
-// Caso o app já esteja aberto
-  _shareHandler.sharedMediaStream.listen((media) {
-      _sharedMedia = media;
-
-  });
-
-
-  final media = _sharedMedia!;
-
-  if (media.content?.isNotEmpty == true) {
-    print('Texto recebido:\n\n${media.content}');
-  }
-
-
   ///Serviços
   await Notifications.initNotifications();
   await AndroidAlarmManager.initialize();
@@ -44,9 +25,6 @@ Future<void> main() async {
   );
 }
 
-extension on ShareHandlerPlatform {
-  SharedMedia? get sharedMedia => null;
-}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

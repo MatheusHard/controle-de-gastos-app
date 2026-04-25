@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:share_handler/share_handler.dart';
 import 'package:switch_button/switch_button.dart';
 
 import '../../../core/constants/enums/status_pagamento_enum.dart';
@@ -64,6 +65,7 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
     _initFocus();
     _loadingUser();
     _loadingGasto();
+    _getFilaByShare();
   }
 
   @override
@@ -77,7 +79,9 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
         onClose: () {
           Navigator.pop(context);
         },
-        gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
+        gradient: context
+            .watch<ThemeProvider>()
+            .currentGradient, // vem do provider,
       ),
       body: Form(
           key: _formKey,
@@ -90,8 +94,10 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
                 children: [
                   Utils.sizedBox(altura: 20.0, largura: 0),
                   Text("Cadastre seu Gasto",
-                      style: AppTextStyles.textoSentimentoNegritoWhite( 20, context),),
+                    style: AppTextStyles.textoSentimentoNegritoWhite(
+                        20, context),),
                   Utils.sizedBox(altura: 20.0, largura: 0),
+
                   /// Descrição
                   CustomField(
                     controller: _controllerDescricao,
@@ -101,6 +107,7 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
                     keyboardType: TextInputType.text,
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
+
                   /// Valor
                   CustomField(
                     controller: _controllerValor,
@@ -110,30 +117,35 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
                     keyboardType: TextInputType.number,
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
+
                   /// Vencimento
                   CustomDatePickerField(
                     label: "Vencimento",
                     initialDate: gasto?.vencimento != null
-                        ? DateTime.tryParse(gasto!.vencimento!) ?? DateTime.now()
+                        ? DateTime.tryParse(gasto!.vencimento!) ??
+                        DateTime.now()
                         : DateTime.now(),
                     onDateSelected: (date) {
                       _selectedVencimento = date;
-                      _controllerVencimento.text = DateFormat('dd/MM/yyyy').format(date);
-                      },
+                      _controllerVencimento.text =
+                          DateFormat('dd/MM/yyyy').format(date);
+                    },
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
+
                   /// Pago
                   CustomSwitchButton(
                     value: _isPago,
                     onToggle: (value) {
                       setState(() {
-                        print("object"+value.toString());
+                        print("object" + value.toString());
                         _isPago = value;
                       });
                     },
                     activeColor: Colors.green,
                     inactiveColor: Colors.red,
                   ),
+
                   /// Foto/Galeria Imagem
                   PhotoGalleryNetworkImg(
                     tirarFoto: _tirarFoto,
@@ -141,11 +153,15 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
                     imagem: _imagem,
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
+
                   /// Salvar
                   CustomButton(
                     radios: 20,
                     height: 55,
-                    gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider
+                    gradient: context
+                        .watch<ThemeProvider>()
+                        .currentGradient,
+                    // vem do provider
                     icon: Icons.monetization_on,
                     isLoading: _isLoading,
                     onTap: () async {
@@ -161,15 +177,15 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
               ),
             ),
           )
-        ),
-      );
+      ),
+    );
   }
 
   ///****** METHODS ******
 
   //Save Gasto
-  Future<void> _salvarGasto({required NavigatorState navigator, required ScaffoldMessengerState scaffoldMessenger,}) async {
-
+  Future<void> _salvarGasto(
+      {required NavigatorState navigator, required ScaffoldMessengerState scaffoldMessenger,}) async {
     setState(() {
       _isLoading = true;
     });
@@ -183,43 +199,52 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
         SnackBar(content: Text('Erro ao cadastrar o gasto: $e')),
       );
       print('Erro ao cadastrar o gasto: $e');
-
     } finally {
       setState(() {
         _isLoading = false;
       });
     }
   }
+
   //Carregar Gasto
   void _loadingGasto() {
     gasto = widget.gasto;
 
-      _isPago = gasto?.pago ?? false; // ✅ inicializa aqui
-      _selectedVencimento = (gasto!.vencimento != null  ? DateTime.tryParse(gasto!.vencimento!) : DateTime.now())!;
-      _controllerDescricao.text = gasto?.descricao ?? "";
-      _controllerValor.text = gasto?.valor != null ? gasto!.valor!.toStringAsFixed(2) : "";
-      if (gasto!.vencimento != null && gasto!.vencimento!.isNotEmpty) {
-        try {
-          DateTime vencimentoDate = DateTime.tryParse(gasto!.vencimento!) ?? DateTime.now();
-          _controllerVencimento.text = DateFormat('dd/MM/yyyy').format(vencimentoDate);
-        } catch (e) {
-          _controllerVencimento.text = gasto!.vencimento!;
-        }
+    _isPago = gasto?.pago ?? false; // ✅ inicializa aqui
+    _selectedVencimento = (gasto!.vencimento != null
+        ? DateTime.tryParse(gasto!.vencimento!)
+        : DateTime.now())!;
+    _controllerDescricao.text = gasto?.descricao ?? "";
+    _controllerValor.text =
+    gasto?.valor != null ? gasto!.valor!.toStringAsFixed(2) : "";
+    if (gasto!.vencimento != null && gasto!.vencimento!.isNotEmpty) {
+      try {
+        DateTime vencimentoDate = DateTime.tryParse(gasto!.vencimento!) ??
+            DateTime.now();
+        _controllerVencimento.text =
+            DateFormat('dd/MM/yyyy').format(vencimentoDate);
+      } catch (e) {
+        _controllerVencimento.text = gasto!.vencimento!;
       }
-      //_clearControllers();
+    }
+    //_clearControllers();
 
   }
+
   // Gerar obj Gasto
   Future<GastoDTO> _generateGasto() async {
     GastoDTO g = GastoDTO();
     g.id = null;
     g.descricao = _controllerDescricao.text;
-    g.valor = _controllerValor.text.isNotEmpty ? double.parse(_controllerValor.text) : 0;
+    g.valor =
+    _controllerValor.text.isNotEmpty ? double.parse(_controllerValor.text) : 0;
     g.vencimento = _selectedVencimento.toIso8601String();
-    g.createdAt =DateTime.now().toIso8601String();
+    g.createdAt = DateTime.now().toIso8601String();
     g.updatedAt = DateTime.now().toIso8601String();
     g.imagemBase64 = bytes != null ? await Utils.base64String(bytes) : null;
-    g.photoName =  "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
+    g.photoName = "foto_${user?.id}${DateTime
+        .now()
+        .millisecondsSinceEpoch}.jpg";
     AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
     agenda.id = gasto?.agendaDePagamento?.id;
     UserDTO u = UserDTO();
@@ -228,20 +253,23 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
     g.agendaDePagamento = agenda;
     g.deletado = gasto?.deletado ?? false;
     g.statusPagamento = _isPago ? StatusPagamentoEnum.PAGO :
-                        Utils.isVencido(gasto?.vencimento) ? StatusPagamentoEnum.VENCIDO :
-                        StatusPagamentoEnum.NAO_PAGO;
+    Utils.isVencido(gasto?.vencimento) ? StatusPagamentoEnum.VENCIDO :
+    StatusPagamentoEnum.NAO_PAGO;
     g.pago = _isPago;
 
     return g;
   }
+
   // Print Photo
   Future<void> _tirarFoto() async {
     var status = await Permission.camera.request();
     if (status.isGranted) {
-      final XFile? fotoFile = await _picker.pickImage(source: ImageSource.camera);
+      final XFile? fotoFile = await _picker.pickImage(
+          source: ImageSource.camera);
       if (fotoFile != null) {
         final File originalFile = File(fotoFile.path);
-        final compressedBytes = await Utils.compressImageBytes(originalFile); // Compactar a foto
+        final compressedBytes = await Utils.compressImageBytes(
+            originalFile); // Compactar a foto
         if (compressedBytes != null) {
           setState(() {
             _imagem = originalFile;
@@ -256,6 +284,7 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
       print("Permissão de câmera negada");
     }
   }
+
   // Capture Galley
   Future _getImage(ImageSource source) async {
     final galleryFile = await _picker.pickImage(
@@ -290,18 +319,21 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
       user = u!;
     });
   }
+
   // Inicializar Focus
-  void _initFocus(){
+  void _initFocus() {
     _focusDescricaoNode = FocusNode();
     _focusValorNode = FocusNode();
   }
+
   // Limpar Controllers
-  void _clearControllers(){
+  void _clearControllers() {
     _controllerDescricao.text = '';
     _controllerValor.text = '';
     _controllerVencimento.text = '';
     _imagem = null;
   }
+
   // Aqui serve para lê da imagem, caso capture as palavras chaves:
   Future<void> _loadingFieldsByPhoto(XFile? foto) async {
     final valor = await Utils.loadingFieldsByPhoto(foto, "valor");
@@ -309,8 +341,62 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
       _controllerValor.text = valor ?? "Não identificado";
     });
   }
+
   //Add Cliente
   Future<bool> _cadastroGasto(GastoDTO g) async {
-      return await GastoApi().addGasto(g);
+    return await GastoApi().addGasto(g);
   }
-}
+
+  _getFilaByShare() {
+
+    final handler = ShareHandler.instance;
+
+
+      // Quando o app já está aberto
+      handler.sharedMediaStream.listen((media) {
+        _handleSharedMedia(media);
+      });
+
+      // Quando o app foi aberto pelo compartilhamento
+      handler.getInitialSharedMedia().then((media) {
+        if (media != null) {
+          _handleSharedMedia(media);
+        }
+      });
+    }
+
+
+  void _handleSharedMedia(SharedMedia media) {
+
+    List<SharedAttachment?>? attachments = media.attachments;
+
+    if (attachments == null || attachments.isEmpty) {
+      print("Nenhum anexo recebido");
+      return;
+    }
+
+    for (SharedAttachment? item in attachments) {
+      if (item == null) continue;
+
+      print("TYPE: ${item.type}");
+      print("PATH: ${item.path}");
+      //print("URI: ${item.}");
+
+      // 🔥 prioridade: path
+      if (item.path.isNotEmpty) {
+        File file = File(item.path);
+        print("Arquivo pronto: ${file.path}");
+        _imagem = file;
+        setState(() {
+
+        });
+      } else {
+        // fallback (Android moderno)
+        //print("Usar URI: ${item.}");
+      }
+    }
+  }
+        }
+
+
+
