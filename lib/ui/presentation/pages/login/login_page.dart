@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_handler/share_handler.dart';
 import '../../../core/constants/imgs/img_url.dart';
 import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
@@ -37,17 +40,24 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
   @override
-  void initState (){
+  void initState() {
     _loadUser();
     _focusEmailNode = FocusNode();
     _focusPaswordNode = FocusNode();
+    _getFilaByShare();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery
+        .of(context)
+        .size
+        .width;
+    var height = MediaQuery
+        .of(context)
+        .size
+        .height;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -64,7 +74,10 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    LogoImg(width: MediaQuery.of(context).size.width, tamanho: 3, url: ImgUrl.gasto_financeiro,),
+                    LogoImg(width: MediaQuery
+                        .of(context)
+                        .size
+                        .width, tamanho: 3, url: ImgUrl.gasto_financeiro,),
 
                     Utils.sizedBox(altura: 30.0),
 
@@ -100,11 +113,15 @@ class _LoginPageState extends State<LoginPage> {
                       isLoading: _isLoading,
                       label: "Acessar",
                       icon: Icons.account_circle_rounded,
-                      gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider
+                      gradient: context
+                          .watch<ThemeProvider>()
+                          .currentGradient,
+                      // vem do provider
                       textStyle: AppTextStyles.textLogin,
                       height: 55,
                       radios: 20,
                     ),
+
                     ///Manter Conectado
                     ManterConectadoCheck(
                       value: _isManterConectado,
@@ -137,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _loadUser() async {
     User? user = await Utils.recuperarUser();
-    if(user != null){
+    if (user != null) {
       _email = user.username ?? "";
       _senha = user.password ?? "";
       _controllerEmail.text = _email;
@@ -147,14 +164,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _logar() async {
-    bool result = await LoginApi(context).login(_email, _senha, _isManterConectado);
+    bool result = await LoginApi(context).login(
+        _email, _senha, _isManterConectado);
     setState(() {
       _isLoading = false;
     });
   }
 
   Future<void> _loadConectado() async {
-      _isManterConectado = await Utils.recuperarManterConectado();
+    _isManterConectado = await Utils.recuperarManterConectado();
     setState(() {
       _isManterConectado;
     });
@@ -164,5 +182,51 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _obscured = !_obscured;
     });
+  }
+
+  _getFilaByShare() {
+    final handler = ShareHandler.instance;
+
+    // Quando o app já está aberto
+    handler.sharedMediaStream.listen((media) {
+      _handleSharedMedia(media);
+    });
+
+    // Quando o app foi aberto pelo compartilhamento
+    handler.getInitialSharedMedia().then((media) {
+      if (media != null) {
+        _handleSharedMedia(media);
+      }
+    });
+  }
+  
+  //TODO possibilidade de salvar no Utils
+  void _handleSharedMedia(SharedMedia media) {
+    List<SharedAttachment?>? attachments = media.attachments;
+    print("GGFFFF");
+
+    if (attachments == null || attachments.isEmpty) {
+      print("Nenhum anexo recebido");
+      return;
+    }
+
+    for (SharedAttachment? item in attachments) {
+      if (item == null) continue;
+
+      print("TYPE: ${item.type}");
+      print("PATH: ${item.path}");
+      //print("URI: ${item.}");
+
+      // 🔥 prioridade: path
+      if (item.path.isNotEmpty) {
+        File file = File(item.path);
+        print("Arquivo pronto: ${file.path}");
+        Utils.saveImageShare(file);
+        setState(() {});
+      } else {
+        // fallback (Android moderno)
+        //print("Usar URI: ${item.}");
+      }
+    }
   }
 }

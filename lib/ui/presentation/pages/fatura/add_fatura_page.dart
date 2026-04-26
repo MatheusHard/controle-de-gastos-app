@@ -23,6 +23,7 @@ import '../../../data/dtos/gasto_dto.dart';
 import '../../../data/model/gasto.dart';
 import '../../../data/model/user.dart';
 import '../../../data/service/api/gasto_api.dart';
+import '../../../data/service/share/share_service.dart';
 import '../../widgets/appbar/app_bar_back.dart';
 import '../../widgets/buttons/normal_button/custom_button.dart';
 import '../../widgets/buttons/switch_button/custom_switch_button.dart';
@@ -65,9 +66,13 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
     _initFocus();
     _loadingUser();
     _loadingGasto();
-    _getFilaByShare();
-  }
 
+    //_getFilaByShare(); //TODO
+    getImage();//TODO
+  }
+Future getImage() async{
+    _imagem = await Utils.getImageShare();
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -351,7 +356,6 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
 
     final handler = ShareHandler.instance;
 
-
       // Quando o app já está aberto
       handler.sharedMediaStream.listen((media) {
         _handleSharedMedia(media);
@@ -369,6 +373,7 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
   void _handleSharedMedia(SharedMedia media) {
 
     List<SharedAttachment?>? attachments = media.attachments;
+    print("GGFFFF");
 
     if (attachments == null || attachments.isEmpty) {
       print("Nenhum anexo recebido");

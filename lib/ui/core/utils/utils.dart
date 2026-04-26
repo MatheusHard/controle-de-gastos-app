@@ -378,6 +378,31 @@ import '../constants/enums/status_pagamento_enum.dart';
     );
     return formatador.format(valor);
   }
+
+  static Future<File?> getImageShare() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? path = prefs.getString('shared_file_path');
+
+    if (path != null && path.isNotEmpty) {
+      return File(path);
+    }
+
+    return null;
+  }
+  static Future<void> saveImageShare(File? file) async {
+    // 🔥 salva o path
+    final prefs = await SharedPreferences.getInstance();
+    if (file != null) {
+      await prefs.setString('shared_file_path', file.path);
+    }
+  }
+  static Future<void> deleteImageShare() async {
+      final prefs = await SharedPreferences.getInstance();
+      String? path = prefs.getString('shared_file_path');
+      if (path != null) {
+        await prefs.remove('shared_file_path');
+      }
+  }
 }
 
 
