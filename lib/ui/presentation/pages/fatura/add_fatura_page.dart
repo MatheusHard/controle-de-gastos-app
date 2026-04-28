@@ -72,6 +72,7 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
   }
 Future getImage() async{
     _imagem = await Utils.getImageShare();
+    setState(() {});
 }
   @override
   Widget build(BuildContext context) {

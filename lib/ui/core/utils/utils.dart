@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:share_handler/share_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import '../../data/service/notifications/notifications.dart';
@@ -378,7 +379,7 @@ import '../constants/enums/status_pagamento_enum.dart';
     );
     return formatador.format(valor);
   }
-
+  //Get Image
   static Future<File?> getImageShare() async {
     final prefs = await SharedPreferences.getInstance();
     String? path = prefs.getString('shared_file_path');
@@ -389,6 +390,7 @@ import '../constants/enums/status_pagamento_enum.dart';
 
     return null;
   }
+  //Save Image
   static Future<void> saveImageShare(File? file) async {
     // 🔥 salva o path
     final prefs = await SharedPreferences.getInstance();
@@ -396,12 +398,29 @@ import '../constants/enums/status_pagamento_enum.dart';
       await prefs.setString('shared_file_path', file.path);
     }
   }
+  //Delete Image
   static Future<void> deleteImageShare() async {
       final prefs = await SharedPreferences.getInstance();
       String? path = prefs.getString('shared_file_path');
       if (path != null) {
         await prefs.remove('shared_file_path');
       }
+  }
+  //Capture Image Share
+  static Future<void> handleSharedMedia(SharedMedia media) async {
+
+    final attachments = media.attachments;
+    if (attachments == null || attachments.isEmpty) return;
+
+    for (final item in attachments) {
+      if (item == null) continue;
+      if (item.path.isNotEmpty) {
+        final file = File(item.path);
+        await saveImageShare(file);
+      } else {
+        print("Arquivo sem path, possível uso de URI");
+      }
+    }
   }
 }
 

@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
     _loadUser();
     _focusEmailNode = FocusNode();
     _focusPaswordNode = FocusNode();
-    _getFilaByShare();
+    _getFileByShare();
     super.initState();
   }
 
@@ -184,49 +184,18 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  _getFilaByShare() {
+  _getFileByShare() {
     final handler = ShareHandler.instance;
-
     // Quando o app já está aberto
     handler.sharedMediaStream.listen((media) {
-      _handleSharedMedia(media);
+      Utils.handleSharedMedia(media);
     });
 
     // Quando o app foi aberto pelo compartilhamento
     handler.getInitialSharedMedia().then((media) {
       if (media != null) {
-        _handleSharedMedia(media);
+        Utils.handleSharedMedia(media);
       }
     });
-  }
-  
-  //TODO possibilidade de salvar no Utils
-  void _handleSharedMedia(SharedMedia media) {
-    List<SharedAttachment?>? attachments = media.attachments;
-    print("GGFFFF");
-
-    if (attachments == null || attachments.isEmpty) {
-      print("Nenhum anexo recebido");
-      return;
-    }
-
-    for (SharedAttachment? item in attachments) {
-      if (item == null) continue;
-
-      print("TYPE: ${item.type}");
-      print("PATH: ${item.path}");
-      //print("URI: ${item.}");
-
-      // 🔥 prioridade: path
-      if (item.path.isNotEmpty) {
-        File file = File(item.path);
-        print("Arquivo pronto: ${file.path}");
-        Utils.saveImageShare(file);
-        setState(() {});
-      } else {
-        // fallback (Android moderno)
-        //print("Usar URI: ${item.}");
-      }
-    }
   }
 }
