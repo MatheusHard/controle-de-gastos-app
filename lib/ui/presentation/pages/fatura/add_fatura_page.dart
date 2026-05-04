@@ -66,14 +66,10 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
     _initFocus();
     _loadingUser();
     _loadingGasto();
-
-    //_getFilaByShare(); //TODO
-    getImage();//TODO
+    // 🔥 ESCUTA mudança da imagem compartilhada
+    Utils.imageShareNotifier.addListener(_onImageShared);
   }
-Future getImage() async{
-    _imagem = await Utils.getImageShare();
-    setState(() {});
-}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,10 +149,16 @@ Future getImage() async{
                   ),
 
                   /// Foto/Galeria Imagem
-                  PhotoGalleryNetworkImg(
-                    tirarFoto: _tirarFoto,
-                    getImage: _getImage,
-                    imagem: _imagem,
+                  ValueListenableBuilder<File?>(
+                    valueListenable: Utils.imageShareNotifier,
+                    builder: (context, file, _) {
+                      return PhotoGalleryNetworkImg(
+                        tirarFoto: _tirarFoto,
+                        getImage: _getImage,
+                        // 🔥 prioridade: imagem do share
+                        imagem: file ?? _imagem,
+                      );
+                    },
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
 
@@ -353,55 +355,22 @@ Future getImage() async{
     return await GastoApi().addGasto(g);
   }
 
-  _getFilaByShare() {
+  Future<void> _onImageShared() async {
+    final file = Utils.imageShareNotifier.value;
+    if (file == null) return;
+    final compressedBytes = await Utils.compressImageBytes(file);
 
-    final handler = ShareHandler.instance;
-
-      // Quando o app já está aberto
-      handler.sharedMediaStream.listen((media) {
-        _handleSharedMedia(media);
-      });
-
-      // Quando o app foi aberto pelo compartilhamento
-      handler.getInitialSharedMedia().then((media) {
-        if (media != null) {
-          _handleSharedMedia(media);
-        }
-      });
-    }
-
-
-  void _handleSharedMedia(SharedMedia media) {
-
-    List<SharedAttachment?>? attachments = media.attachments;
-    print("GGFFFF");
-
-    if (attachments == null || attachments.isEmpty) {
-      print("Nenhum anexo recebido");
-      return;
-    }
-
-    for (SharedAttachment? item in attachments) {
-      if (item == null) continue;
-
-      print("TYPE: ${item.type}");
-      print("PATH: ${item.path}");
-      //print("URI: ${item.}");
-
-      // 🔥 prioridade: path
-      if (item.path.isNotEmpty) {
-        File file = File(item.path);
-        print("Arquivo pronto: ${file.path}");
+    if (compressedBytes != null) {
+      setState(() {
         _imagem = file;
-        setState(() {
+        bytes = compressedBytes;
+      });
 
-        });
-      } else {
-        // fallback (Android moderno)
-        //print("Usar URI: ${item.}");
-      }
+      print("Imagem via share convertida: ${bytes.length / 1024} KB");
     }
   }
+
+
         }
 
 

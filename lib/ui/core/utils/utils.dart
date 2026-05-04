@@ -10,17 +10,16 @@ import 'package:share_handler/share_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import '../../data/service/notifications/notifications.dart';
-import '../configs/dio/configs.dart';
 import '../constants/enums/app_platform.dart';
 import '../constants/enums/status_pagamento_enum.dart';
 
   class Utils {
-
   static const String _boolKey = 'isLoggedIn';
   ///Servidor
   static String URL_UPLOAD = 'uploads/';
   static String URL_IMG_WEB = "images/";
   static String URL_IMG_ANDROID = "assets/images/";
+  static final ValueNotifier<File?> imageShareNotifier = ValueNotifier<File?>(null);
 
   ///Local
   //static String URL_WEB_SERVICE = "http://192.168.0.7:5001/api/";
@@ -380,32 +379,31 @@ import '../constants/enums/status_pagamento_enum.dart';
     return formatador.format(valor);
   }
   //Get Image
-  static Future<File?> getImageShare() async {
+  static Future<void> loadImageShare() async {
     final prefs = await SharedPreferences.getInstance();
     String? path = prefs.getString('shared_file_path');
 
     if (path != null && path.isNotEmpty) {
-      return File(path);
+      imageShareNotifier.value = File(path);
     }
-
-    return null;
   }
   //Save Image
   static Future<void> saveImageShare(File? file) async {
-    // 🔥 salva o path
     final prefs = await SharedPreferences.getInstance();
     if (file != null) {
       await prefs.setString('shared_file_path', file.path);
+      // 🔥 atualiza automaticamente a UI
+      imageShareNotifier.value = file;
     }
   }
   //Delete Image
   static Future<void> deleteImageShare() async {
-      final prefs = await SharedPreferences.getInstance();
-      String? path = prefs.getString('shared_file_path');
-      if (path != null) {
-        await prefs.remove('shared_file_path');
-      }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('shared_file_path');
+
+    imageShareNotifier.value = null;
   }
+
   //Capture Image Share
   static Future<void> handleSharedMedia(SharedMedia media) async {
 
