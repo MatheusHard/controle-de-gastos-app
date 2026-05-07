@@ -250,9 +250,8 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
     g.createdAt = DateTime.now().toIso8601String();
     g.updatedAt = DateTime.now().toIso8601String();
     g.imagemBase64 = bytes != null ? await Utils.base64String(bytes) : null;
-    g.photoName = "foto_${user?.id}${DateTime
-        .now()
-        .millisecondsSinceEpoch}.jpg";
+    g.imagemBase64 = await _saveByte();
+    g.photoName = "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
     AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
     agenda.id = gasto?.agendaDePagamento?.id;
     UserDTO u = UserDTO();
@@ -279,6 +278,7 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
         final compressedBytes = await Utils.compressImageBytes(
             originalFile); // Compactar a foto
         if (compressedBytes != null) {
+          Utils.imageShareNotifier.value = null;  // 🔥 limpa imagem compartilhada
           setState(() {
             _imagem = originalFile;
             bytes = compressedBytes; // já comprimidos
@@ -307,6 +307,7 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
       final compressedBytes = await Utils.compressImageBytes(originalFile);
 
       if (compressedBytes != null) {
+        Utils.imageShareNotifier.value = null;  // 🔥 limpa imagem compartilhada
         setState(() {
           _imagem = originalFile;
           bytes = compressedBytes; // salva os bytes comprimidos
@@ -349,29 +350,32 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
       _controllerValor.text = valor ?? "Não identificado";
     });
   }
-
+void _cleanWidgets(){
+  Utils.imageShareNotifier.value = null;
+}
   //Add Cliente
   Future<bool> _cadastroGasto(GastoDTO g) async {
+    _cleanWidgets();
     return await GastoApi().addGasto(g);
   }
 
   Future<void> _onImageShared() async {
+
     final file = Utils.imageShareNotifier.value;
     if (file == null) return;
+    await Utils.saveImageShare(file);
     final compressedBytes = await Utils.compressImageBytes(file);
-
     if (compressedBytes != null) {
       setState(() {
         _imagem = file;
         bytes = compressedBytes;
       });
-
-      print("Imagem via share convertida: ${bytes.length / 1024} KB");
     }
   }
+}
 
 
-        }
+
 
 
 
