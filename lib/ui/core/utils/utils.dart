@@ -378,6 +378,15 @@ import '../constants/enums/status_pagamento_enum.dart';
     );
     return formatador.format(valor);
   }
+  // Alternar Url de api entre Produção ou Homologação
+  static saveUrlIsProd(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool("is_prod", value);
+  }
+  static Future<bool> getIsProd() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool("is_prod") ?? false;
+  }
 }
 
 

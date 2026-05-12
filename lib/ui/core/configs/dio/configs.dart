@@ -1,3 +1,4 @@
+import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,8 +13,7 @@ class Configs {
 
   static Future<Configs> create() async {
       final config = Configs();
-      final prefs = await SharedPreferences.getInstance();
-      final bool isProd = prefs.getBool("is_prod") ?? false;
+      final bool isProd = await Utils.getIsProd();
       ///URL
       config._dio.options.baseUrl = isProd ? URL_PROD : URL_HOMOLOG;
       ///Timeout
