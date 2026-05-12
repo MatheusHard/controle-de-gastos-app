@@ -10,17 +10,16 @@ import '../../dtos/agenda_de_pagamento_dto.dart';
 class AgendaDePagamentoApi  {
 
   BuildContext? _context;
-  final Configs _customDio = Configs();
   final URL = "/agendasdepagamento";
   final FILTRAR = '/filtrar';
   final FIND_ONE = '/findOne';
 
-  AgendaDePagamentoApi(BuildContext context) {
-    _context = context;
-  }
+  AgendaDePagamentoApi() {}
+
   //Add
   Future<AgendaDePagamento?> addAgendaDePagamento(AgendaDePagamentoDTO agenda) async {
-    var response = await _customDio.dio.post(URL,
+    final configs = await Configs.create();
+    var response = await configs.dio.post(URL,
       data: agenda.toJson(),
       options: Options(headers: await Utils.requestToken()),
     );
@@ -28,7 +27,8 @@ class AgendaDePagamentoApi  {
   }
   //Find All
   Future<List<AgendaDePagamento>> getList() async {
-    var response = await _customDio.dio.get(URL,
+    final configs = await Configs.create();
+    var response = await configs.dio.get(URL,
       options: Options(
       headers: await Utils.requestToken()),);
     if (response.statusCode == 200) {
@@ -38,9 +38,10 @@ class AgendaDePagamentoApi  {
   }
   //Find All By Filters
   Future<List<AgendaDePagamento>> getListByFilter(AgendaDePagamentoDTO filtros) async {
-    var response = await _customDio.dio.post(
+    final configs = await Configs.create();
+    var response = await configs.dio.post(
       URL+FILTRAR,
-      data: 	filtros.toJson(),
+      data: 	 filtros.toJson(),
       options: Options(headers: await Utils.requestToken()),);
     if (response.statusCode == 200) {
       return (response.data as List).map((json) => AgendaDePagamento.fromJson(json)).toList();
@@ -49,7 +50,8 @@ class AgendaDePagamentoApi  {
   }
   //Find Object
   Future<AgendaDePagamento?> getOneByFilter(AgendaDePagamentoDTO filtros) async {
-    var response = await _customDio.dio.post(
+    final configs = await Configs.create();
+    var response = await configs.dio.post(
       URL+FIND_ONE,
       data: 	filtros.toJson(),
       options: Options(headers: await Utils.requestToken()),);

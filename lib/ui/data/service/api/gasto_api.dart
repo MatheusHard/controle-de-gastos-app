@@ -7,15 +7,16 @@ import '../../dtos/gasto_dto.dart';
 
 class GastoApi {
 
-  final Configs _customDio = Configs();
   final URL = "/gastos";
   final FILTRAR = '/filtrar';
   final FIND_ONE = '/findOne';
 
   GastoApi() {}
+
   //Add
   Future<bool> addGasto(GastoDTO gasto) async {
-    var response = await _customDio.dio.post(URL,
+    final configs = await Configs.create();
+    var response = await configs.dio.post(URL,
       data: gasto.toJson(),
       options: Options(headers: await Utils.requestToken()),
     );
@@ -23,7 +24,8 @@ class GastoApi {
   }
   //Update
   Future<bool> updateGasto(GastoDTO gasto, int userId) async {
-    var response = await _customDio.dio.put(URL,
+    final configs = await Configs.create();
+    var response = await configs.dio.put(URL,
       data: gasto.toJson(),
       options: Options(headers: await Utils.requestToken()),
     );
@@ -31,7 +33,8 @@ class GastoApi {
   }
   //Get All
   Future<List<Gasto>> getList() async {
-    var response = await _customDio.dio.get(
+    final configs = await Configs.create();
+    var response = await configs.dio.get(
       URL,
       options: Options(headers: await Utils.requestToken()),
     );
@@ -42,7 +45,9 @@ class GastoApi {
   }
   //Get All By Filters
   Future<List<Gasto>> getListByFilter(GastoDTO filtros) async {
-    var response = await _customDio.dio.post(
+    final configs = await Configs.create();
+
+    var response = await configs.dio.post(
       URL + FILTRAR,
       data: filtros.toJson(),
       options: Options(headers: await Utils.requestToken()),

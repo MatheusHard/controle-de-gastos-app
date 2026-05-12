@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/configs/dio/configs.dart';
 import '../../../core/constants/enums/status_pagamento_enum.dart';
@@ -51,6 +52,7 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
   var bytes;
   bool _isLoading = false;
   bool _isPago = false;
+  late String BASE_URL;
 
   late DateTime _selectedVencimento;
 
@@ -60,6 +62,7 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
     _initFocus();
     _loadingUser();
     _loadingGasto();
+    _initPrefs();
   }
 
   @override
@@ -227,8 +230,6 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
     return g;
   }
   String getUrlImg(String photoName){
-    Configs conf = Configs();
-    String BASE_URL = conf.dio.options.baseUrl;
     return "$BASE_URL/${Utils.URL_UPLOAD}$photoName";
   }
   // Print Photo
@@ -309,5 +310,11 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
   //Add Cliente
   Future<bool> _updateGasto(GastoDTO g) async {
       return await GastoApi().updateGasto(g, user?.id ?? 0);
-    }
+  }
+  //Iniciar prefs
+  Future<void> _initPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool isProd = prefs.getBool("is_prod") ?? false;
+    BASE_URL = isProd ? Configs.URL_PROD : Configs.URL_HOMOLOG;
+  }
 }
