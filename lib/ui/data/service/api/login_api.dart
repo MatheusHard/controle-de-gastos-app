@@ -15,11 +15,12 @@ LoginApi(BuildContext context){
 }
 
   Future<bool> login(String username, String password, bool isChecked) async {
-    var customDio = Configs();
+
+    final configs = await Configs.create();
     String userBase64 = Utils.base64EncodeString(username);
     String passwordBase64 = Utils.base64EncodeString(password);
     try{
-        var response = await customDio.dio.post("/login", data: {
+        var response = await configs.dio.post("/login", data: {
           "username": userBase64,
           "password": passwordBase64
         });

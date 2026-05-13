@@ -43,9 +43,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
     UserDTO u = UserDTO();
     u.id = user?.id;
     filters.user = u;
-
-    dashboardObject =  (await DashBoardApi(context).getTotais(filters))!;
-
+    dashboardObject =  (await DashBoardApi().getTotais(filters))!;
     setState(() {
       listaMensal = dashboardObject.totaisPorMes;
       totaGeral = dashboardObject.somaTotal;

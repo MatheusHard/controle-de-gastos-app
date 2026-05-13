@@ -8,19 +8,16 @@ import '../../dtos/gasto_dto.dart';
 
 class DashBoardApi {
 
-  BuildContext? _context;
-  final Configs _customDio = Configs();
   final URL = "/dashboard";
   final GET_TOTAIS = '/totais-mensais';
 
 
-  DashBoardApi(BuildContext context) {
-    _context = context;
-  }
+  DashBoardApi() {}
 
   //Get All By Filters
   Future<TotaisMensaisResponse?> getTotais(GastoDTO filtros) async {
-    var response = await _customDio.dio.post(
+    final configs = await Configs.create();
+    var response = await configs.dio.post(
       URL + GET_TOTAIS,
       data: filtros.toJson(),
       options: Options(headers: await Utils.requestToken()),

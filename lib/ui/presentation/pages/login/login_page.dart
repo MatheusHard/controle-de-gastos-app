@@ -21,6 +21,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
+  bool _isHomologacao = false;
+
   /// ******* CAMPOS *******
   bool _isManterConectado = false;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -39,23 +41,30 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState (){
     _loadUser();
+    _loadAmbiente();
     _focusEmailNode = FocusNode();
     _focusPaswordNode = FocusNode();
     super.initState();
   }
 
+  Future<void> _loadAmbiente() async {
+    bool isProd = await Utils.getIsProd();
+    setState(() {
+      _isHomologacao = !isProd;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       key: _scaffoldKey,
+      backgroundColor: _isHomologacao ? Colors.yellow.shade100 : null,
       body: Center(
         child: SingleChildScrollView(
           child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: 400, // Limita a largura para centralizar melhor
+            constraints: const BoxConstraints(
+              maxWidth: 400,
             ),
             child: Form(
               key: _formKey,
@@ -64,8 +73,32 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    LogoImg(width: MediaQuery.of(context).size.width, tamanho: 3, url: ImgUrl.gasto_financeiro,),
 
+                    // TEXTO OPCIONAL
+                    if (_isHomologacao)
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 10),
+                        child: Text(
+                          "AMBIENTE HOMOLOGAÇÃO",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+
+                    LogoImg(
+                      width: MediaQuery.of(context).size.width,
+                      tamanho: 3,
+                      url: ImgUrl.gasto_financeiro,
+                      onChangeAmbiente: (isHomologacao) {
+                        setState(() {
+                          _isHomologacao = isHomologacao;
+                        });
+                      },
+                    ),
                     Utils.sizedBox(altura: 30.0),
 
                     /// Email
@@ -78,6 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                         });
                       },
                     ),
+
                     Utils.sizedBox(altura: 30.0),
 
                     /// Password
@@ -92,6 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                         });
                       },
                     ),
+
                     Utils.sizedBox(altura: 30.0),
 
                     /// Botão de login
@@ -100,12 +135,13 @@ class _LoginPageState extends State<LoginPage> {
                       isLoading: _isLoading,
                       label: "Acessar",
                       icon: Icons.account_circle_rounded,
-                      gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider
+                      gradient: context.watch<ThemeProvider>().currentGradient,
                       textStyle: AppTextStyles.textLogin,
                       height: 55,
                       radios: 20,
                     ),
-                    ///Manter Conectado
+
+                    /// Manter Conectado
                     ManterConectadoCheck(
                       value: _isManterConectado,
                       onChanged: (bool? value) {
@@ -113,7 +149,6 @@ class _LoginPageState extends State<LoginPage> {
                           _isManterConectado = value!;
                         });
                       },
-
                     )
                   ],
                 ),
@@ -126,35 +161,44 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   ///********  METHODS  *********
+
   void _handleLogin() {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
+
       _logar();
     }
   }
 
   Future<void> _loadUser() async {
     User? user = await Utils.recuperarUser();
+
     if(user != null){
       _email = user.username ?? "";
       _senha = user.password ?? "";
+
       _controllerEmail.text = _email;
       _controllerPassword.text = _senha;
     }
+
     _loadConectado();
   }
 
   void _logar() async {
-    bool result = await LoginApi(context).login(_email, _senha, _isManterConectado);
+    bool result = await LoginApi(context)
+        .login(_email, _senha, _isManterConectado);
+
     setState(() {
       _isLoading = false;
     });
   }
 
   Future<void> _loadConectado() async {
-      _isManterConectado = await Utils.recuperarManterConectado();
+    _isManterConectado =
+    await Utils.recuperarManterConectado();
+
     setState(() {
       _isManterConectado;
     });

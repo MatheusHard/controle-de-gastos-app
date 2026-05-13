@@ -385,7 +385,7 @@ import '../constants/enums/status_pagamento_enum.dart';
   }
   static Future<bool> getIsProd() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool("is_prod") ?? false;
+    return prefs.getBool("is_prod") ?? true;
   }
 }
 
