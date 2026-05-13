@@ -241,32 +241,44 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
 
   // Gerar obj Gasto
   Future<GastoDTO> _generateGasto() async {
+
+    // 🔥 pega a imagem atual
+    final currentImage =
+        Utils.imageShareNotifier.value ?? _imagem;
+
+    var currentBytes;
+
+    if (currentImage != null) {
+      currentBytes = await Utils.compressImageBytes(currentImage);
+    }
+
     GastoDTO g = GastoDTO();
+
     g.id = null;
     g.descricao = _controllerDescricao.text;
-    g.valor =
-    _controllerValor.text.isNotEmpty ? double.parse(_controllerValor.text) : 0;
+    g.valor = _controllerValor.text.isNotEmpty ? double.parse(_controllerValor.text) : 0;
     g.vencimento = _selectedVencimento.toIso8601String();
     g.createdAt = DateTime.now().toIso8601String();
     g.updatedAt = DateTime.now().toIso8601String();
-    g.imagemBase64 = bytes != null ? await Utils.base64String(bytes) : null;
-    g.imagemBase64 = await _saveByte();
+    g.imagemBase64 = currentBytes != null ? await Utils.base64String(currentBytes) : null;
     g.photoName = "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
     AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
     agenda.id = gasto?.agendaDePagamento?.id;
+
     UserDTO u = UserDTO();
     u.id = user?.id;
     g.user = u;
     g.agendaDePagamento = agenda;
     g.deletado = gasto?.deletado ?? false;
-    g.statusPagamento = _isPago ? StatusPagamentoEnum.PAGO :
-    Utils.isVencido(gasto?.vencimento) ? StatusPagamentoEnum.VENCIDO :
-    StatusPagamentoEnum.NAO_PAGO;
+    g.statusPagamento = _isPago
+        ? StatusPagamentoEnum.PAGO
+        : Utils.isVencido(gasto?.vencimento)
+        ? StatusPagamentoEnum.VENCIDO
+        : StatusPagamentoEnum.NAO_PAGO;
     g.pago = _isPago;
 
     return g;
   }
-
   // Print Photo
   Future<void> _tirarFoto() async {
     var status = await Permission.camera.request();

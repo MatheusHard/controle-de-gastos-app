@@ -229,7 +229,7 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
   String getUrlImg(String photoName){
     Configs conf = Configs();
     String BASE_URL = conf.dio.options.baseUrl;
-    return "$BASE_URL/${Utils.URL_UPLOAD}$photoName";
+    return "$BASE_URL/${Utils.URL_UPLOAD}$photoName?t=${DateTime.now().millisecondsSinceEpoch}";
   }
   // Print Photo
   Future<void> _tirarFoto() async {
