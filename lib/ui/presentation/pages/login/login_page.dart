@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_handler/share_handler.dart';
 import '../../../core/constants/imgs/img_url.dart';
 import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
@@ -39,11 +42,12 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
   @override
-  void initState (){
+  void initState() {
     _loadUser();
     _loadAmbiente();
     _focusEmailNode = FocusNode();
     _focusPaswordNode = FocusNode();
+    _getFileByShare();
     super.initState();
   }
 
@@ -56,6 +60,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -174,15 +180,12 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _loadUser() async {
     User? user = await Utils.recuperarUser();
-
     if(user != null){
       _email = user.username ?? "";
       _senha = user.password ?? "";
-
       _controllerEmail.text = _email;
       _controllerPassword.text = _senha;
     }
-
     _loadConectado();
   }
 
@@ -207,6 +210,21 @@ class _LoginPageState extends State<LoginPage> {
   void _toggleObscured() {
     setState(() {
       _obscured = !_obscured;
+    });
+  }
+
+  _getFileByShare() {
+    final handler = ShareHandler.instance;
+    // Quando o app já está aberto
+    handler.sharedMediaStream.listen((media) {
+      Utils.handleSharedMedia(media);
+    });
+
+    // Quando o app foi aberto pelo compartilhamento
+    handler.getInitialSharedMedia().then((media) {
+      if (media != null) {
+        Utils.handleSharedMedia(media);
+      }
     });
   }
 }

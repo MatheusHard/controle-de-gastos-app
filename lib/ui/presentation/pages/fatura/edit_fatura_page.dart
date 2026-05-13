@@ -52,17 +52,14 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
   var bytes;
   bool _isLoading = false;
   bool _isPago = false;
-  late String BASE_URL;
-
+  String PHOTO_GALLERY_URL = '';
+  String BASE_URL = '';
   late DateTime _selectedVencimento;
 
   @override
   void initState() {
     super.initState();
-    _initFocus();
-    _loadingUser();
-    _loadingGasto();
-    _initPrefs();
+    _initialize();
   }
 
   @override
@@ -134,7 +131,7 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
                     tirarFoto: _tirarFoto,
                     getImage: _getImage,
                     imagem: _imagem,
-                    url: getUrlImg(gasto?.photoName ?? '')
+                    url: PHOTO_GALLERY_URL
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
                   /// Salvar
@@ -229,9 +226,6 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
 
     return g;
   }
-  String getUrlImg(String photoName){
-    return "$BASE_URL/${Utils.URL_UPLOAD}$photoName";
-  }
   // Print Photo
   Future<void> _tirarFoto() async {
     var status = await Permission.camera.request();
@@ -314,7 +308,22 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
   //Iniciar prefs
   Future<void> _initPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    final bool isProd = prefs.getBool("is_prod") ?? false;
+    final bool isProd =  prefs.getBool("is_prod") ?? false;
     BASE_URL = isProd ? Configs.URL_PROD : Configs.URL_HOMOLOG;
+  }
+  //Get Url da Imagem
+  Future<void> _getUrlImg(String photoName) async {
+    PHOTO_GALLERY_URL = "$BASE_URL/${Utils.URL_UPLOAD}$photoName?t=${DateTime.now().millisecondsSinceEpoch}";
+  }
+  //
+  Future<void> _initialize() async {
+    _initFocus();
+    await _loadingUser();
+    _loadingGasto();
+    await _initPrefs();
+    await _getUrlImg(gasto?.photoName ?? "");
+    if (mounted) {
+      setState(() {});
+    }
   }
 }

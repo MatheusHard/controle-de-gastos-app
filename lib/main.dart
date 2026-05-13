@@ -6,6 +6,7 @@ import 'package:controle_de_gastos_app/ui/data/service/worker/alarm_manager.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:share_handler/share_handler.dart';
 
 @pragma('vm:entry-point')
 Future<void> main() async {
@@ -23,6 +24,7 @@ Future<void> main() async {
     ),
   );
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

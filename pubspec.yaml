@@ -53,6 +53,7 @@ dependencies:
   workmanager: ^0.9.0+3
   android_alarm_manager_plus: ^4.0.3
   syncfusion_flutter_charts: ^32.2.8
+  share_handler: ^0.0.25
 
 dev_dependencies:
   flutter_test:
