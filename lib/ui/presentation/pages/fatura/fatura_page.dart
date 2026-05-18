@@ -1,6 +1,7 @@
 
 import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
+import 'package:controle_de_gastos_app/ui/data/service/api/relatorio_api.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../core/constants/enums/status_pagamento_enum.dart';
@@ -36,6 +37,7 @@ class _FaturaPageState extends State<FaturaPage> {
     _loadingUser();
     _loadingFaturaAtual();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -213,5 +215,9 @@ class _FaturaPageState extends State<FaturaPage> {
     filters.deletado = false;
     filters.agendaDePagamento = AgendaDePagamentoDTO(id: faturaAtual.id);
     listaGastos = await GastoApi().getListByFilter(filters);
+    await _testes(filters);
+  }
+  _testes(GastoDTO filters) async{
+    await RelatorioApi(context).getRelatorioGastos(filters);
   }
 }
