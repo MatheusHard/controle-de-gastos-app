@@ -52,9 +52,9 @@ dependencies:
   flutter_image_compress: ^2.4.0
   workmanager: ^0.9.0+3
   android_alarm_manager_plus: ^4.0.3
-  syncfusion_flutter_charts: ^32.2.8
   open_filex: ^4.5.0
-  universal_html: ^2.2.4
+  syncfusion_flutter_charts: ^33.2.7
+  syncfusion_flutter_xlsio: ^33.2.7
 
 dev_dependencies:
   flutter_test:

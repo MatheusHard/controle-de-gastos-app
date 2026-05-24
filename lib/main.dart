@@ -13,8 +13,8 @@ Future<void> main() async {
 
   ///Serviços
   await Notifications.initNotifications();
-  await AndroidAlarmManager.initialize();
-  await AlarmManager.initialize();
+  //await AndroidAlarmManager.initialize();
+  //await AlarmManager.initialize();
 
   runApp(
     ChangeNotifierProvider(

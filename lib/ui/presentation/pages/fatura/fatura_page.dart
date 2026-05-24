@@ -1,4 +1,5 @@
 
+import 'package:controle_de_gastos_app/ui/core/utils/relatorio_utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:controle_de_gastos_app/ui/data/service/api/relatorio_api.dart';
@@ -107,8 +108,7 @@ class _FaturaPageState extends State<FaturaPage> {
         onPressed: () async {
           Gasto gasto = Gasto();
           gasto.agendaDePagamento = faturaAtual;
-          //context.read<ThemeProvider>().setGradient(AppGradients.darkBlueGradient); // TODO
-          final resultado = await Navigator.pushNamed(
+          /*final resultado = await Navigator.pushNamed(
             context,
             AppRoutes.add_fatura,
             arguments: {
@@ -119,7 +119,9 @@ class _FaturaPageState extends State<FaturaPage> {
             await _getGastos();
             _atualizarStatusPagamento();
             setState(() {});
-          }
+          }*/
+          await _testes();
+
         },
       ),
     );
@@ -215,9 +217,9 @@ class _FaturaPageState extends State<FaturaPage> {
     filters.deletado = false;
     filters.agendaDePagamento = AgendaDePagamentoDTO(id: faturaAtual.id);
     listaGastos = await GastoApi().getListByFilter(filters);
-    await _testes(filters);
   }
-  _testes(GastoDTO filters) async{
-    await RelatorioApi(context).getRelatorioGastos(filters);
+  _testes() async{
+    //await RelatorioApi(context).getRelatorioGastos(filters);
+    await RelatorioUtils.criarExcelAvancado();
   }
 }

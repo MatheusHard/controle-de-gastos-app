@@ -5,7 +5,7 @@ class Configs {
 
   final _dio = Dio();
   static final URL_PROD    = "https://api-controle-de-gastos.squareweb.app";
-  static final URL_HOMOLOG = "https://homolog-api-controle-de-gastos.squareweb.app";
+  static final URL_HOMOLOG = "http://192.168.0.16:8081";
   Dio get dio => _dio;
 
   Configs();
