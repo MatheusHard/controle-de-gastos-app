@@ -12,19 +12,21 @@ class RelatorioUtils {
     final Worksheet sheet = workbook.worksheets[0];
 
     /// Texto
-    final Range range = sheet.getRangeByName('A1');
+    final Range rangeTitle = sheet.getRangeByName('A1:C1');
 
-    range.setText('Relatório Financeiro');
-
-    range.cellStyle.fontSize = 14;
-    range.cellStyle.bold = true;
+    rangeTitle.setText('Relatório de Gastos');
+    rangeTitle.cellStyle.fontSize = 18;
+    rangeTitle.cellStyle.bold = true;
+    rangeTitle.merge();
 
     /// Fórmula
-    sheet.getRangeByName('B1').setNumber(100);
+    sheet.getRangeByName('B2').setNumber(100);
 
-    sheet.getRangeByName('B2').setNumber(200);
-
-    sheet.getRangeByName('B3').setFormula('=SUM(B1:B2)');
+    final Range range2 = sheet.getRangeByName('B3');
+range2.setNumber(200);
+range2.numberFormat = r'$#,##0.00';
+//range2.st
+    sheet.getRangeByName('B4').setFormula('=SUM(B1:B2)');
 
     /// Gerar bytes
     final List<int> bytes = workbook.saveAsStream();
