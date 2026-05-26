@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:controle_de_gastos_app/ui/core/constants/colors/app_colors.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart';
 
@@ -11,21 +12,40 @@ class RelatorioUtils {
 
     final Worksheet sheet = workbook.worksheets[0];
 
-    /// Texto
-    final Range rangeTitle = sheet.getRangeByName('A1:C1');
-
+    /// Title
+    final Range rangeTitle = sheet.getRangeByName('A1:D1');
     rangeTitle.setText('Relatório de Gastos');
     rangeTitle.cellStyle.fontSize = 18;
     rangeTitle.cellStyle.bold = true;
     rangeTitle.merge();
 
-    /// Fórmula
-    sheet.getRangeByName('B2').setNumber(100);
+    /// Headers
+    final rangeDescr = sheet.getRangeByName('A2');
+    rangeDescr.setText("Descrição");
 
-    final Range range2 = sheet.getRangeByName('B3');
-range2.setNumber(200);
-range2.numberFormat = r'$#,##0.00';
-//range2.st
+    final rangeVenc = sheet.getRangeByName('B2');
+    rangeVenc.setText("Vencimento");
+
+    final rangeValor = sheet.getRangeByName('C2');
+    rangeValor.setText("Valor");
+
+    final rangeStatus = sheet.getRangeByName('D2');
+    rangeStatus.setText("Status");
+
+    /// Borders
+    final headers = sheet.getRangeByName('A2:D2');
+    headers.cellStyle.bold = true;
+    headers.cellStyle.borders.all.lineStyle = LineStyle.thin;
+    headers.cellStyle.backColor = '#d2d2ce';
+    //headers.cellStyle.borders.all.color = '#000000';
+
+    rangeTitle.cellStyle.bold = true;
+    rangeTitle.cellStyle.hAlign = HAlignType.center;
+    rangeTitle.cellStyle.vAlign = VAlignType.center;
+    rangeTitle.cellStyle.borders.all.lineStyle = LineStyle.thin;
+    //headers.cellStyle.borders.all.color = '#000000';
+
+    /// Fórmula
     sheet.getRangeByName('B4').setFormula('=SUM(B1:B2)');
 
     /// Gerar bytes
@@ -34,18 +54,13 @@ range2.numberFormat = r'$#,##0.00';
     workbook.dispose();
 
     final directory = Directory('/storage/emulated/0/Download');
-//    final directory = await getApplicationDocumentsDirectory();
-    if (!await directory.exists()) {
-      await directory.create(recursive: true);
-    }
-    final filePath = '${directory.path}/ffff.xlsx';
 
+    if (!await directory.exists()) await directory.create(recursive: true);
+
+    final filePath = '${directory.path}/gastos_excel.xlsx';
     final file = File(filePath);
-
     await file.writeAsBytes(bytes);
-
     await OpenFilex.open(filePath);
 
-    print(filePath);
   }
 }
