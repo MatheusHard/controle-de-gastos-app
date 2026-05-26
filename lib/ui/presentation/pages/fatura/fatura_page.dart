@@ -220,6 +220,7 @@ class _FaturaPageState extends State<FaturaPage> {
   }
   _testes() async{
     //await RelatorioApi(context).getRelatorioGastos(filters);
-    await RelatorioUtils.criarExcelAvancado();
+
+    await RelatorioUtils.criarExcelAvancado(listaGastos);
   }
 }

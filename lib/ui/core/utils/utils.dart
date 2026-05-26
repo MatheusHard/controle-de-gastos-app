@@ -117,7 +117,9 @@ class Utils {
   static DateTime? stringToDate(String dataHora){
     return DateTime.tryParse(dataHora);
   }
-  static String formatarData(String data, bool small){
+  static String formatarData(String? data, bool small){
+
+    if(data == null) return "";
 
     final DateTime dt = DateTime.parse(data);
 
@@ -386,50 +388,16 @@ class Utils {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool("is_prod") ?? true;
   }
+  static String formatStatus(StatusPagamentoEnum? statusPagamento) {
+    switch (statusPagamento) {
+      case StatusPagamentoEnum.PAGO:
+        return 'Pago';
+      case StatusPagamentoEnum.NAO_PAGO:
+        return 'Não Pago';
+      case StatusPagamentoEnum.VENCIDO:
+        return 'Vencido';
+      default:
+        return '';
+      }
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
