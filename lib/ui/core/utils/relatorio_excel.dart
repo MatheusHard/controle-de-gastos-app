@@ -1,15 +1,15 @@
 import 'dart:io';
+import 'package:controle_de_gastos_app/ui/core/constants/colors/string_colors.dart';
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart';
 
-class RelatorioUtils {
+class RelatorioExcel {
 
   static Future<void> criarExcelAvancado(List<Gasto> listaGastos) async {
 
     final Workbook workbook = Workbook();
-
     final Worksheet sheet = workbook.worksheets[0];
 
     /// Title
@@ -23,22 +23,29 @@ class RelatorioUtils {
     ///****HEADERS****
     // Descrição
     final rangeDescr = sheet.getRangeByName('A$cont');
+    rangeDescr.cellStyle.hAlign = HAlignType.center;
+    rangeDescr.cellStyle.vAlign = VAlignType.center;
     rangeDescr.setText("Descrição");
     //Vencimento
     final rangeVenc = sheet.getRangeByName('B$cont');
+    rangeVenc.cellStyle.hAlign = HAlignType.center;
+    rangeVenc.cellStyle.vAlign = VAlignType.center;
     rangeVenc.setText("Vencimento");
     //Valor
     final rangeValor = sheet.getRangeByName('C$cont');
+    rangeValor.cellStyle.hAlign = HAlignType.center;
+    rangeValor.cellStyle.vAlign = VAlignType.center;
     rangeValor.setText("Valor");
     //Status
     final rangeStatus = sheet.getRangeByName('D$cont');
+    rangeStatus.cellStyle.hAlign = HAlignType.center;
+    rangeStatus.cellStyle.vAlign = VAlignType.center;
     rangeStatus.setText("Status");
     //Styles
     final headers = sheet.getRangeByName('A$cont:D$cont');
     headers.cellStyle.bold = true;
     headers.cellStyle.borders.all.lineStyle = LineStyle.thin;
-    headers.cellStyle.backColor = '#d2d2ce';
-
+    headers.cellStyle.backColor = StringColors.cinza_claro;
     rangeTitle.cellStyle.bold = true;
     rangeTitle.cellStyle.hAlign = HAlignType.center;
     rangeTitle.cellStyle.vAlign = VAlignType.center;
@@ -46,24 +53,29 @@ class RelatorioUtils {
     //headers.cellStyle.borders.all.color = '#000000';
     cont++;
     for(Gasto item in listaGastos) {
+
       //Descri item
       final itemDescr = sheet.getRangeByName('A$cont');
       itemDescr.setText(item.descricao);
       itemDescr.cellStyle.hAlign = HAlignType.center;
       itemDescr.cellStyle.vAlign = VAlignType.center;
       itemDescr.cellStyle.borders.all.lineStyle = LineStyle.thin;
+      itemDescr.columnWidth = 15;
+
       //Vencimento item
       final itemVenc = sheet.getRangeByName('B$cont');
       itemVenc.setText(Utils.formatarData(item.vencimento, true));
       itemVenc.cellStyle.hAlign = HAlignType.center;
       itemVenc.cellStyle.vAlign = VAlignType.center;
       itemVenc.cellStyle.borders.all.lineStyle = LineStyle.thin;
+      itemVenc.columnWidth = 11;
       //Valor item
-      final itemVAlor = sheet.getRangeByName('C$cont');
-      itemVAlor.setText(Utils.formatMoeda(item.valor));
-      itemVAlor.cellStyle.hAlign = HAlignType.center;
-      itemVAlor.cellStyle.vAlign = VAlignType.center;
-      itemVAlor.cellStyle.borders.all.lineStyle = LineStyle.thin;
+      final itemValor = sheet.getRangeByName('C$cont');
+      itemValor.setText(Utils.formatMoeda(item.valor));
+      itemValor.cellStyle.hAlign = HAlignType.center;
+      itemValor.cellStyle.vAlign = VAlignType.center;
+      itemValor.cellStyle.borders.all.lineStyle = LineStyle.thin;
+      itemValor.columnWidth = 10;
       //Status item
       final itemStatus = sheet.getRangeByName('D$cont');
       itemStatus.setText(Utils.formatStatus(item.statusPagamento));
@@ -73,8 +85,29 @@ class RelatorioUtils {
 
       cont++;
     }
-    /// Fórmula
-    sheet.getRangeByName('B4').setFormula('=SUM(B1:B2)');
+    ///Footer
+    final total = sheet.getRangeByName('A$cont');
+    total.setText("TOTAL");
+    total.cellStyle.hAlign = HAlignType.center;
+    total.cellStyle.vAlign = VAlignType.center;
+    total.cellStyle.borders.all.lineStyle = LineStyle.thin;
+    total.cellStyle.backColor = StringColors.cinza_claro;
+
+    final vazio = sheet.getRangeByName('B$cont');
+    vazio.setText("");
+    vazio.cellStyle.hAlign = HAlignType.center;
+    vazio.cellStyle.vAlign = VAlignType.center;
+    vazio.cellStyle.borders.all.lineStyle = LineStyle.thin;
+    vazio.cellStyle.backColor = StringColors.cinza_claro;
+
+    // Valor Total
+    double valorTotal = listaGastos.fold(0.0, (soma, item) => soma + (item.valor ?? 0),);
+    final itemValorTotal = sheet.getRangeByName('C$cont');
+    itemValorTotal.setText(Utils.formatMoeda(valorTotal));
+    itemValorTotal.cellStyle.hAlign = HAlignType.center;
+    itemValorTotal.cellStyle.vAlign = VAlignType.center;
+    itemValorTotal.cellStyle.borders.all.lineStyle = LineStyle.thin;
+    itemValorTotal.cellStyle.backColor = StringColors.cinza_claro;
 
     /// Gerar bytes
     final List<int> bytes = workbook.saveAsStream();
@@ -85,10 +118,9 @@ class RelatorioUtils {
 
     if (!await directory.exists()) await directory.create(recursive: true);
 
-    final filePath = '${directory.path}/gastos_excel.xlsx';
+    final filePath = '${directory.path}/relatorio_gastos_${DateTime.now().millisecondsSinceEpoch}.xlsx';
     final file = File(filePath);
     await file.writeAsBytes(bytes);
     await OpenFilex.open(filePath);
-
   }
 }

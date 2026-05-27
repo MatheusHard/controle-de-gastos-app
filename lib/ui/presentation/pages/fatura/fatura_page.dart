@@ -1,8 +1,7 @@
 
-import 'package:controle_de_gastos_app/ui/core/utils/relatorio_utils.dart';
+import 'package:controle_de_gastos_app/ui/core/utils/relatorio_excel.dart';
 import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
-import 'package:controle_de_gastos_app/ui/data/service/api/relatorio_api.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../core/constants/enums/status_pagamento_enum.dart';
@@ -221,6 +220,6 @@ class _FaturaPageState extends State<FaturaPage> {
   _testes() async{
     //await RelatorioApi(context).getRelatorioGastos(filters);
 
-    await RelatorioUtils.criarExcelAvancado(listaGastos);
+    await RelatorioExcel.criarExcelAvancado(listaGastos);
   }
 }
