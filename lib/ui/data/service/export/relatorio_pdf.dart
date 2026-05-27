@@ -1,32 +1,25 @@
 import 'dart:io';
-
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:open_filex/open_filex.dart';
-//import 'package:pdf/pdf.dart';
-//import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
-//TODO
 class RelatorioPdf {
 
-  /*static Future<void> criarPdf(List<Gasto> listaGastos) async {
+  static Future<void> gerarPdfGastos(List<Gasto> listaGastos) async {
 
     final pdf = pw.Document();
 
-    double valorTotal = listaGastos.fold(
-      0.0,
-          (soma, item) => soma + (item.valor ?? 0),
-    );
+    double valorTotal = listaGastos.fold(0.0, (soma, item) => soma + (item.valor ?? 0),);
 
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
         build: (context) {
-
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-
               /// Título
               pw.Center(
                 child: pw.Text(
@@ -41,7 +34,7 @@ class RelatorioPdf {
               pw.SizedBox(height: 20),
 
               /// Tabela
-              pw.Table.fromTextArray(
+              pw.TableHelper.fromTextArray(
                 border: pw.TableBorder.all(),
                 headerStyle: pw.TextStyle(
                   fontWeight: pw.FontWeight.bold,
@@ -94,5 +87,5 @@ class RelatorioPdf {
     await file.writeAsBytes(await pdf.save());
 
     await OpenFilex.open(filePath);
-  }*/
+  }
 }

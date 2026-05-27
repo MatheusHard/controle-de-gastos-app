@@ -1,7 +1,8 @@
 
-import 'package:controle_de_gastos_app/ui/core/utils/relatorio_excel.dart';
+import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_excel.dart';
 import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
+import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_pdf.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import '../../../core/constants/enums/status_pagamento_enum.dart';
@@ -107,7 +108,7 @@ class _FaturaPageState extends State<FaturaPage> {
         onPressed: () async {
           Gasto gasto = Gasto();
           gasto.agendaDePagamento = faturaAtual;
-          /*final resultado = await Navigator.pushNamed(
+          final resultado = await Navigator.pushNamed(
             context,
             AppRoutes.add_fatura,
             arguments: {
@@ -118,8 +119,7 @@ class _FaturaPageState extends State<FaturaPage> {
             await _getGastos();
             _atualizarStatusPagamento();
             setState(() {});
-          }*/
-          await _testes();
+          }
 
         },
       ),
@@ -217,9 +217,8 @@ class _FaturaPageState extends State<FaturaPage> {
     filters.agendaDePagamento = AgendaDePagamentoDTO(id: faturaAtual.id);
     listaGastos = await GastoApi().getListByFilter(filters);
   }
-  _testes() async{
-    //await RelatorioApi(context).getRelatorioGastos(filters);
-
-    await RelatorioExcel.criarExcelAvancado(listaGastos);
+  Future<void> _testes() async{
+    //await RelatorioExcel.gerarExcelGastos(listaGastos);
+    await RelatorioPdf.gerarPdfGastos(listaGastos);
   }
 }

@@ -55,6 +55,8 @@ dependencies:
   open_filex: ^4.5.0
   syncfusion_flutter_charts: ^33.2.7
   syncfusion_flutter_xlsio: ^33.2.7
+  pdf: ^3.11.0
+  printing: ^5.13.4
 
 dev_dependencies:
   flutter_test:

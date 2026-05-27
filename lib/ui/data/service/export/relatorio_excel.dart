@@ -7,7 +7,7 @@ import 'package:syncfusion_flutter_xlsio/xlsio.dart';
 
 class RelatorioExcel {
 
-  static Future<void> criarExcelAvancado(List<Gasto> listaGastos) async {
+  static Future<void> gerarExcelGastos(List<Gasto> listaGastos) async {
 
     final Workbook workbook = Workbook();
     final Worksheet sheet = workbook.worksheets[0];
