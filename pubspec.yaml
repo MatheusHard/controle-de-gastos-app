@@ -52,6 +52,7 @@ dependencies:
   flutter_image_compress: ^2.4.0
   workmanager: ^0.9.0+3
   android_alarm_manager_plus: ^4.0.3
+  share_handler: ^0.0.25
   open_filex: ^4.5.0
   syncfusion_flutter_charts: ^33.2.7
   syncfusion_flutter_xlsio: ^33.2.7

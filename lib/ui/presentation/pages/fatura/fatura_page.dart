@@ -5,6 +5,7 @@ import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_pdf.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:share_handler/share_handler.dart';
 import '../../../core/constants/enums/status_pagamento_enum.dart';
 import '../../../core/constants/routes/app_routes.dart';
 import '../../../core/utils/utils.dart';

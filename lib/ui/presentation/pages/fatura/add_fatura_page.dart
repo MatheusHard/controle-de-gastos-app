@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:share_handler/share_handler.dart';
 import 'package:switch_button/switch_button.dart';
 
 import '../../../core/constants/enums/status_pagamento_enum.dart';
@@ -22,6 +23,7 @@ import '../../../data/dtos/gasto_dto.dart';
 import '../../../data/model/gasto.dart';
 import '../../../data/model/user.dart';
 import '../../../data/service/api/gasto_api.dart';
+import '../../../data/service/share/share_service.dart';
 import '../../widgets/appbar/app_bar_back.dart';
 import '../../widgets/buttons/normal_button/custom_button.dart';
 import '../../widgets/buttons/switch_button/custom_switch_button.dart';
@@ -64,6 +66,8 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
     _initFocus();
     _loadingUser();
     _loadingGasto();
+    // 🔥 ESCUTA mudança da imagem compartilhada
+    Utils.imageShareNotifier.addListener(_onImageShared);
   }
 
   @override
@@ -77,7 +81,9 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
         onClose: () {
           Navigator.pop(context);
         },
-        gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
+        gradient: context
+            .watch<ThemeProvider>()
+            .currentGradient, // vem do provider,
       ),
       body: Form(
           key: _formKey,
@@ -90,8 +96,10 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
                 children: [
                   Utils.sizedBox(altura: 20.0, largura: 0),
                   Text("Cadastre seu Gasto",
-                      style: AppTextStyles.textoSentimentoNegritoWhite( 20, context),),
+                    style: AppTextStyles.textoSentimentoNegritoWhite(
+                        20, context),),
                   Utils.sizedBox(altura: 20.0, largura: 0),
+
                   /// Descrição
                   CustomField(
                     controller: _controllerDescricao,
@@ -101,6 +109,7 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
                     keyboardType: TextInputType.text,
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
+
                   /// Valor
                   CustomField(
                     controller: _controllerValor,
@@ -110,42 +119,57 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
                     keyboardType: TextInputType.number,
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
+
                   /// Vencimento
                   CustomDatePickerField(
                     label: "Vencimento",
                     initialDate: gasto?.vencimento != null
-                        ? DateTime.tryParse(gasto!.vencimento!) ?? DateTime.now()
+                        ? DateTime.tryParse(gasto!.vencimento!) ??
+                        DateTime.now()
                         : DateTime.now(),
                     onDateSelected: (date) {
                       _selectedVencimento = date;
-                      _controllerVencimento.text = DateFormat('dd/MM/yyyy').format(date);
-                      },
+                      _controllerVencimento.text =
+                          DateFormat('dd/MM/yyyy').format(date);
+                    },
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
+
                   /// Pago
                   CustomSwitchButton(
                     value: _isPago,
                     onToggle: (value) {
                       setState(() {
-                        print("object"+value.toString());
+                        print("object" + value.toString());
                         _isPago = value;
                       });
                     },
                     activeColor: Colors.green,
                     inactiveColor: Colors.red,
                   ),
+
                   /// Foto/Galeria Imagem
-                  PhotoGalleryNetworkImg(
-                    tirarFoto: _tirarFoto,
-                    getImage: _getImage,
-                    imagem: _imagem,
+                  ValueListenableBuilder<File?>(
+                    valueListenable: Utils.imageShareNotifier,
+                    builder: (context, file, _) {
+                      return PhotoGalleryNetworkImg(
+                        tirarFoto: _tirarFoto,
+                        getImage: _getImage,
+                        // 🔥 prioridade: imagem do share
+                        imagem: file ?? _imagem,
+                      );
+                    },
                   ),
                   Utils.sizedBox(altura: 20.0, largura: 0),
+
                   /// Salvar
                   CustomButton(
                     radios: 20,
                     height: 55,
-                    gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider
+                    gradient: context
+                        .watch<ThemeProvider>()
+                        .currentGradient,
+                    // vem do provider
                     icon: Icons.monetization_on,
                     isLoading: _isLoading,
                     onTap: () async {
@@ -161,15 +185,15 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
               ),
             ),
           )
-        ),
-      );
+      ),
+    );
   }
 
   ///****** METHODS ******
 
   //Save Gasto
-  Future<void> _salvarGasto({required NavigatorState navigator, required ScaffoldMessengerState scaffoldMessenger,}) async {
-
+  Future<void> _salvarGasto(
+      {required NavigatorState navigator, required ScaffoldMessengerState scaffoldMessenger,}) async {
     setState(() {
       _isLoading = true;
     });
@@ -183,53 +207,74 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
         SnackBar(content: Text('Erro ao cadastrar o gasto: $e')),
       );
       print('Erro ao cadastrar o gasto: $e');
-
     } finally {
       setState(() {
         _isLoading = false;
       });
     }
   }
+
   //Carregar Gasto
   void _loadingGasto() {
     gasto = widget.gasto;
 
-      _isPago = gasto?.pago ?? false; // ✅ inicializa aqui
-      _selectedVencimento = (gasto!.vencimento != null  ? DateTime.tryParse(gasto!.vencimento!) : DateTime.now())!;
-      _controllerDescricao.text = gasto?.descricao ?? "";
-      _controllerValor.text = gasto?.valor != null ? gasto!.valor!.toStringAsFixed(2) : "";
-      if (gasto!.vencimento != null && gasto!.vencimento!.isNotEmpty) {
-        try {
-          DateTime vencimentoDate = DateTime.tryParse(gasto!.vencimento!) ?? DateTime.now();
-          _controllerVencimento.text = DateFormat('dd/MM/yyyy').format(vencimentoDate);
-        } catch (e) {
-          _controllerVencimento.text = gasto!.vencimento!;
-        }
+    _isPago = gasto?.pago ?? false; // ✅ inicializa aqui
+    _selectedVencimento = (gasto!.vencimento != null
+        ? DateTime.tryParse(gasto!.vencimento!)
+        : DateTime.now())!;
+    _controllerDescricao.text = gasto?.descricao ?? "";
+    _controllerValor.text =
+    gasto?.valor != null ? gasto!.valor!.toStringAsFixed(2) : "";
+    if (gasto!.vencimento != null && gasto!.vencimento!.isNotEmpty) {
+      try {
+        DateTime vencimentoDate = DateTime.tryParse(gasto!.vencimento!) ??
+            DateTime.now();
+        _controllerVencimento.text =
+            DateFormat('dd/MM/yyyy').format(vencimentoDate);
+      } catch (e) {
+        _controllerVencimento.text = gasto!.vencimento!;
       }
-      //_clearControllers();
+    }
+    //_clearControllers();
 
   }
+
   // Gerar obj Gasto
   Future<GastoDTO> _generateGasto() async {
+
+    // 🔥 pega a imagem atual
+    final currentImage =
+        Utils.imageShareNotifier.value ?? _imagem;
+
+    var currentBytes;
+
+    if (currentImage != null) {
+      currentBytes = await Utils.compressImageBytes(currentImage);
+    }
+
     GastoDTO g = GastoDTO();
+
     g.id = null;
     g.descricao = _controllerDescricao.text;
     g.valor = _controllerValor.text.isNotEmpty ? double.parse(_controllerValor.text) : 0;
     g.vencimento = _selectedVencimento.toIso8601String();
-    g.createdAt =DateTime.now().toIso8601String();
+    g.createdAt = DateTime.now().toIso8601String();
     g.updatedAt = DateTime.now().toIso8601String();
-    g.imagemBase64 = bytes != null ? await Utils.base64String(bytes) : null;
-    g.photoName =  "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
+    g.imagemBase64 = currentBytes != null ? await Utils.base64String(currentBytes) : null;
+    g.photoName = "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
     AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
     agenda.id = gasto?.agendaDePagamento?.id;
+
     UserDTO u = UserDTO();
     u.id = user?.id;
     g.user = u;
     g.agendaDePagamento = agenda;
     g.deletado = gasto?.deletado ?? false;
-    g.statusPagamento = _isPago ? StatusPagamentoEnum.PAGO :
-                        Utils.isVencido(gasto?.vencimento) ? StatusPagamentoEnum.VENCIDO :
-                        StatusPagamentoEnum.NAO_PAGO;
+    g.statusPagamento = _isPago
+        ? StatusPagamentoEnum.PAGO
+        : Utils.isVencido(gasto?.vencimento)
+        ? StatusPagamentoEnum.VENCIDO
+        : StatusPagamentoEnum.NAO_PAGO;
     g.pago = _isPago;
 
     return g;
@@ -238,11 +283,14 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
   Future<void> _tirarFoto() async {
     var status = await Permission.camera.request();
     if (status.isGranted) {
-      final XFile? fotoFile = await _picker.pickImage(source: ImageSource.camera);
+      final XFile? fotoFile = await _picker.pickImage(
+          source: ImageSource.camera);
       if (fotoFile != null) {
         final File originalFile = File(fotoFile.path);
-        final compressedBytes = await Utils.compressImageBytes(originalFile); // Compactar a foto
+        final compressedBytes = await Utils.compressImageBytes(
+            originalFile); // Compactar a foto
         if (compressedBytes != null) {
+          Utils.imageShareNotifier.value = null;  // 🔥 limpa imagem compartilhada
           setState(() {
             _imagem = originalFile;
             bytes = compressedBytes; // já comprimidos
@@ -256,6 +304,7 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
       print("Permissão de câmera negada");
     }
   }
+
   // Capture Galley
   Future _getImage(ImageSource source) async {
     final galleryFile = await _picker.pickImage(
@@ -270,6 +319,7 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
       final compressedBytes = await Utils.compressImageBytes(originalFile);
 
       if (compressedBytes != null) {
+        Utils.imageShareNotifier.value = null;  // 🔥 limpa imagem compartilhada
         setState(() {
           _imagem = originalFile;
           bytes = compressedBytes; // salva os bytes comprimidos
@@ -290,18 +340,21 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
       user = u!;
     });
   }
+
   // Inicializar Focus
-  void _initFocus(){
+  void _initFocus() {
     _focusDescricaoNode = FocusNode();
     _focusValorNode = FocusNode();
   }
+
   // Limpar Controllers
-  void _clearControllers(){
+  void _clearControllers() {
     _controllerDescricao.text = '';
     _controllerValor.text = '';
     _controllerVencimento.text = '';
     _imagem = null;
   }
+
   // Aqui serve para lê da imagem, caso capture as palavras chaves:
   Future<void> _loadingFieldsByPhoto(XFile? foto) async {
     final valor = await Utils.loadingFieldsByPhoto(foto, "valor");
@@ -309,8 +362,32 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
       _controllerValor.text = valor ?? "Não identificado";
     });
   }
+void _cleanWidgets(){
+  Utils.imageShareNotifier.value = null;
+}
   //Add Cliente
   Future<bool> _cadastroGasto(GastoDTO g) async {
-      return await GastoApi().addGasto(g);
+    _cleanWidgets();
+    return await GastoApi().addGasto(g);
+  }
+
+  Future<void> _onImageShared() async {
+
+    final file = Utils.imageShareNotifier.value;
+    if (file == null) return;
+    await Utils.saveImageShare(file);
+    final compressedBytes = await Utils.compressImageBytes(file);
+    if (compressedBytes != null) {
+      setState(() {
+        _imagem = file;
+        bytes = compressedBytes;
+      });
+    }
   }
 }
+
+
+
+
+
+
