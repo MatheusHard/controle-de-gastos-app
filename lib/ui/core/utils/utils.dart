@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:share_handler/share_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import '../../data/model/gasto.dart';
 import '../../data/service/notifications/notifications.dart';
 import '../constants/enums/app_platform.dart';
 import '../constants/enums/status_pagamento_enum.dart';
@@ -443,5 +444,9 @@ class Utils {
         print("Arquivo sem path, possível uso de URI");
       }
     }
+  }
+  static double sumTotalGastos(List<Gasto> listaGastos) {
+    double valorTotal = listaGastos.fold(0.0, (soma, item) => soma + (item.valor ?? 0),);
+    return valorTotal;
   }
 }
