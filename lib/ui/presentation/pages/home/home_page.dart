@@ -40,7 +40,9 @@ class _HomePageState extends State<HomePage> {
             CardPrincipalItem(icon: Icons.receipt_long, label: "Faturas $mes_ano", onTap: () {
               Navigator.pushNamed(context, AppRoutes.fatura);
             }),
-            CardPrincipalItem(icon: Icons.history_outlined, label: "Histórico", onTap: () {}),
+            CardPrincipalItem(icon: Icons.history_outlined, label: "Histórico", onTap: () {
+              Navigator.pushNamed(context, AppRoutes.historico);
+            }),
             CardPrincipalItem(icon: Icons.dashboard, label: "DashBoarding", onTap: () {
               Navigator.pushNamed(context, AppRoutes.dashboard);
             }),
