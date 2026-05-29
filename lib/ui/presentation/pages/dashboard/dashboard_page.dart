@@ -7,6 +7,7 @@ import 'package:controle_de_gastos_app/ui/presentation/widgets/appbar/app_bar_ba
 import 'package:controle_de_gastos_app/ui/presentation/widgets/cards/card_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -15,6 +16,7 @@ import '../../../core/utils/utils.dart';
 import '../../../data/dtos/dashboarding/gastos_data.dart';
 import '../../../data/dtos/dashboarding/gastos_mensais.dart';
 import '../../../data/model/user.dart';
+import '../../widgets/cards/card_total_gastos.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -29,6 +31,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
   late TotaisMensaisResponse dashboardObject;
   late List<GastosMensais>? listaMensal = [];
   late double? totaGeral = 0;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -38,6 +41,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
   }
 
   Future<void> _loadDashBoarding() async {
+    _isLoading = true;
     GastoDTO filters = GastoDTO();
     filters.deletado = false;
     UserDTO u = UserDTO();
@@ -48,6 +52,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       listaMensal = dashboardObject.totaisPorMes;
       totaGeral = dashboardObject.somaTotal;
     });
+    _isLoading = false;
   }
   //Carregar User
   Future<void> _loadingUser() async {
@@ -65,7 +70,13 @@ class _DashBoardPageState extends State<DashBoardPage> {
         onClose: () => Navigator.pop(context),
         gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
       ),
-      body: SingleChildScrollView(
+      body: _isLoading
+          ? Center(
+          child: LoadingAnimationWidget.staggeredDotsWave(
+            color: Colors.blue,
+            size: 50,
+          ))
+          : SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

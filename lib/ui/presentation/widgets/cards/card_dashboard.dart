@@ -1,3 +1,4 @@
+import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class CardDashboard extends StatelessWidget {
@@ -28,8 +29,7 @@ class CardDashboard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'R\$ $value',
+                Text(Utils.formatMoeda(value),
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
