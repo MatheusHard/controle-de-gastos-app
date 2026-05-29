@@ -1,5 +1,7 @@
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
+import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_excel.dart';
+import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_pdf.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/buttons/padding/botoes_relatorio.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/cards/card_gasto_historico.dart';
 import 'package:flutter/material.dart';
@@ -106,23 +108,13 @@ class _HistoricoPageState extends State<HistoricoPage> {
     });
   }
   Future<void> baixarExcel() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Download do Excel iniciado'),
-      ),
-    );
-
     // chamar geração excel aqui
+    await RelatorioExcel.gerarExcelGastos(listaGastos);
   }
 
   Future<void> baixarPdf() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Download do PDF iniciado'),
-      ),
-    );
-
     // chamar geração pdf aqui
+    await RelatorioPdf.gerarPdfGastos(listaGastos);
   }
 
 }
