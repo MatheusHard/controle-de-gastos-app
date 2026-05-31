@@ -14,62 +14,50 @@ class RelatorioPdf {
     double valorTotal = listaGastos.fold(0.0, (soma, item) => soma + (item.valor ?? 0),);
 
     pdf.addPage(
-      pw.Page(
+      pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
-        build: (context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              /// Título
-              pw.Center(
-                child: pw.Text(
-                  'Relatório de Gastos',
-                  style: pw.TextStyle(
-                    fontSize: 20,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-              ),
-
-              pw.SizedBox(height: 20),
-
-              /// Tabela
-              pw.TableHelper.fromTextArray(
-                border: pw.TableBorder.all(),
-                headerStyle: pw.TextStyle(
-                  fontWeight: pw.FontWeight.bold,
-                ),
-                headerDecoration: const pw.BoxDecoration(
-                  color: PdfColors.grey300,
-                ),
-                headers: [
-                  'Descrição',
-                  'Vencimento',
-                  'Valor',
-                  'Status',
-                ],
-                data: [
-                  ...listaGastos.map(
-                        (item) => [
-                      item.descricao ?? '',
-                      Utils.formatarData(item.vencimento, true),
-                      Utils.formatMoeda(item.valor),
-                      Utils.formatStatus(item.statusPagamento),
-                    ],
-                  ),
-
-                  /// Linha total
-                  [
-                    'TOTAL',
-                    '',
-                    Utils.formatMoeda(valorTotal),
-                    '',
-                  ],
-                ],
-              ),
+        header: (context) => pw.Text(
+          'Relatório de Gastos',
+          style: pw.TextStyle(
+            fontSize: 18,
+            fontWeight: pw.FontWeight.bold,
+          ),
+        ),
+        footer: (context) => pw.Align(
+          alignment: pw.Alignment.centerRight,
+          child: pw.Text(
+            'Página ${context.pageNumber} de ${context.pagesCount}',
+          ),
+        ),
+        build: (context) => [
+          pw.TableHelper.fromTextArray(
+            headers: [
+              'Descrição',
+              'Vencimento',
+              'Valor',
+              'Status',
             ],
-          );
-        },
+            data: listaGastos.map(
+                  (item) => [
+                item.descricao ?? '',
+                Utils.formatarData(item.vencimento, true),
+                Utils.formatMoeda(item.valor),
+                Utils.formatStatus(item.statusPagamento),
+              ],
+            ).toList(),
+          ),
+          pw.SizedBox(height: 20),
+          pw.Align(
+            alignment: pw.Alignment.centerRight,
+            child: pw.Text(
+              'Total: ${Utils.formatMoeda(valorTotal)}',
+              style: pw.TextStyle(
+                fontSize: 14,
+                fontWeight: pw.FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
       ),
     );
 
