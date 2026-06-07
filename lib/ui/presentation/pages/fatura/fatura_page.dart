@@ -218,8 +218,4 @@ class _FaturaPageState extends State<FaturaPage> {
     filters.agendaDePagamento = AgendaDePagamentoDTO(id: faturaAtual.id);
     listaGastos = await GastoApi().getListByFilter(filters);
   }
-  Future<void> _testes() async{
-    //await RelatorioExcel.gerarExcelGastos(listaGastos);
-    await RelatorioPdf.gerarPdfGastos(listaGastos);
-  }
 }

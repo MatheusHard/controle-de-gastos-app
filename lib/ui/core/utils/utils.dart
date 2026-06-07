@@ -449,4 +449,19 @@ class Utils {
     double valorTotal = listaGastos.fold(0.0, (soma, item) => soma + (item.valor ?? 0),);
     return valorTotal;
   }
+  static DateTime parseVencimento(String? data) {
+    if (data == null || data.isEmpty) {
+      return DateTime.now();
+    }
+
+    try {
+      return DateTime.parse(data);
+    } catch (_) {
+      try {
+        return DateFormat('dd/MM/yyyy').parse(data);
+      } catch (_) {
+        return DateTime.now();
+      }
+    }
+  }
 }

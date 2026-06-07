@@ -54,7 +54,7 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
   bool _isPago = false;
   String PHOTO_GALLERY_URL = '';
   String BASE_URL = '';
-  late DateTime _selectedVencimento;
+  DateTime _selectedVencimento = DateTime.now();
 
   @override
   void initState() {
@@ -105,9 +105,7 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
                   /// Vencimento
                   CustomDatePickerField(
                     label: "Vencimento",
-                    initialDate: gasto?.vencimento != null
-                        ? DateTime.tryParse(gasto!.vencimento!) ?? DateTime.now()
-                        : DateTime.now(),
+                    initialDate: _selectedVencimento,
                     onDateSelected: (date) {
                       _selectedVencimento = date;
                       _controllerVencimento.text = DateFormat('dd/MM/yyyy').format(date);
@@ -176,7 +174,6 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
         SnackBar(content: Text('Erro ao cadastrar o gasto: $e')),
       );
       print('Erro ao cadastrar o gasto: $e');
-
     } finally {
       setState(() {
         _isLoading = false;
@@ -186,21 +183,17 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
   //Carregar Gasto
   void _loadingGasto() {
     gasto = widget.gasto;
-
-      _isPago = gasto?.pago ?? false; // ✅ inicializa aqui
-      _selectedVencimento = (gasto!.vencimento != null  ? DateTime.tryParse(gasto!.vencimento!) : DateTime.now())!;
-      _controllerDescricao.text = gasto?.descricao ?? "";
-      _controllerValor.text = gasto?.valor != null ? gasto!.valor!.toStringAsFixed(2) : "";
-      if (gasto!.vencimento != null && gasto!.vencimento!.isNotEmpty) {
-        try {
-          DateTime vencimentoDate = DateTime.tryParse(gasto!.vencimento!) ?? DateTime.now();
-          _controllerVencimento.text = DateFormat('dd/MM/yyyy').format(vencimentoDate);
-        } catch (e) {
-          _controllerVencimento.text = gasto!.vencimento!;
-        }
-      }
-
+    _isPago = gasto?.pago ?? false;
+    _selectedVencimento = Utils.parseVencimento(gasto?.vencimento);
+    _controllerDescricao.text = gasto?.descricao ?? "";
+    _controllerValor.text = gasto?.valor != null ? gasto!.valor!.toStringAsFixed(2) : "";
+    if (gasto!.vencimento != null && gasto!.vencimento!.isNotEmpty) {
+       _controllerVencimento.text =  DateFormat('dd/MM/yyyy').format(_selectedVencimento);
+    } else {
+       _controllerVencimento.text = gasto!.vencimento!;
+    }
   }
+
   // Gerar obj Gasto
   Future<GastoDTO> _generateGasto() async {
     GastoDTO g = GastoDTO();
@@ -211,7 +204,7 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
     g.createdAt = gasto?.createdAt;
     g.updatedAt = DateTime.now().toIso8601String();
     g.imagemBase64 = bytes != null ? await Utils.base64String(bytes) : null;
-    g.photoName =  "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
+    g.photoName = gasto?.photoName;
     AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
     agenda.id = gasto?.agendaDePagamento?.id;
     UserDTO u = UserDTO();
@@ -326,4 +319,5 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
       setState(() {});
     }
   }
+
 }
