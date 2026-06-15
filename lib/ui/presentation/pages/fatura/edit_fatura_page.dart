@@ -53,7 +53,7 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
   bool _isLoading = false;
   bool _isPago = false;
   String PHOTO_GALLERY_URL = '';
-  String BASE_URL = '';
+  String BASE_URL_MS_IMAGEM = '';
   late DateTime _selectedVencimento;
 
   @override
@@ -307,13 +307,14 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
   }
   //Iniciar prefs
   Future<void> _initPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final bool isProd =  prefs.getBool("is_prod") ?? false;
-    BASE_URL = isProd ? Configs.URL_PROD : Configs.URL_HOMOLOG;
+    //final prefs = await SharedPreferences.getInstance();
+    //final bool isProd =  prefs.getBool("is_prod") ?? false;
+    BASE_URL_MS_IMAGEM = await Utils.baseUrlMsImagem();
   }
   //Get Url da Imagem
   Future<void> _getUrlImg(String photoName) async {
-    PHOTO_GALLERY_URL = "$BASE_URL/${Utils.URL_UPLOAD}$photoName?t=${DateTime.now().millisecondsSinceEpoch}";
+    PHOTO_GALLERY_URL = "$BASE_URL_MS_IMAGEM/${Utils.URL_UPLOAD}$photoName";
+    print("BASINHA$PHOTO_GALLERY_URL");
   }
   //
   Future<void> _initialize() async {

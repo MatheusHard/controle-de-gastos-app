@@ -18,10 +18,13 @@ class Utils {
 
   static const String _boolKey = 'isLoggedIn';
   ///Servidor
-  static String URL_UPLOAD = 'uploads/';
+  static String URL_UPLOAD = 'photos/';
   static String URL_IMG_WEB = "images/";
   static String URL_IMG_ANDROID = "assets/images/";
   static final ValueNotifier<File?> imageShareNotifier = ValueNotifier<File?>(null);
+  //Micro-serviços
+  static final URL_MS_IMAGEM = "https://ms-imagem.squareweb.app";
+  static final URL_MS_IMAGEM_HOMOLOG = "https://homolog-ms-imagem.squareweb.app";
 
   ///Local
   //static String URL_WEB_SERVICE = "http://192.168.0.7:5001/api/";
@@ -448,5 +451,10 @@ class Utils {
   static double sumTotalGastos(List<Gasto> listaGastos) {
     double valorTotal = listaGastos.fold(0.0, (soma, item) => soma + (item.valor ?? 0),);
     return valorTotal;
+  }
+
+  static Future<String> baseUrlMsImagem() async {
+    final bool isProd = await Utils.getIsProd();
+    return isProd ? URL_MS_IMAGEM : URL_MS_IMAGEM_HOMOLOG;
   }
 }
