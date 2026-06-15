@@ -30,6 +30,16 @@ class _CustomDatePickerFieldState extends State<CustomDatePickerField> {
     );
   }
 
+  @override
+  void didUpdateWidget(covariant CustomDatePickerField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.initialDate != oldWidget.initialDate &&
+        widget.initialDate != null) {
+      _controller.text = DateFormat('dd/MM/yyyy').format(widget.initialDate!);
+    }
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,

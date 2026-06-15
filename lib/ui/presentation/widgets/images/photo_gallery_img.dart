@@ -73,6 +73,7 @@ class _PhotoGalleryImgState extends State<PhotoGalleryNetworkImg> {
               height: 250,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
+                print("Ocorreu um Erro: $error");
                 return Image.asset(
                   ImgUrl.no_image,
                   width: 250,
