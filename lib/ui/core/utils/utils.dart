@@ -24,7 +24,7 @@ class Utils {
   static final ValueNotifier<File?> imageShareNotifier = ValueNotifier<File?>(null);
   //Micro-serviços
   static final URL_MS_IMAGEM = "https://ms-imagem.squareweb.app";
-  static final URL_MS_IMAGEM_HOMOLOG = "https://homolog-ms-imagem.squareweb.app";
+  static final URL_MS_IMAGEM_HOMOLOG = "https://ms-imagem.squareweb.app"; //TODO Ficara com url de prod, por enquanto
 
   ///Local
   //static String URL_WEB_SERVICE = "http://192.168.0.7:5001/api/";
