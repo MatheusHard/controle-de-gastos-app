@@ -1,5 +1,6 @@
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
+import 'package:controle_de_gastos_app/ui/data/service/api/relatorio_api.dart';
 import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_excel.dart';
 import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_pdf.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/buttons/padding/botoes_relatorio.dart';
@@ -109,7 +110,11 @@ class _HistoricoPageState extends State<HistoricoPage> {
   }
   Future<void> baixarExcel() async {
     // chamar geração excel aqui
-    await RelatorioExcel.gerarExcelGastos(listaGastos);
+    //await RelatorioExcel.gerarExcelGastos(listaGastos);
+    GastoDTO filtros = GastoDTO(); // TODO pegar dos filtros
+    filtros.vencimento = DateTime.now().toIso8601String();
+    await RelatorioApi(context).getRelatorioGastos(filtros) ;
+
   }
 
   Future<void> baixarPdf() async {

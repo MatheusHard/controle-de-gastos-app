@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:share_handler/share_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -468,8 +470,34 @@ class Utils {
     }
   }
 
+  //Url Microserviços
   static Future<String> baseUrlMsImagem() async {
     final bool isProd = await Utils.getIsProd();
     return isProd ? URL_MS_IMAGEM : URL_MS_IMAGEM_HOMOLOG;
+  }
+
+  //Gerar File Excel
+  static Future<void> generateFile(Response res, String fileName) async {
+
+    AppPlatform platform = Utils.getCurrentPlatform();
+
+    /// ANDROID
+    if(platform == AppPlatform.android) {
+      final directory = Directory('/storage/emulated/0/Download');
+      if (!await directory.exists()) { await directory.create(recursive: true);}
+
+      final filePath = '${directory.path}/$fileName.xlsx';
+      final file = File(filePath);
+      await file.writeAsBytes(List<int>.from(res.data),);
+      await OpenFilex.open(filePath);
+    }
+
+    /// WEB
+    /*else if(platform == AppPlatform.web){
+      downloadFile(
+        List<int>.from(res.data),
+        "relatorio_gastos.xlsx",
+      );
+    }*/
   }
 }
