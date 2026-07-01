@@ -1,4 +1,5 @@
 import 'package:controle_de_gastos_app/ui/core/configs/dio/configs.dart';
+import 'package:controle_de_gastos_app/ui/core/constants/enums/type_file_enum.dart';
 import 'package:controle_de_gastos_app/ui/data/dtos/gasto_dto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class RelatorioApi {
     _context = context;
   }
 
-  Future<void> getRelatorioGastos(GastoDTO filtros) async {
+  Future<void> getRelatorioGastosExcel(GastoDTO filtros) async {
     final configs = await Configs.create();
     //Remove filtros nulos
     final params = filtros.toJson()..removeWhere((key, value) => value == null);
@@ -27,7 +28,36 @@ class RelatorioApi {
           headers: await Utils.requestToken(),
         ),
       );
-      await Utils.generateFile(response, "relatorio_gastos");
+      //
+      await Utils.generateFile(
+        response,
+        "relatorio_gastos",
+        extension: TypeFileEnum.excel,
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
+  Future<void> getRelatorioGastosPdf(GastoDTO filtros) async {
+    final configs = await Configs.create();
+
+    final params = filtros.toJson()..removeWhere((key, value) => value == null);
+
+    try {
+      final response = await configs.dio.get(
+        "/relatorio/gastos/pdf",
+        queryParameters: params,
+        options: Options(
+          responseType: ResponseType.bytes,
+          headers: await Utils.requestToken(),
+        ),
+      );
+
+      await Utils.generateFile(
+        response,
+        "relatorio_gastos",
+        extension: TypeFileEnum.pdf,
+      );
     } catch (e) {
       print(e);
     }

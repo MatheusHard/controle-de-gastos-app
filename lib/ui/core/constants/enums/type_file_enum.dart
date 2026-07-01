@@ -1,0 +1,4 @@
+enum TypeFileEnum {
+  excel,
+  pdf
+}

@@ -112,14 +112,22 @@ class _HistoricoPageState extends State<HistoricoPage> {
     // chamar geração excel aqui
     //await RelatorioExcel.gerarExcelGastos(listaGastos);
     GastoDTO filtros = GastoDTO(); // TODO pegar dos filtros
-    filtros.vencimento = DateTime.now().toIso8601String();
-    await RelatorioApi(context).getRelatorioGastos(filtros) ;
+    //filtros.vencimento = DateTime.now().toIso8601String();
+    filtros.dataInicial = '2026-06-01T00:00:00';
+    filtros.dataFinal = '2026-06-30T00:00:00';
+
+
+    await RelatorioApi(context).getRelatorioGastosExcel(filtros) ;
 
   }
 
   Future<void> baixarPdf() async {
     // chamar geração pdf aqui
-    await RelatorioPdf.gerarPdfGastos(listaGastos);
+    GastoDTO filtros = GastoDTO(); // TODO pegar dos filtros
+    //filtros.vencimento = DateTime.now().toIso8601String();
+    filtros.dataInicial = '2026-02-01T00:00:00';
+    filtros.dataFinal = '2026-06-30T00:00:00';
+    await RelatorioApi(context).getRelatorioGastosPdf(filtros) ;
   }
 
 }
