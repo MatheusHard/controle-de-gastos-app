@@ -277,6 +277,8 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
         : StatusPagamentoEnum.NAO_PAGO;
     g.pago = _isPago;
 
+    var gg = agenda.id;
+    print("Agenda"+ gg.toString());
     return g;
   }
   // Print Photo

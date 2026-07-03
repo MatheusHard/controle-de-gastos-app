@@ -1,5 +1,7 @@
+import 'package:controle_de_gastos_app/ui/data/dtos/gasto_dto.dart';
 import 'package:controle_de_gastos_app/ui/presentation/pages/dashboard/dashboard_page.dart';
 import 'package:controle_de_gastos_app/ui/presentation/pages/historico/historico_page.dart';
+import 'package:controle_de_gastos_app/ui/presentation/pages/relatorio/relatorio_page.dart';
 import 'package:controle_de_gastos_app/ui/presentation/pages/user/perfil.dart';
 import 'package:flutter/material.dart';
 import '../../../data/model/gasto.dart';
@@ -18,6 +20,7 @@ class AppRoutes {
   static const String perfil = '/perfil_page';
   static const String dashboard = '/dashboard_page';
   static const String historico = '/historico_page';
+  static const String relatorio = '/relatorio_page';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -42,6 +45,10 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => DashBoardPage());
       case historico:
         return MaterialPageRoute(builder: (_) => HistoricoPage());
+      case relatorio:
+        final args = settings.arguments as Map<String, dynamic>;
+        final filtros = args['filtros'] as GastoDTO?;
+        return MaterialPageRoute(builder: (_) => RelatorioPage(filtros: filtros));
       default:
         return MaterialPageRoute(builder: (_) => HomePage());
     }

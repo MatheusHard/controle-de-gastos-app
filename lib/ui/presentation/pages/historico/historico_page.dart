@@ -1,8 +1,10 @@
+import 'package:controle_de_gastos_app/ui/core/constants/routes/app_routes.dart';
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:controle_de_gastos_app/ui/data/service/api/relatorio_api.dart';
 import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_excel.dart';
 import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_pdf.dart';
+import 'package:controle_de_gastos_app/ui/presentation/widgets/appbar/app_bar_download.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/buttons/padding/botoes_relatorio.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/cards/card_gasto_historico.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +34,7 @@ class _HistoricoPageState extends State<HistoricoPage> {
   List<Gasto> listaGastos = [];
   bool _isLoading = true;
   double total = 0;
+  GastoDTO filters = GastoDTO();
 
   @override
   void initState() {
@@ -43,10 +46,16 @@ class _HistoricoPageState extends State<HistoricoPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: AppBarBack(
+      appBar: AppBarDownload(
         title: '',
         onBack:  () => Navigator.pop(context),
-        onClose: () => Navigator.pop(context),
+        onDownload: () =>  Navigator.pushNamed(
+          context,
+          AppRoutes.relatorio,
+          arguments: {
+            'filtros': filters,
+          },
+        ),
         gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
       ),
       body: Column(
@@ -99,7 +108,6 @@ class _HistoricoPageState extends State<HistoricoPage> {
 
   //Get Gastos
   Future<void> _getGastos() async {
-    GastoDTO filters = GastoDTO();
     filters.deletado = false;
     final gastos = await GastoApi().getListByFilter(filters);
     setState(() {
