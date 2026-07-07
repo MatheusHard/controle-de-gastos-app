@@ -1,22 +1,19 @@
+import 'package:controle_de_gastos_app/ui/core/constants/enums/status_pagamento_enum.dart';
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:controle_de_gastos_app/ui/data/service/api/relatorio_api.dart';
-import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_excel.dart';
-import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_pdf.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/buttons/padding/botoes_relatorio.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/cards/card_gasto_historico.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../core/configs/dio/configs.dart';
 import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
 import '../../../data/dtos/gasto_dto.dart';
 import '../../../data/model/gasto.dart';
 import '../../../data/service/api/gasto_api.dart';
 import '../../widgets/appbar/app_bar_back.dart';
+import '../../widgets/botton_sheet/filtros_gastos_botton_sheet.dart';
 import '../../widgets/cards/card_total_gastos.dart';
 
 class HistoricoPage extends StatefulWidget {
@@ -32,6 +29,10 @@ class _HistoricoPageState extends State<HistoricoPage> {
   List<Gasto> listaGastos = [];
   bool _isLoading = true;
   double total = 0;
+  //Filters
+  DateTime? _dataInicial;
+  DateTime? _dataFinal;
+  StatusPagamentoEnum? _statusPagamento;
 
   @override
   void initState() {
@@ -46,16 +47,32 @@ class _HistoricoPageState extends State<HistoricoPage> {
       appBar: AppBarBack(
         title: '',
         onBack:  () => Navigator.pop(context),
-        onClose: () => Navigator.pop(context),
-        gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
+        onClose: () async {
+
+          BottomSheetFiltroRelatorio.show(
+            context,
+            onConfirm: (
+                dataInicial,
+                dataFinal,
+                status,
+                ) async {
+
+              setState(() {
+                _dataInicial = dataInicial;
+                _dataFinal = dataFinal;
+                _statusPagamento = status;
+              });
+
+              await _getGastos();
+            },
+          );
+        },        gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
       ),
       body: Column(
         children: [
           Utils.sizedBox(altura: 20.0, largura: 0),
           ///Title
-          Text("Histórico de Gastos",
-            style: AppTextStyles.textoSentimentoNegritoWhite(
-                20, context),),
+          Text("Histórico de Gastos", style: AppTextStyles.textoSentimentoNegritoWhite(20, context),),
           Utils.sizedBox(altura: 20.0, largura: 0),
           ///Botões Gerar Relatório
           BotoesRelatorio(
@@ -79,9 +96,7 @@ class _HistoricoPageState extends State<HistoricoPage> {
                     itemBuilder: (context, index) {
                     final gasto = listaGastos[index];
 
-                     return CardGastoHistorico(
-                          gasto: gasto,
-                          );
+                    return CardGastoHistorico(gasto: gasto,);
               },
             ),
           ),
@@ -99,35 +114,49 @@ class _HistoricoPageState extends State<HistoricoPage> {
 
   //Get Gastos
   Future<void> _getGastos() async {
-    GastoDTO filters = GastoDTO();
-    filters.deletado = false;
-    final gastos = await GastoApi().getListByFilter(filters);
+
+    setState(() => _isLoading = true);
+    GastoDTO filtros = GastoDTO();
+    filtros.deletado = false;
+    filtros.dataInicial = _dataInicial?.toIso8601String();
+    filtros.dataFinal = _dataFinal?.toIso8601String();
+    filtros.statusPagamento = _statusPagamento;
+    final gastos = await GastoApi().getListByFilter(filtros);
     setState(() {
       listaGastos = gastos;
       total = Utils.sumTotalGastos(gastos);
       _isLoading = false;
     });
   }
+
+  // Gerar Excel
   Future<void> baixarExcel() async {
-    // chamar geração excel aqui
-    //await RelatorioExcel.gerarExcelGastos(listaGastos);
-    GastoDTO filtros = GastoDTO(); // TODO pegar dos filtros
-    //filtros.vencimento = DateTime.now().toIso8601String();
-    filtros.dataInicial = '2026-06-01T00:00:00';
-    filtros.dataFinal = '2026-06-30T00:00:00';
+    BottomSheetFiltroRelatorio.show(
+      context,
+      onConfirm: (dataInicial, dataFinal, status) async {
+        GastoDTO dto = GastoDTO();
+        dto.dataInicial = dataInicial?.toIso8601String();
+        dto.dataFinal = dataFinal?.toIso8601String();
+        dto.statusPagamento = status;
 
-
-    await RelatorioApi(context).getRelatorioGastosExcel(filtros) ;
-
+        await RelatorioApi(context).getRelatorioGastosExcel(dto);
+      },
+    );
   }
 
+  // Gerar Pdf
   Future<void> baixarPdf() async {
-    // chamar geração pdf aqui
-    GastoDTO filtros = GastoDTO(); // TODO pegar dos filtros
-    //filtros.vencimento = DateTime.now().toIso8601String();
-    filtros.dataInicial = '2026-02-01T00:00:00';
-    filtros.dataFinal = '2026-06-30T00:00:00';
-    await RelatorioApi(context).getRelatorioGastosPdf(filtros) ;
+    BottomSheetFiltroRelatorio.show(
+      context,
+      onConfirm: (dataInicial, dataFinal, status) async {
+        GastoDTO dto = GastoDTO();
+        dto.dataInicial = dataInicial?.toIso8601String();
+        dto.dataFinal = dataFinal?.toIso8601String();
+        dto.statusPagamento = status;
+
+        await RelatorioApi(context).getRelatorioGastosPdf(dto);
+      },
+    );
   }
 
 }
