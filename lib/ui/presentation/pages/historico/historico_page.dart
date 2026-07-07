@@ -1,7 +1,11 @@
 import 'package:controle_de_gastos_app/ui/core/constants/enums/status_pagamento_enum.dart';
+import 'package:controle_de_gastos_app/ui/core/constants/routes/app_routes.dart';
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:controle_de_gastos_app/ui/data/service/api/relatorio_api.dart';
+import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_excel.dart';
+import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_pdf.dart';
+import 'package:controle_de_gastos_app/ui/presentation/widgets/appbar/app_bar_download.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/buttons/padding/botoes_relatorio.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/cards/card_gasto_historico.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +33,6 @@ class _HistoricoPageState extends State<HistoricoPage> {
   List<Gasto> listaGastos = [];
   bool _isLoading = true;
   double total = 0;
-  //Filters
   DateTime? _dataInicial;
   DateTime? _dataFinal;
   StatusPagamentoEnum? _statusPagamento;
@@ -44,11 +47,10 @@ class _HistoricoPageState extends State<HistoricoPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: AppBarBack(
+      appBar: AppBarDownload(
         title: '',
         onBack:  () => Navigator.pop(context),
-        onClose: () async {
-
+        onDownload: () async {
           BottomSheetFiltroRelatorio.show(
             context,
             onConfirm: (
@@ -66,7 +68,8 @@ class _HistoricoPageState extends State<HistoricoPage> {
               await _getGastos();
             },
           );
-        },        gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
+        },
+        gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
       ),
       body: Column(
         children: [
@@ -121,7 +124,9 @@ class _HistoricoPageState extends State<HistoricoPage> {
     filtros.dataInicial = _dataInicial?.toIso8601String();
     filtros.dataFinal = _dataFinal?.toIso8601String();
     filtros.statusPagamento = _statusPagamento;
+
     final gastos = await GastoApi().getListByFilter(filtros);
+
     setState(() {
       listaGastos = gastos;
       total = Utils.sumTotalGastos(gastos);
