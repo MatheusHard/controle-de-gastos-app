@@ -4,6 +4,7 @@ class AppBarDownload extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onBack;
   final VoidCallback? onDownload;
+  final VoidCallback? onFilter;
   final Gradient gradient;
   final double radios;
 
@@ -12,6 +13,7 @@ class AppBarDownload extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     this.onBack,
     this.onDownload,
+    this.onFilter,
     required this.gradient,
     this.radios = 0,
   }) : super(key: key);
@@ -44,8 +46,12 @@ class AppBarDownload extends StatelessWidget implements PreferredSizeWidget {
           ),
           actions: [
             IconButton(
+              icon: Icon(Icons.filter_list_outlined, color: Colors.white),
+              onPressed: onFilter,
+            ),
+            IconButton(
               icon: Icon(Icons.file_download_outlined, color: Colors.white),
-              onPressed: onDownload ?? () => Navigator.of(context).pop(),
+              onPressed: onDownload,
             ),
           ],
           centerTitle: true,

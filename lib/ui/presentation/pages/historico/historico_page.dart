@@ -50,7 +50,8 @@ class _HistoricoPageState extends State<HistoricoPage> {
       appBar: AppBarDownload(
         title: '',
         onBack:  () => Navigator.pop(context),
-        onDownload: () async {
+        //Filter dialog
+        onFilter: () async {
           BottomSheetFiltroRelatorio.show(
             context,
             onConfirm: (
@@ -58,7 +59,6 @@ class _HistoricoPageState extends State<HistoricoPage> {
                 dataFinal,
                 status,
                 ) async {
-
               setState(() {
                 _dataInicial = dataInicial;
                 _dataFinal = dataFinal;
@@ -69,6 +69,14 @@ class _HistoricoPageState extends State<HistoricoPage> {
             },
           );
         },
+        //DownloadPage
+        onDownload:  () => Navigator.pushNamed(
+          context,
+          AppRoutes.relatorio,
+          arguments: {
+            'filtros': null,
+          },
+        ),
         gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
       ),
       body: Column(
