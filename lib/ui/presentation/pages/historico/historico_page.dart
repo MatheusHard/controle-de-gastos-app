@@ -33,9 +33,12 @@ class _HistoricoPageState extends State<HistoricoPage> {
   List<Gasto> listaGastos = [];
   bool _isLoading = true;
   double total = 0;
-  DateTime? _dataInicial;
-  DateTime? _dataFinal;
+  final today = DateTime.now();
+
+  late DateTime? _dataInicial = DateTime(today.year, today.month, 1);
+  late DateTime? _dataFinal = today;
   StatusPagamentoEnum? _statusPagamento;
+  GastoDTO? filtros;
 
   @override
   void initState() {
@@ -74,7 +77,7 @@ class _HistoricoPageState extends State<HistoricoPage> {
           context,
           AppRoutes.relatorio,
           arguments: {
-            'filtros': null,
+            'filtros': filtros,
           },
         ),
         gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
@@ -85,11 +88,6 @@ class _HistoricoPageState extends State<HistoricoPage> {
           ///Title
           Text("Histórico de Gastos", style: AppTextStyles.textoSentimentoNegritoWhite(20, context),),
           Utils.sizedBox(altura: 20.0, largura: 0),
-          ///Botões Gerar Relatório
-          BotoesRelatorio(
-            onExcel: baixarExcel,
-            onPdf: baixarPdf,
-          ),
           ///Total Gastos
           CardTotalGastos(
             total: total,
@@ -127,13 +125,13 @@ class _HistoricoPageState extends State<HistoricoPage> {
   Future<void> _getGastos() async {
 
     setState(() => _isLoading = true);
-    GastoDTO filtros = GastoDTO();
-    filtros.deletado = false;
-    filtros.dataInicial = _dataInicial?.toIso8601String();
-    filtros.dataFinal = _dataFinal?.toIso8601String();
-    filtros.statusPagamento = _statusPagamento;
+    filtros = GastoDTO();
+    filtros?.deletado = false;
+    filtros?.dataInicial = _dataInicial?.toIso8601String();
+    filtros?.dataFinal = _dataFinal?.toIso8601String();
+    filtros?.statusPagamento = _statusPagamento;
 
-    final gastos = await GastoApi().getListByFilter(filtros);
+    final gastos = await GastoApi().getListByFilter(filtros!);
 
     setState(() {
       listaGastos = gastos;
@@ -141,35 +139,4 @@ class _HistoricoPageState extends State<HistoricoPage> {
       _isLoading = false;
     });
   }
-
-  // Gerar Excel
-  Future<void> baixarExcel() async {
-    BottomSheetFiltroRelatorio.show(
-      context,
-      onConfirm: (dataInicial, dataFinal, status) async {
-        GastoDTO dto = GastoDTO();
-        dto.dataInicial = dataInicial?.toIso8601String();
-        dto.dataFinal = dataFinal?.toIso8601String();
-        dto.statusPagamento = status;
-
-        await RelatorioApi(context).getRelatorioGastosExcel(dto);
-      },
-    );
-  }
-
-  // Gerar Pdf
-  Future<void> baixarPdf() async {
-    BottomSheetFiltroRelatorio.show(
-      context,
-      onConfirm: (dataInicial, dataFinal, status) async {
-        GastoDTO dto = GastoDTO();
-        dto.dataInicial = dataInicial?.toIso8601String();
-        dto.dataFinal = dataFinal?.toIso8601String();
-        dto.statusPagamento = status;
-
-        await RelatorioApi(context).getRelatorioGastosPdf(dto);
-      },
-    );
-  }
-
 }

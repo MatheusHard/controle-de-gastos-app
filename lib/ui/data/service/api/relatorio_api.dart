@@ -17,12 +17,12 @@ class RelatorioApi {
   Future<void> getRelatorioGastosExcel(GastoDTO filtros) async {
     final configs = await Configs.create();
     //Remove filtros nulos
-    final params = filtros.toJson()..removeWhere((key, value) => value == null);
+    //final params = filtros.toJson()..removeWhere((key, value) => value == null);
 
     try {
       final response = await configs.dio.get(
         "/relatorio/gastos/excel",
-        queryParameters: params,
+        queryParameters:  filtros.toJson(),
         options: Options(
           responseType: ResponseType.bytes,
           headers: await Utils.requestToken(),
@@ -40,13 +40,12 @@ class RelatorioApi {
   }
   Future<void> getRelatorioGastosPdf(GastoDTO filtros) async {
     final configs = await Configs.create();
-
-    final params = filtros.toJson()..removeWhere((key, value) => value == null);
+    //final params = filtros.toJson()..removeWhere((key, value) => value == null);
 
     try {
       final response = await configs.dio.get(
         "/relatorio/gastos/pdf",
-        queryParameters: params,
+        queryParameters: filtros.toJson(),
         options: Options(
           responseType: ResponseType.bytes,
           headers: await Utils.requestToken(),

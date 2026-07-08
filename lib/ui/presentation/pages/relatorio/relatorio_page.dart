@@ -1,5 +1,6 @@
 import 'package:controle_de_gastos_app/ui/core/constants/enums/type_file_enum.dart';
 import 'package:controle_de_gastos_app/ui/data/dtos/gasto_dto.dart';
+import 'package:controle_de_gastos_app/ui/data/service/api/relatorio_api.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/appbar/app_bar_back.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/buttons/radio/radio_type_relatorio.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,9 @@ import '../../widgets/buttons/normal_button/custom_button.dart';
 
 
 class RelatorioPage extends StatefulWidget {
-  const RelatorioPage({super.key, GastoDTO? filtros});
+  final GastoDTO? filtros;
+
+  const RelatorioPage({super.key, this.filtros});
 
   @override
   State<RelatorioPage> createState() => _RelatorioPageState();
@@ -22,6 +25,13 @@ class _RelatorioPageState extends State<RelatorioPage> {
   TypeFileEnum _selected = TypeFileEnum.pdf;
   bool _isLoading = false;
 
+  GastoDTO? filtros;
+
+  @override
+  void initState() {
+    filtros = widget.filtros;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -86,13 +96,11 @@ class _RelatorioPageState extends State<RelatorioPage> {
                 isLoading: _isLoading,
                 onTap: () async {
                   switch (_selected) {
-
                     case TypeFileEnum.pdf:
-                      print("Baixar PDF");
+                     await baixarPdf();
                       break;
-
                     case TypeFileEnum.excel:
-                      print("Baixar Excel");
+                      await baixarExcel();
                       break;
                   }
                 },
@@ -106,5 +114,18 @@ class _RelatorioPageState extends State<RelatorioPage> {
       ),
     );
   }
+  // Gerar Excel
+  Future<void> baixarExcel() async {
+    _isLoading = true;
+    await RelatorioApi(context).getRelatorioGastosExcel(filtros!);
+    _isLoading = false;
+  }
 
+  // Gerar Pdf
+  Future<void> baixarPdf() async {
+    _isLoading = true;
+    await RelatorioApi(context).getRelatorioGastosPdf(filtros!);
+    _isLoading = false;
+
+  }
 }

@@ -484,10 +484,8 @@ class Utils {
     AppPlatform platform = Utils.getCurrentPlatform();
     final typeFile = extension == TypeFileEnum.excel ? 'xlsx' : 'pdf';
     fileName = "${fileName}_${DateTime.now().millisecondsSinceEpoch}";
-print("filename"+fileName);
     /// ANDROID
     if(platform == AppPlatform.android) {
-
       final dir = await getApplicationDocumentsDirectory();
       final file = File('${dir.path}/$fileName.$typeFile');
       await file.writeAsBytes(List<int>.from(res.data),);
