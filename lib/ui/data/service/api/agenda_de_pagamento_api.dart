@@ -39,9 +39,9 @@ class AgendaDePagamentoApi  {
   //Find All By Filters
   Future<List<AgendaDePagamento>> getListByFilter(AgendaDePagamentoDTO filtros) async {
     final configs = await Configs.create();
-    var response = await configs.dio.post(
+    var response = await configs.dio.get(
       URL+FILTRAR,
-      data: 	 filtros.toJson(),
+      queryParameters: filtros.toJson(),
       options: Options(headers: await Utils.requestToken()),);
     if (response.statusCode == 200) {
       return (response.data as List).map((json) => AgendaDePagamento.fromJson(json)).toList();
@@ -51,9 +51,9 @@ class AgendaDePagamentoApi  {
   //Find Object
   Future<AgendaDePagamento?> getOneByFilter(AgendaDePagamentoDTO filtros) async {
     final configs = await Configs.create();
-    var response = await configs.dio.post(
+    var response = await configs.dio.get(
       URL+FIND_ONE,
-      data: 	filtros.toJson(),
+      queryParameters: filtros.toJson(),
       options: Options(headers: await Utils.requestToken()),);
     if (response.statusCode == 200 && response.data != null && response.data != "") {
       return AgendaDePagamento.fromJson(response.data);

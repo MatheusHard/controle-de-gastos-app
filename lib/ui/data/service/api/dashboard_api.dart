@@ -11,15 +11,14 @@ class DashBoardApi {
   final URL = "/dashboard";
   final GET_TOTAIS = '/totais-mensais';
 
-
   DashBoardApi() {}
 
   //Get All By Filters
   Future<TotaisMensaisResponse?> getTotais(GastoDTO filtros) async {
     final configs = await Configs.create();
-    var response = await configs.dio.post(
+    var response = await configs.dio.get(
       URL + GET_TOTAIS,
-      data: filtros.toJson(),
+      queryParameters: filtros.toJson(),
       options: Options(headers: await Utils.requestToken()),
     );
     if (response.statusCode == 200 && response.data != null && response.data != "") {

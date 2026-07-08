@@ -47,9 +47,9 @@ class GastoApi {
   Future<List<Gasto>> getListByFilter(GastoDTO filtros) async {
     final configs = await Configs.create();
 
-    var response = await configs.dio.post(
+    var response = await configs.dio.get(
       URL + FILTRAR,
-      data: filtros.toJson(),
+      queryParameters: filtros.toJson(),
       options: Options(headers: await Utils.requestToken()),
     );
     if (response.statusCode == 200) {
