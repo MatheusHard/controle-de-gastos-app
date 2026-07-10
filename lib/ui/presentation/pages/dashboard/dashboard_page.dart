@@ -15,6 +15,7 @@ import '../../../core/theme/styles/app_text_styles.dart';
 import '../../../core/utils/utils.dart';
 import '../../../data/dtos/dashboarding/gastos_data.dart';
 import '../../../data/dtos/dashboarding/gastos_mensais.dart';
+import '../../../data/dtos/request/dashboard_request_dto.dart';
 import '../../../data/model/user.dart';
 import '../../widgets/cards/card_total_gastos.dart';
 
@@ -35,32 +36,10 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
   @override
   void initState() {
-    _loadingUser();
-    _loadDashBoarding();
+    _init();
     super.initState();
   }
 
-  Future<void> _loadDashBoarding() async {
-    _isLoading = true;
-    GastoDTO filters = GastoDTO();
-    filters.deletado = false;
-    UserDTO u = UserDTO();
-    u.id = user?.id;
-    filters.user = u;
-    dashboardObject =  (await DashBoardApi().getTotais(filters))!;
-    setState(() {
-      listaMensal = dashboardObject.totaisPorMes;
-      totaGeral = dashboardObject.somaTotal;
-    });
-    _isLoading = false;
-  }
-  //Carregar User
-  Future<void> _loadingUser() async {
-    final u = await Utils.recuperarUser();
-    setState(() {
-      user = u;
-    });
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,6 +95,33 @@ class _DashBoardPageState extends State<DashBoardPage> {
       )
     );
   }
+  Future<void> _init() async {
+    await _loadingUser();
+    await _loadDashBoarding();
+  }
+
+  Future<void> _loadDashBoarding() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final filters = DashboardRequestDto()
+      ..deletado = false
+      ..userId = user!.id;
+
+    dashboardObject = (await DashBoardApi().getTotais(filters))!;
+
+    setState(() {
+      listaMensal = dashboardObject.totaisPorMes;
+      totaGeral = dashboardObject.somaTotal;
+      _isLoading = false;
+    });
+  }
+  //Carregar User
+  Future<void> _loadingUser() async {
+    user = await Utils.recuperarUser();
+  }
+
 }
 
 
