@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/configs/dio/configs.dart';
 import '../../dtos/agenda_de_pagamento_dto.dart';
+import '../../dtos/request/agenda_de_pagamento_request_dto.dart';
 
 
 class AgendaDePagamentoApi  {
@@ -49,11 +50,11 @@ class AgendaDePagamentoApi  {
     return [];
   }
   //Find Object
-  Future<AgendaDePagamento?> getOneByFilter(AgendaDePagamentoDTO filtros) async {
+  Future<AgendaDePagamento?> getOneByFilter(AgendaDePagamentoRequestDTO filtros) async {
     final configs = await Configs.create();
-    var response = await configs.dio.post(
+    var response = await configs.dio.get(
       URL+FIND_ONE,
-      data: 	filtros.toJson(),
+      queryParameters: 	filtros.toJson(),
       options: Options(headers: await Utils.requestToken()),);
     if (response.statusCode == 200 && response.data != null && response.data != "") {
       return AgendaDePagamento.fromJson(response.data);

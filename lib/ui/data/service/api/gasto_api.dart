@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../../../core/configs/dio/configs.dart';
 import '../../dtos/gasto_dto.dart';
+import '../../dtos/request/gasto_request_dto.dart';
 
 class GastoApi {
 
@@ -44,12 +45,12 @@ class GastoApi {
     return [];
   }
   //Get All By Filters
-  Future<List<Gasto>> getListByFilter(GastoDTO filtros) async {
+  Future<List<Gasto>> getListByFilter(GastoRequestDTO filtros) async {
     final configs = await Configs.create();
 
-    var response = await configs.dio.post(
+    var response = await configs.dio.get(
       URL + FILTRAR,
-      data: filtros.toJson(),
+      queryParameters: filtros.toJson(),
       options: Options(headers: await Utils.requestToken()),
     );
     if (response.statusCode == 200) {

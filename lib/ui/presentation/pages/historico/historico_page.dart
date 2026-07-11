@@ -1,4 +1,5 @@
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
+import 'package:controle_de_gastos_app/ui/data/dtos/request/gasto_request_dto.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_excel.dart';
 import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_pdf.dart';
@@ -98,7 +99,7 @@ class _HistoricoPageState extends State<HistoricoPage> {
 
   //Get Gastos
   Future<void> _getGastos() async {
-    GastoDTO filters = GastoDTO();
+    GastoRequestDTO filters = GastoRequestDTO(); //TOD
     filters.deletado = false;
     final gastos = await GastoApi().getListByFilter(filters);
     setState(() {

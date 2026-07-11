@@ -1,4 +1,5 @@
 
+import 'package:controle_de_gastos_app/ui/data/dtos/request/gasto_request_dto.dart';
 import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_excel.dart';
 import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
@@ -11,6 +12,7 @@ import '../../../core/constants/routes/app_routes.dart';
 import '../../../core/utils/utils.dart';
 import '../../../data/dtos/agenda_de_pagamento_dto.dart';
 import '../../../data/dtos/gasto_dto.dart';
+import '../../../data/dtos/request/agenda_de_pagamento_request_dto.dart';
 import '../../../data/dtos/user_dto.dart';
 import '../../../data/model/user.dart';
 import '../../../data/service/api/agenda_de_pagamento_api.dart';
@@ -36,8 +38,7 @@ class _FaturaPageState extends State<FaturaPage> {
   @override
   void initState () {
     super.initState();
-    _loadingUser();
-    _loadingFaturaAtual();
+    _init();
   }
 
 
@@ -128,22 +129,25 @@ class _FaturaPageState extends State<FaturaPage> {
   }
 
   ///******** METHODS ********
+
+  Future<void> _init() async {
+    await _loadingUser();
+    await _loadingFaturaAtual();
+  }
+
   //Carregar User
   Future<void> _loadingUser() async {
-    final u = await Utils.recuperarUser();
-    setState(() {
-      user = u;
-    });
+    user = await Utils.recuperarUser();
   }
+
   //Carregar fatura
   Future<void> _loadingFaturaAtual() async {
-    AgendaDePagamentoDTO filters = AgendaDePagamentoDTO();
+    AgendaDePagamentoRequestDTO filters = AgendaDePagamentoRequestDTO();
     filters.dataInicial = Utils.dateFirstOrLast(true);
     filters.dataFinal = Utils.dateFirstOrLast(false);
     filters.deletado = false;
-    final u = UserDTO();
-    u.id = user?.id;
-    filters.user = u;
+    filters.userId = user?.id;
+
     await _getOrAddFatura(filters);
     _atualizarStatusPagamento();
       setState(() {
@@ -153,7 +157,7 @@ class _FaturaPageState extends State<FaturaPage> {
       });
   }
   //Get or Add Fatura
-  Future<void> _getOrAddFatura(AgendaDePagamentoDTO filters) async {
+  Future<void> _getOrAddFatura(AgendaDePagamentoRequestDTO filters) async {
     final fatura =   await AgendaDePagamentoApi().getOneByFilter(filters);
     if(fatura == null){
       faturaAtual = (await AgendaDePagamentoApi().addAgendaDePagamento(await _generateFatura()))!;
@@ -213,9 +217,9 @@ class _FaturaPageState extends State<FaturaPage> {
   }
   //Get Gastos
   Future<void> _getGastos() async {
-    GastoDTO filters = GastoDTO();
+    GastoRequestDTO filters = GastoRequestDTO();
     filters.deletado = false;
-    filters.agendaDePagamento = AgendaDePagamentoDTO(id: faturaAtual.id);
+    filters.agendaDePagamentoId = faturaAtual.id;
     listaGastos = await GastoApi().getListByFilter(filters);
   }
 }

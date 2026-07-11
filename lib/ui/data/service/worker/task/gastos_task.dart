@@ -1,4 +1,5 @@
 import 'package:controle_de_gastos_app/ui/data/dtos/gasto_dto.dart';
+import 'package:controle_de_gastos_app/ui/data/dtos/request/gasto_request_dto.dart';
 import 'package:controle_de_gastos_app/ui/data/dtos/user_dto.dart';
 
 import '../../../../core/utils/utils.dart';
@@ -28,9 +29,9 @@ class GastosTask {
   }
 
   static Future<List<Gasto>> _loadingGastos(User? user) async {
-      GastoDTO filters = GastoDTO();
+      GastoRequestDTO filters = GastoRequestDTO();
       filters.deletado = false;
-      filters.user = UserDTO(id: user?.id);
+      filters.userId = user?.id;
       filters.vencimento = DateTime.now().toIso8601String();
 
     return await GastoApi().getListByFilter(filters);
