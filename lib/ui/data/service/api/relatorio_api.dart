@@ -1,9 +1,11 @@
 import 'package:controle_de_gastos_app/ui/core/configs/dio/configs.dart';
+import 'package:controle_de_gastos_app/ui/core/constants/enums/type_file_enum.dart';
 import 'package:controle_de_gastos_app/ui/data/dtos/gasto_dto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/utils/utils.dart';
+import '../../dtos/request/gasto_request_dto.dart';
 
 class RelatorioApi {
 
@@ -13,61 +15,50 @@ class RelatorioApi {
     _context = context;
   }
 
-  Future<void> getRelatorioGastos(GastoDTO filtros) async {
+  Future<void> getRelatorioGastosExcel(GastoRequestDTO filtros) async {
+    final configs = await Configs.create();
+    //Remove filtros nulos
+    //final params = filtros.toJson()..removeWhere((key, value) => value == null);
 
+    try {
+      final response = await configs.dio.get(
+        "/relatorio/gastos/excel",
+        queryParameters:  filtros.toJson(),
+        options: Options(
+          responseType: ResponseType.bytes,
+          headers: await Utils.requestToken(),
+        ),
+      );
+      //
+      await Utils.generateFile(
+        response,
+        "relatorio_gastos",
+        extension: TypeFileEnum.excel,
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
+  Future<void> getRelatorioGastosPdf(GastoRequestDTO filtros) async {
     final configs = await Configs.create();
 
     try {
-
-      final response = await configs.dio.post(
-        "/relatorio/gastos",
-        data: filtros.toJson(),
+      final response = await configs.dio.get(
+        "/relatorio/gastos/pdf",
+        queryParameters: filtros.toJson(),
         options: Options(
           responseType: ResponseType.bytes,
           headers: await Utils.requestToken(),
         ),
       );
 
-      //await generateFile(response);
-
+      await Utils.generateFile(
+        response,
+        "relatorio_gastos",
+        extension: TypeFileEnum.pdf,
+      );
     } catch (e) {
       print(e);
     }
   }
-
-  /*Future<void> generateFile(Response res) async {
-
-    AppPlatform platform = Utils.getCurrentPlatform();
-
-    /// ANDROID
-    if(platform == AppPlatform.android) {
-
-      final directory = Directory('/storage/emulated/0/Download');
-
-      if (!await directory.exists()) {
-        print("Diretory");
-        await directory.create(recursive: true);
-      }
-
-      final filePath = '${directory.path}/relatorio_gastos.xlsx';
-
-      final file = File(filePath);
-
-      await file.writeAsBytes(
-        List<int>.from(res.data),
-      );
-
-      await OpenFilex.open(filePath);
-    }
-
-    /// WEB
-    else if(platform == AppPlatform.web){
-      downloadFile(
-        List<int>.from(res.data),
-        "relatorio_gastos.xlsx",
-      );
-    }
-  }*/
-
-
 }

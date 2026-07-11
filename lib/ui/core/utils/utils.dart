@@ -1,11 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:controle_de_gastos_app/ui/core/constants/enums/type_file_enum.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_handler/share_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -468,8 +472,32 @@ class Utils {
     }
   }
 
+  //Url Microserviços
   static Future<String> baseUrlMsImagem() async {
     final bool isProd = await Utils.getIsProd();
     return isProd ? URL_MS_IMAGEM : URL_MS_IMAGEM_HOMOLOG;
+  }
+
+  //Gerar File Excel
+  static Future<void> generateFile(Response res, String fileName, {required TypeFileEnum extension}) async {
+
+    AppPlatform platform = Utils.getCurrentPlatform();
+    final typeFile = extension == TypeFileEnum.excel ? 'xlsx' : 'pdf';
+    fileName = "${fileName}_${DateTime.now().millisecondsSinceEpoch}";
+    /// ANDROID
+    if(platform == AppPlatform.android) {
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File('${dir.path}/$fileName.$typeFile');
+      await file.writeAsBytes(List<int>.from(res.data),);
+      await OpenFilex.open(file.path);
+    }
+
+    /// WEB
+    /*else if(platform == AppPlatform.web){
+      downloadFile(
+        List<int>.from(res.data),
+        "relatorio_gastos.xlsx",
+      );
+    }*/
   }
 }
