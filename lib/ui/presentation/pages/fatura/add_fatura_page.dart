@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 
+import 'package:controle_de_gastos_app/ui/data/dtos/request/created/gasto_created_request_dto.dart';
 import 'package:controle_de_gastos_app/ui/data/dtos/user_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
@@ -240,11 +241,10 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
   }
 
   // Gerar obj Gasto
-  Future<GastoDTO> _generateGasto() async {
+  Future<GastoCreatedRequestDTO> _generateGasto() async {
 
     // 🔥 pega a imagem atual
-    final currentImage =
-        Utils.imageShareNotifier.value ?? _imagem;
+    final currentImage = Utils.imageShareNotifier.value ?? _imagem;
 
     var currentBytes;
 
@@ -252,9 +252,8 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
       currentBytes = await Utils.compressImageBytes(currentImage);
     }
 
-    GastoDTO g = GastoDTO();
+    GastoCreatedRequestDTO g = GastoCreatedRequestDTO();
 
-    g.id = null;
     g.descricao = _controllerDescricao.text;
     g.valor = _controllerValor.text.isNotEmpty ? double.parse(_controllerValor.text) : 0;
     g.vencimento = _selectedVencimento.toIso8601String();
@@ -262,13 +261,8 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
     g.updatedAt = DateTime.now().toIso8601String();
     g.imagemBase64 = currentBytes != null ? await Utils.base64String(currentBytes) : null;
     g.photoName = "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
-    AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
-    agenda.id = gasto?.agendaDePagamento?.id;
-
-    UserDTO u = UserDTO();
-    u.id = user?.id;
-    g.user = u;
-    g.agendaDePagamento = agenda;
+    g.userId = user?.id;
+    g.agendaDePagamentoId = gasto?.agendaDePagamento?.id;
     g.deletado = gasto?.deletado ?? false;
     g.statusPagamento = _isPago
         ? StatusPagamentoEnum.PAGO
@@ -277,9 +271,8 @@ class _AddFaturaPageState extends State<AddFaturaPage> {
         : StatusPagamentoEnum.NAO_PAGO;
     g.pago = _isPago;
 
-    var gg = agenda.id;
-    print("Agenda"+ gg.toString());
     return g;
+
   }
   // Print Photo
   Future<void> _tirarFoto() async {
@@ -368,7 +361,7 @@ void _cleanWidgets(){
   Utils.imageShareNotifier.value = null;
 }
   //Add Cliente
-  Future<bool> _cadastroGasto(GastoDTO g) async {
+  Future<bool> _cadastroGasto(GastoCreatedRequestDTO g) async {
     _cleanWidgets();
     return await GastoApi().addGasto(g);
   }

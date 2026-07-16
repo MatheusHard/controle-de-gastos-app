@@ -1,18 +1,16 @@
 
-import 'package:controle_de_gastos_app/ui/data/dtos/request/gasto_request_dto.dart';
-import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_excel.dart';
+import 'package:controle_de_gastos_app/ui/data/dtos/request/get/gasto_request_dto.dart';
+import 'package:controle_de_gastos_app/ui/data/dtos/request/updated/gasto_updated_request_dto.dart';
 import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
-import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_pdf.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:share_handler/share_handler.dart';
 import '../../../core/constants/enums/status_pagamento_enum.dart';
 import '../../../core/constants/routes/app_routes.dart';
 import '../../../core/utils/utils.dart';
 import '../../../data/dtos/agenda_de_pagamento_dto.dart';
 import '../../../data/dtos/gasto_dto.dart';
-import '../../../data/dtos/request/agenda_de_pagamento_request_dto.dart';
+import '../../../data/dtos/request/get/agenda_de_pagamento_request_dto.dart';
 import '../../../data/dtos/user_dto.dart';
 import '../../../data/model/user.dart';
 import '../../../data/service/api/agenda_de_pagamento_api.dart';
@@ -190,12 +188,12 @@ class _FaturaPageState extends State<FaturaPage> {
     });
   }
   //Deletar Gasto
-  Future<bool> _deletarGasto(GastoDTO g,  BuildContext context) async {
+  Future<bool> _deletarGasto(GastoUpdatedRequestDto g,  BuildContext context) async {
       return await GastoApi().updateGasto(g, user?.id ?? 0);
   }
   //Gerar obj delete Gasto
-  Future<GastoDTO> _generateDelGasto(Gasto gasto) async {
-    GastoDTO g = GastoDTO();
+  Future<GastoUpdatedRequestDto> _generateDelGasto(Gasto gasto) async {
+    GastoUpdatedRequestDto g = GastoUpdatedRequestDto();
     g.id =  gasto.id;
     g.descricao = gasto.descricao;
     g.valor = gasto.valor;
@@ -204,12 +202,8 @@ class _FaturaPageState extends State<FaturaPage> {
     g.updatedAt = DateTime.now().toIso8601String();
     g.imagemBase64 = null;
     g.photoName =  null;
-    AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
-    agenda.id = gasto.agendaDePagamento?.id;
-    UserDTO u = UserDTO();
-    u.id = user?.id;
-    g.user = u;
-    g.agendaDePagamento = agenda;
+    g.userId = user?.id;
+    g.agendaDePagamentoId =  gasto.agendaDePagamento?.id;
     g.deletado = true;
     g.statusPagamento = gasto.statusPagamento;
     g.pago = gasto.pago;

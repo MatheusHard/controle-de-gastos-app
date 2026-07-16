@@ -1,19 +1,15 @@
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/dtos/dashboarding/totais_mensais_response.dart';
-import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import '../../../core/configs/dio/configs.dart';
-import '../../dtos/gasto_dto.dart';
-import '../../dtos/request/dashboard_request_dto.dart';
+import '../../dtos/request/get/dashboard_request_dto.dart';
 
 class DashBoardApi {
 
   final URL = "/dashboard";
   final GET_TOTAIS = '/totais-mensais';
 
-
-  DashBoardApi() {}
+  DashBoardApi();
 
   //Get All By Filters
   Future<TotaisMensaisResponse?> getTotais(DashboardRequestDto filtros) async {

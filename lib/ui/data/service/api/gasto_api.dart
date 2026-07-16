@@ -1,10 +1,11 @@
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
+import 'package:controle_de_gastos_app/ui/data/dtos/request/created/gasto_created_request_dto.dart';
+import 'package:controle_de_gastos_app/ui/data/dtos/request/updated/gasto_updated_request_dto.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import '../../../core/configs/dio/configs.dart';
 import '../../dtos/gasto_dto.dart';
-import '../../dtos/request/gasto_request_dto.dart';
+import '../../dtos/request/get/gasto_request_dto.dart';
 
 class GastoApi {
 
@@ -15,7 +16,7 @@ class GastoApi {
   GastoApi() {}
 
   //Add
-  Future<bool> addGasto(GastoDTO gasto) async {
+  Future<bool> addGasto(GastoCreatedRequestDTO gasto) async {
     final configs = await Configs.create();
     var response = await configs.dio.post(URL,
       data: gasto.toJson(),
@@ -24,7 +25,7 @@ class GastoApi {
     return response.statusCode == 200 || response.statusCode == 201;
   }
   //Update
-  Future<bool> updateGasto(GastoDTO gasto, int userId) async {
+  Future<bool> updateGasto(GastoUpdatedRequestDto gasto, int userId) async {
     final configs = await Configs.create();
     var response = await configs.dio.put(URL,
       data: gasto.toJson(),

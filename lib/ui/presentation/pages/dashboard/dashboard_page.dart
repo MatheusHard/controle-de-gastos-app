@@ -15,7 +15,7 @@ import '../../../core/theme/styles/app_text_styles.dart';
 import '../../../core/utils/utils.dart';
 import '../../../data/dtos/dashboarding/gastos_data.dart';
 import '../../../data/dtos/dashboarding/gastos_mensais.dart';
-import '../../../data/dtos/request/dashboard_request_dto.dart';
+import '../../../data/dtos/request/get/dashboard_request_dto.dart';
 import '../../../data/model/user.dart';
 import '../../widgets/cards/card_total_gastos.dart';
 

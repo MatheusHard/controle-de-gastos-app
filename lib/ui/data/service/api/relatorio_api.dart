@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/utils/utils.dart';
-import '../../dtos/request/gasto_request_dto.dart';
+import '../../dtos/request/get/gasto_request_dto.dart';
 
 class RelatorioApi {
 

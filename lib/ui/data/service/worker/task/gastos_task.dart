@@ -1,8 +1,5 @@
-import 'package:controle_de_gastos_app/ui/data/dtos/gasto_dto.dart';
-import 'package:controle_de_gastos_app/ui/data/dtos/request/gasto_request_dto.dart';
-import 'package:controle_de_gastos_app/ui/data/dtos/user_dto.dart';
-
 import '../../../../core/utils/utils.dart';
+import '../../../dtos/request/get/gasto_request_dto.dart';
 import '../../../model/gasto.dart';
 import '../../../model/user.dart';
 import '../../api/gasto_api.dart';

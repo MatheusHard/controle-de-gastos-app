@@ -1,7 +1,7 @@
-import '../../../core/constants/enums/status_pagamento_enum.dart';
+import '../../../../core/constants/enums/status_pagamento_enum.dart';
 
-class GastoRequestDTO {
-  int? id;
+class GastoCreatedRequestDTO {
+
   String? createdAt;
   String? updatedAt;
   String? vencimento;
@@ -14,9 +14,11 @@ class GastoRequestDTO {
   double? valor;
   bool? pago = false;
   int? agendaDePagamentoId;
+  String? photoName;
+  String? imagemBase64;
 
-  GastoRequestDTO(
-      {this.id,
+  GastoCreatedRequestDTO(
+      {
         this.createdAt,
         this.updatedAt,
         this.vencimento,
@@ -28,10 +30,11 @@ class GastoRequestDTO {
         this.statusPagamento,
         this.valor,
         this.agendaDePagamentoId,
-        this.pago});
+        this.pago,
+        this.photoName,
+        this.imagemBase64});
 
-  GastoRequestDTO.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+  GastoCreatedRequestDTO.fromJson(Map<String, dynamic> json) {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     vencimento = json['vencimento'];
@@ -44,12 +47,12 @@ class GastoRequestDTO {
     valor = json['valor'];
     agendaDePagamentoId = json['agendaDePagamento'];
     pago = json['pago'];
-
+    photoName = json['photoName'];
+    imagemBase64 = json['imagemBase64'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
     data['createdAt'] = createdAt;
     data['updatedAt'] = updatedAt;
     data['vencimento'] =vencimento;
@@ -62,6 +65,8 @@ class GastoRequestDTO {
     data['valor'] = valor;
     data['agendaDePagamentoId'] = agendaDePagamentoId;
     data['pago'] = pago;
+    data['photoName'] = photoName;
+    data['imagemBase64'] = imagemBase64;
 
     return data;
   }

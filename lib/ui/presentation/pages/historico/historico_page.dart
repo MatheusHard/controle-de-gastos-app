@@ -1,11 +1,9 @@
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
-import 'package:controle_de_gastos_app/ui/data/dtos/request/gasto_request_dto.dart';
+import 'package:controle_de_gastos_app/ui/data/dtos/request/get/gasto_request_dto.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
-import 'package:controle_de_gastos_app/ui/data/service/api/relatorio_api.dart';
 import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_excel.dart';
 import 'package:controle_de_gastos_app/ui/data/service/export/relatorio_pdf.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/appbar/app_bar_download.dart';
-import 'package:controle_de_gastos_app/ui/presentation/widgets/buttons/padding/botoes_relatorio.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/cards/card_gasto_historico.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -14,10 +12,8 @@ import '../../../core/constants/enums/status_pagamento_enum.dart';
 import '../../../core/constants/routes/app_routes.dart';
 import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
-import '../../../data/dtos/gasto_dto.dart';
 import '../../../data/model/gasto.dart';
 import '../../../data/service/api/gasto_api.dart';
-import '../../widgets/appbar/app_bar_back.dart';
 import '../../widgets/botton_sheet/filtros_gastos_botton_sheet.dart';
 import '../../widgets/cards/card_total_gastos.dart';
 

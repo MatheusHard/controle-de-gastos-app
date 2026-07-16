@@ -2,10 +2,9 @@ import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
 import '../../../core/configs/dio/configs.dart';
 import '../../dtos/agenda_de_pagamento_dto.dart';
-import '../../dtos/request/agenda_de_pagamento_request_dto.dart';
+import '../../dtos/request/get/agenda_de_pagamento_request_dto.dart';
 
 
 class AgendaDePagamentoApi  {
@@ -15,7 +14,7 @@ class AgendaDePagamentoApi  {
   final FILTRAR = '/filtrar';
   final FIND_ONE = '/findOne';
 
-  AgendaDePagamentoApi() {}
+  AgendaDePagamentoApi();
 
   //Add
   Future<AgendaDePagamento?> addAgendaDePagamento(AgendaDePagamentoDTO agenda) async {
@@ -26,8 +25,9 @@ class AgendaDePagamentoApi  {
     );
     return response.data != null ? AgendaDePagamento.fromJson(response.data) : null;
   }
+
   //Find All
-  Future<List<AgendaDePagamento>> getList() async {
+    Future<List<AgendaDePagamento>> getList() async {
     final configs = await Configs.create();
     var response = await configs.dio.get(URL,
       options: Options(
@@ -37,6 +37,7 @@ class AgendaDePagamentoApi  {
     }
     return [];
   }
+
   //Find All By Filters
   Future<List<AgendaDePagamento>> getListByFilter(AgendaDePagamentoDTO filtros) async {
     final configs = await Configs.create();

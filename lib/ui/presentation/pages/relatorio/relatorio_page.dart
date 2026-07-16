@@ -1,5 +1,4 @@
 import 'package:controle_de_gastos_app/ui/core/constants/enums/type_file_enum.dart';
-import 'package:controle_de_gastos_app/ui/data/dtos/gasto_dto.dart';
 import 'package:controle_de_gastos_app/ui/data/service/api/relatorio_api.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/appbar/app_bar_back.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/buttons/radio/radio_type_relatorio.dart';
@@ -8,7 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
-import '../../../data/dtos/request/gasto_request_dto.dart';
+import '../../../data/dtos/request/get/gasto_request_dto.dart';
 import '../../widgets/buttons/normal_button/custom_button.dart';
 
 

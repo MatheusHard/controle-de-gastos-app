@@ -2,6 +2,7 @@
 import 'dart:io';
 
 
+import 'package:controle_de_gastos_app/ui/data/dtos/request/updated/gasto_updated_request_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -197,8 +198,9 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
   }
 
   // Gerar obj Gasto
-  Future<GastoDTO> _generateGasto() async {
-    GastoDTO g = GastoDTO();
+  Future<GastoUpdatedRequestDto> _generateGasto() async {
+
+    GastoUpdatedRequestDto g = GastoUpdatedRequestDto();
     g.id =  gasto?.id;
     g.descricao = _controllerDescricao.text;
     g.valor = _controllerValor.text.isNotEmpty ? double.parse(_controllerValor.text) : 0;
@@ -207,12 +209,8 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
     g.updatedAt = DateTime.now().toIso8601String();
     g.imagemBase64 = bytes != null ? await Utils.base64String(bytes) : null;
     g.photoName = gasto?.photoName;
-    AgendaDePagamentoDTO agenda = AgendaDePagamentoDTO();
-    agenda.id = gasto?.agendaDePagamento?.id;
-    UserDTO u = UserDTO();
-    u.id = user?.id;
-    g.user = u;
-    g.agendaDePagamento = agenda;
+    g.userId = user?.id;
+    g.agendaDePagamentoId = gasto?.agendaDePagamento?.id;;
     g.deletado = gasto?.deletado ?? false;
     g.statusPagamento = _isPago ? StatusPagamentoEnum.PAGO :
     Utils.isVencido(gasto?.vencimento) ? StatusPagamentoEnum.VENCIDO :
@@ -297,7 +295,7 @@ class _EditFaturaPageState extends State<EditFaturaPage> {
     });
   }
   //Add Cliente
-  Future<bool> _updateGasto(GastoDTO g) async {
+  Future<bool> _updateGasto(GastoUpdatedRequestDto g) async {
       return await GastoApi().updateGasto(g, user?.id ?? 0);
   }
   //Iniciar prefs
