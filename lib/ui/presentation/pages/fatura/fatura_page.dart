@@ -10,6 +10,7 @@ import '../../../core/constants/routes/app_routes.dart';
 import '../../../core/utils/utils.dart';
 import '../../../data/dtos/agenda_de_pagamento_dto.dart';
 import '../../../data/dtos/gasto_dto.dart';
+import '../../../data/dtos/request/created/agenda_de_pagameto_created_request_dto.dart';
 import '../../../data/dtos/request/get/agenda_de_pagamento_request_dto.dart';
 import '../../../data/dtos/user_dto.dart';
 import '../../../data/model/user.dart';
@@ -156,27 +157,27 @@ class _FaturaPageState extends State<FaturaPage> {
   }
   //Get or Add Fatura
   Future<void> _getOrAddFatura(AgendaDePagamentoRequestDTO filters) async {
-    final fatura =   await AgendaDePagamentoApi().getOneByFilter(filters);
-    if(fatura == null){
+    //final fatura =   await AgendaDePagamentoApi().getOneByFilter(filters);
+    //if(fatura == null){
       faturaAtual = (await AgendaDePagamentoApi().addAgendaDePagamento(await _generateFatura()))!;
-    }else{
-      faturaAtual = fatura;
-    }
+   // }else{
+     // faturaAtual = fatura;
+   // }
     await _getGastos();
   }
   //Gerar Fatura
-  Future<AgendaDePagamentoDTO> _generateFatura() async {
+  Future<AgendaDePagamentoCreatedRequestDTO> _generateFatura() async {
+
     String dataAtual = DateTime.now().toIso8601String();
-    AgendaDePagamentoDTO a = AgendaDePagamentoDTO();
-    a.id =   null;
+    AgendaDePagamentoCreatedRequestDTO a = AgendaDePagamentoCreatedRequestDTO();
     a.deletado = false;
     a.updatedAt = dataAtual;
     a.createdAt = dataAtual;
     UserDTO u = UserDTO();
-    u.id = user?.id;
-    a.user = u;
+    a.userId = user?.id;
     return a;
   }
+
   //Atualizar Status de pagamento
   void _atualizarStatusPagamento(){
     for (var gasto in listaGastos) {

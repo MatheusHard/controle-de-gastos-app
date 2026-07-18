@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../../../core/configs/dio/configs.dart';
 import '../../dtos/agenda_de_pagamento_dto.dart';
+import '../../dtos/request/created/agenda_de_pagameto_created_request_dto.dart';
 import '../../dtos/request/get/agenda_de_pagamento_request_dto.dart';
 
 
@@ -17,7 +18,7 @@ class AgendaDePagamentoApi  {
   AgendaDePagamentoApi();
 
   //Add
-  Future<AgendaDePagamento?> addAgendaDePagamento(AgendaDePagamentoDTO agenda) async {
+  Future<AgendaDePagamento?> addAgendaDePagamento(AgendaDePagamentoCreatedRequestDTO agenda) async {
     final configs = await Configs.create();
     var response = await configs.dio.post(URL,
       data: agenda.toJson(),
