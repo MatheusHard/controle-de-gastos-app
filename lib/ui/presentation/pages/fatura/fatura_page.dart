@@ -157,12 +157,12 @@ class _FaturaPageState extends State<FaturaPage> {
   }
   //Get or Add Fatura
   Future<void> _getOrAddFatura(AgendaDePagamentoRequestDTO filters) async {
-    //final fatura =   await AgendaDePagamentoApi().getOneByFilter(filters);
-    //if(fatura == null){
+    final fatura =   await AgendaDePagamentoApi().getOneByFilter(filters);
+    if(fatura == null){
       faturaAtual = (await AgendaDePagamentoApi().addAgendaDePagamento(await _generateFatura()))!;
-   // }else{
-     // faturaAtual = fatura;
-   // }
+    }else{
+      faturaAtual = fatura;
+    }
     await _getGastos();
   }
   //Gerar Fatura
