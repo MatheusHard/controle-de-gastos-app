@@ -49,7 +49,7 @@ class _PhotoGalleryImgState extends State<PhotoGalleryNetworkImg> {
           widget.imagem!,
           width: 250,
           height: 250,
-          fit: BoxFit.cover,
+          fit: BoxFit.contain,
         ),
       );
     } else {
@@ -63,7 +63,7 @@ class _PhotoGalleryImgState extends State<PhotoGalleryNetworkImg> {
               ImgUrl.no_image,
               width: 250,
               height: 250,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             );
           } else {
             final headers = snapshot.data ?? {};
@@ -71,14 +71,14 @@ class _PhotoGalleryImgState extends State<PhotoGalleryNetworkImg> {
               image: NetworkImage('${widget.url}?${DateTime.now().millisecondsSinceEpoch}', headers: headers,),
               width: 250,
               height: 250,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) {
                 print("Ocorreu um Erro: $error");
                 return Image.asset(
                   ImgUrl.no_image,
                   width: 250,
                   height: 250,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 );
               },
             );
