@@ -102,6 +102,9 @@ class _RelatorioPageState extends State<RelatorioPage> {
                     case TypeFileEnum.excel:
                       await baixarExcel();
                       break;
+                    case TypeFileEnum.email:
+                    print("baixarExcel()");
+                      break;
                   }
                 },
                 label: 'Baixar',
@@ -116,16 +119,27 @@ class _RelatorioPageState extends State<RelatorioPage> {
   }
   // Gerar Excel
   Future<void> baixarExcel() async {
-    _isLoading = true;
-    await RelatorioApi(context).getRelatorioGastosExcel(filtros!);
-    _isLoading = false;
+
+    setState(() {_isLoading = true;});
+   try {
+      await RelatorioApi(context).getRelatorioGastosExcel(filtros!);
+    } finally {
+      if (mounted) {
+        setState(() {_isLoading = false;});
+      }
+    }
   }
 
   // Gerar Pdf
   Future<void> baixarPdf() async {
-    _isLoading = true;
-    await RelatorioApi(context).getRelatorioGastosPdf(filtros!);
-    _isLoading = false;
 
+    setState(() {_isLoading = true;});
+    try {
+      await RelatorioApi(context).getRelatorioGastosPdf(filtros!);
+    } finally {
+      if (mounted) {
+        setState(() {_isLoading = false;});
+      }
+    }
   }
 }

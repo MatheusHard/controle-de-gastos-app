@@ -136,14 +136,4 @@ class _HistoricoPageState extends State<HistoricoPage> {
       _isLoading = false;
     });
   }
-  Future<void> baixarExcel() async {
-    // chamar geração excel aqui
-    await RelatorioExcel.gerarExcelGastos(listaGastos);
-  }
-
-  Future<void> baixarPdf() async {
-    // chamar geração pdf aqui
-    await RelatorioPdf.gerarPdfGastos(listaGastos);
-  }
-
 }

@@ -1,4 +1,5 @@
 enum TypeFileEnum {
   excel,
-  pdf
+  pdf,
+  email
 }
