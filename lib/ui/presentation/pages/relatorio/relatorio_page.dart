@@ -1,4 +1,7 @@
 import 'package:controle_de_gastos_app/ui/core/constants/enums/type_file_enum.dart';
+import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
+import 'package:controle_de_gastos_app/ui/data/dtos/request/get/email_request_dto.dart';
+import 'package:controle_de_gastos_app/ui/data/service/api/email_api.dart';
 import 'package:controle_de_gastos_app/ui/data/service/api/relatorio_api.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/appbar/app_bar_back.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/buttons/radio/radio_type_relatorio.dart';
@@ -8,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
 import '../../../data/dtos/request/get/gasto_request_dto.dart';
+import '../../../data/model/user.dart';
 import '../../widgets/buttons/normal_button/custom_button.dart';
 
 
@@ -24,12 +28,14 @@ class _RelatorioPageState extends State<RelatorioPage> {
 
   TypeFileEnum _selected = TypeFileEnum.pdf;
   bool _isLoading = false;
+  User? user;
 
   GastoRequestDTO? filtros;
 
   @override
   void initState() {
     filtros = widget.filtros;
+    _loadingUser();
     super.initState();
   }
   @override
@@ -82,6 +88,19 @@ class _RelatorioPageState extends State<RelatorioPage> {
                   });
                 },
               ),
+              ///Radio Email
+              RadioTypeRelatorio<TypeFileEnum>(
+                value: TypeFileEnum.email,
+                groupValue: _selected,
+                icon: Icons.email_outlined,
+                title: "Email",
+                subtitle: "Ideal para envio de Emails",
+                onChanged: (value) {
+                  setState(() {
+                    _selected = value!;
+                  });
+                },
+              ),
               const Spacer(),
 
               ///Button Baixar
@@ -103,7 +122,7 @@ class _RelatorioPageState extends State<RelatorioPage> {
                       await baixarExcel();
                       break;
                     case TypeFileEnum.email:
-                    print("baixarExcel()");
+                      await enviarEmail();
                       break;
                   }
                 },
@@ -141,5 +160,33 @@ class _RelatorioPageState extends State<RelatorioPage> {
         setState(() {_isLoading = false;});
       }
     }
+  }
+  // Gerar Excel
+  Future<void> enviarEmail() async {
+
+    EmailRequestDTO request = EmailRequestDTO();
+    filtros?.userId = user?.id;
+    request.nomeUsuario = user?.username;
+    request.destinatario = user?.email;
+    request.filters = filtros;
+    request.corpo = '';
+    request.assunto = '';
+    request.remetente = '';
+    request.createdAt  =DateTime.now().toIso8601String();
+    request.updatedAt  =DateTime.now().toIso8601String();
+    request.file = null;
+
+    setState(() {_isLoading = true;});
+    try {
+      await EmailApi(context).sendEmail(request);
+    } finally {
+      if (mounted) {
+        setState(() {_isLoading = false;});
+      }
+    }
+  }
+  //Carregar User
+  Future<void> _loadingUser() async {
+    user = await Utils.recuperarUser();
   }
 }
