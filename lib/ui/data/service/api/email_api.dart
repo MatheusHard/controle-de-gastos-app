@@ -23,9 +23,9 @@ class EmailApi {
   Future<bool> sendEmail(EmailRequestDTO dto) async {
 
     final configs = await Configs.create();
-    try{
 
-      var response = await configs.dio.post('''$URL$SEND_EMAIL''',
+    try{
+          var response = await configs.dio.post('''$URL$SEND_EMAIL''',
           data: dto.toJson(),
           options: Options(headers: await Utils.requestToken()),
       );

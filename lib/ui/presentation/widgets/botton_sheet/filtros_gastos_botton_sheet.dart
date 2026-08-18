@@ -1,7 +1,6 @@
 import 'package:controle_de_gastos_app/ui/core/constants/enums/status_pagamento_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
 import '../../../core/utils/utils.dart';
@@ -17,11 +16,11 @@ class BottomSheetFiltroRelatorio extends StatefulWidget {
       DateTime? dataInicial,
       DateTime? dataFinal,
       StatusPagamentoEnum? status,
+      String? descricao,
       ) onConfirm;
 
   @override
-  State<BottomSheetFiltroRelatorio> createState() =>
-      _BottomSheetFiltroRelatorioState();
+  State<BottomSheetFiltroRelatorio> createState() => _BottomSheetFiltroRelatorioState();
 
   static Future<void> show(
       BuildContext context, {
@@ -29,6 +28,7 @@ class BottomSheetFiltroRelatorio extends StatefulWidget {
             DateTime? dataInicial,
             DateTime? dataFinal,
             StatusPagamentoEnum? status,
+            String? descricao,
             ) onConfirm,
       }) {
     return showModalBottomSheet(
@@ -47,11 +47,15 @@ class BottomSheetFiltroRelatorio extends StatefulWidget {
   }
 }
 
-class _BottomSheetFiltroRelatorioState
-    extends State<BottomSheetFiltroRelatorio> {
+class _BottomSheetFiltroRelatorioState extends State<BottomSheetFiltroRelatorio> {
+
   DateTime? dataInicial;
   DateTime? dataFinal;
   StatusPagamentoEnum? status;
+  String? descricao;
+
+  // Controller para o campo de descrição
+  final TextEditingController descricaoController = TextEditingController();
 
   Future<void> _selecionarDataInicial() async {
     final data = await showDatePicker(
@@ -62,7 +66,9 @@ class _BottomSheetFiltroRelatorioState
     );
 
     if (data != null) {
-      setState(() => dataInicial = data);
+      setState(() {
+        dataInicial = data;
+      });
     }
   }
 
@@ -75,8 +81,16 @@ class _BottomSheetFiltroRelatorioState
     );
 
     if (data != null) {
-      setState(() => dataFinal = data);
+      setState(() {
+        dataFinal = data;
+      });
     }
+  }
+
+  @override
+  void dispose() {
+    descricaoController.dispose();
+    super.dispose();
   }
 
   @override
@@ -103,6 +117,23 @@ class _BottomSheetFiltroRelatorioState
 
             const SizedBox(height: 20),
 
+            // Descrição
+            TextFormField(
+              controller: descricaoController,
+              decoration: const InputDecoration(
+                labelText: 'Descrição',
+                hintText: 'Digite a descrição',
+                prefixIcon: Icon(Icons.description),
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                descricao = value;
+              },
+            ),
+
+            const SizedBox(height: 15),
+
+            // Data Inicial
             ListTile(
               leading: const Icon(Icons.calendar_today),
               title: Text(
@@ -113,6 +144,7 @@ class _BottomSheetFiltroRelatorioState
               onTap: _selecionarDataInicial,
             ),
 
+            // Data Final
             ListTile(
               leading: const Icon(Icons.calendar_month),
               title: Text(
@@ -123,6 +155,7 @@ class _BottomSheetFiltroRelatorioState
               onTap: _selecionarDataFinal,
             ),
 
+            // Status
             DropdownButtonFormField<StatusPagamentoEnum>(
               value: status,
               decoration: const InputDecoration(
@@ -143,22 +176,29 @@ class _BottomSheetFiltroRelatorioState
 
             const SizedBox(height: 30),
 
-            /// Salvar
+            // Filtrar
             CustomButton(
               radios: 20,
               height: 55,
               gradient: context
                   .watch<ThemeProvider>()
                   .currentGradient,
-              // vem do provider
               icon: Icons.monetization_on,
-              isLoading: false, //todo
-              onTap: ()  {
+              isLoading: false,
+              onTap: () {
+
+                // Evita enviar string vazia
+                final descricaoFiltro = descricaoController.text.trim();
+
                 widget.onConfirm(
                   dataInicial,
                   dataFinal,
                   status,
+                  descricaoFiltro.isEmpty
+                      ? null
+                      : descricaoFiltro,
                 );
+
                 Navigator.pop(context);
               },
               label: 'Filtrar',

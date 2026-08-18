@@ -136,6 +136,7 @@ class _RelatorioPageState extends State<RelatorioPage> {
       ),
     );
   }
+
   // Gerar Excel
   Future<void> baixarExcel() async {
 
@@ -161,7 +162,8 @@ class _RelatorioPageState extends State<RelatorioPage> {
       }
     }
   }
-  // Gerar Excel
+
+  // Enviar Email
   Future<void> enviarEmail() async {
 
     EmailRequestDTO request = EmailRequestDTO();
@@ -172,8 +174,8 @@ class _RelatorioPageState extends State<RelatorioPage> {
     request.corpo = '';
     request.assunto = '';
     request.remetente = '';
-    request.createdAt  =DateTime.now().toIso8601String();
-    request.updatedAt  =DateTime.now().toIso8601String();
+    request.createdAt = DateTime.now().toIso8601String();
+    request.updatedAt = DateTime.now().toIso8601String();
     request.file = null;
 
     setState(() {_isLoading = true;});

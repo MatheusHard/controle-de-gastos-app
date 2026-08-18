@@ -35,12 +35,12 @@ class _HistoricoPageState extends State<HistoricoPage> {
   late DateTime? _dataInicial = DateTime(today.year, today.month, 1);
   late DateTime? _dataFinal = today;
   StatusPagamentoEnum? _statusPagamento;
+  String? _descricao;
   GastoRequestDTO? filtros;
 
   @override
   void initState() {
-    _loadingUser();
-    _getGastos();
+    _initialize();
     super.initState();
   }
   @override
@@ -58,18 +58,20 @@ class _HistoricoPageState extends State<HistoricoPage> {
                 dataInicial,
                 dataFinal,
                 status,
+                descricao
                 ) async {
               setState(() {
                 _dataInicial = dataInicial;
                 _dataFinal = dataFinal;
                 _statusPagamento = status;
+                _descricao = descricao;
               });
-
+              //Reload gastos
               await _getGastos();
             },
           );
         },
-        //DownloadPage
+        //Download Page
         onDownload:  () => Navigator.pushNamed(
           context,
           AppRoutes.relatorio,
@@ -110,23 +112,33 @@ class _HistoricoPageState extends State<HistoricoPage> {
       ),
     );
   }
-  //Carregar User
+
+  // Inicialização
+  Future<void> _initialize() async {
+    await _loadingUser();
+    await _getGastos();
+  }
+  // Carregar User
   Future<void> _loadingUser() async {
     final u = await Utils.recuperarUser();
     setState(() {
       user = u;
     });
+    print('Usuário carregado: ${user?.id}');
   }
 
   //Get Gastos
   Future<void> _getGastos() async {
-
     setState(() => _isLoading = true);
+
     filtros = GastoRequestDTO();
+
     filtros?.deletado = false;
     filtros?.dataInicial = _dataInicial?.toIso8601String();
     filtros?.dataFinal = _dataFinal?.toIso8601String();
     filtros?.statusPagamento = _statusPagamento;
+    filtros?.userId = user?.id;
+    filtros?.descricao = _descricao;
 
     final gastos = await GastoApi().getListByFilter(filtros!);
 
