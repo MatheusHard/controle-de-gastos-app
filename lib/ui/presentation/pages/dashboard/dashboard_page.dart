@@ -18,6 +18,7 @@ import '../../../data/dtos/dashboarding/gastos_mensais.dart';
 import '../../../data/dtos/request/get/dashboard_request_dto.dart';
 import '../../../data/model/user.dart';
 import '../../widgets/cards/card_total_gastos.dart';
+import '../../widgets/graficos/grafico_gastos_mensais.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -63,29 +64,11 @@ class _DashBoardPageState extends State<DashBoardPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Utils.sizedBox(altura: 20.0, largura: 0),
-              Text("DashBoarding",style: AppTextStyles.textoSentimentoNegritoWhite( 20, context),),
+              Text("DashBoarding", style: AppTextStyles.textoSentimentoNegritoWhite( 20, context),),
 
               ///Gráfico por mês
-              SfCartesianChart(
-                primaryXAxis: CategoryAxis(),
-                primaryYAxis: NumericAxis(
-                  numberFormat: NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$'),
-                ),
-                title: ChartTitle(text: 'Gastos mensais'),
-                legend: Legend(isVisible: true),
-                tooltipBehavior: TooltipBehavior(
-                  enable: true,
-                  format: 'Mês: point.x\nValor: R\$ point.y',
-                ),
-                series: <LineSeries<GastosMensais, String>>[
-                  LineSeries<GastosMensais, String>(
-                    dataSource: listaMensal,
-                    xValueMapper: (GastosMensais gastos, _) => gastos.mesAbreviado,
-                    yValueMapper: (GastosMensais gastos, _) => gastos.total,
-                    name: 'Gastos',
-                    dataLabelSettings: const DataLabelSettings(isVisible: true),
-                  ),
-                ],
+              GraficoGastosMensais(
+                gastos: listaMensal,
               ),
               ///Card Total
               CardDashboard(title: 'Total Geral',value: totaGeral, icon: Icons.monetization_on_sharp,)
