@@ -1,3 +1,4 @@
+import 'package:controle_de_gastos_app/ui/data/repositories/gasto_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,7 @@ import 'package:controle_de_gastos_app/ui/presentation/widgets/cards/card_gasto_
 import '../../../core/constants/routes/app_routes.dart';
 import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
+import '../../../data/service/api/gasto_api.dart';
 import '../../widgets/botton_sheet/filtros_gastos_botton_sheet.dart';
 import '../../widgets/cards/card_total_gastos.dart';
 import 'historico_view_model.dart';
@@ -21,7 +23,11 @@ class HistoricoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => HistoricoViewModel()..initialize(),
+      create: (_) => HistoricoViewModel(
+        repository: GastoRepository(
+            api: GastoApi()
+        )
+      )..initialize(),
       child: const _HistoricoView(),
     );
   }

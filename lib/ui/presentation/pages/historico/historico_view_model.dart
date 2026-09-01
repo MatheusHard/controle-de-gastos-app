@@ -4,22 +4,27 @@ import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/data/dtos/request/get/gasto_request_dto.dart';
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
-import 'package:controle_de_gastos_app/ui/data/service/api/gasto_api.dart';
-
 import '../../../core/constants/enums/status_pagamento_enum.dart';
+import '../../../data/repositories/gasto_repository.dart';
 
 /// ViewModel responsável por toda a lógica de estado e regras de negócio
 /// da tela de Histórico. Não conhece Widgets — apenas expõe estado e
 /// comportamentos que a View consome via `context.watch`/`context.read`.
 class HistoricoViewModel extends ChangeNotifier {
+
+  final GastoRepository repository;
+
   User? user;
   List<Gasto> listaGastos = [];
   bool isLoading = true;
   double total = 0;
   GastoRequestDTO? filtros;
 
-  final DateTime _today = DateTime.now();
+  HistoricoViewModel({
+    required this.repository,
+  });
 
+  final DateTime _today = DateTime.now();
   late DateTime? dataInicial = DateTime(_today.year, _today.month, 1);
   late DateTime? dataFinal = _today;
   StatusPagamentoEnum? statusPagamento;
@@ -48,7 +53,7 @@ class HistoricoViewModel extends ChangeNotifier {
       ..userId = user?.id
       ..descricao = descricao;
 
-    final gastos = await GastoApi().getListByFilter(filtros!);
+    final gastos = await repository.getListByFilter(filtros!);
 
     listaGastos = gastos;
     total = Utils.sumTotalGastos(gastos);
