@@ -1,52 +1,56 @@
-import 'package:controle_de_gastos_app/ui/core/constants/enums/type_file_enum.dart';
-import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
-import 'package:controle_de_gastos_app/ui/data/dtos/request/get/email_request_dto.dart';
-import 'package:controle_de_gastos_app/ui/data/service/api/email_api.dart';
-import 'package:controle_de_gastos_app/ui/data/service/api/relatorio_api.dart';
-import 'package:controle_de_gastos_app/ui/presentation/widgets/appbar/app_bar_back.dart';
-import 'package:controle_de_gastos_app/ui/presentation/widgets/buttons/radio/radio_type_relatorio.dart';
+import 'package:controle_de_gastos_app/ui/presentation/pages/relatorio/relatorio_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/constants/enums/type_file_enum.dart';
 import '../../../core/theme/provider/theme_provider.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
 import '../../../data/dtos/request/get/gasto_request_dto.dart';
-import '../../../data/model/user.dart';
+import '../../../data/repositories/relatorio_repository.dart';
+import '../../widgets/appbar/app_bar_back.dart';
 import '../../widgets/buttons/normal_button/custom_button.dart';
+import '../../widgets/buttons/radio/radio_type_relatorio.dart';
 
-
-class RelatorioPage extends StatefulWidget {
+class RelatorioPage extends StatelessWidget {
   final GastoRequestDTO? filtros;
 
-  const RelatorioPage({super.key, this.filtros});
+  const RelatorioPage({
+    super.key,
+    this.filtros,
+  });
 
-  @override
-  State<RelatorioPage> createState() => _RelatorioPageState();
-}
-
-class _RelatorioPageState extends State<RelatorioPage> {
-
-  TypeFileEnum _selected = TypeFileEnum.pdf;
-  bool _isLoading = false;
-  User? user;
-
-  GastoRequestDTO? filtros;
-
-  @override
-  void initState() {
-    filtros = widget.filtros;
-    _loadingUser();
-    super.initState();
-  }
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) {
+        final viewModel = RelatorioViewModel(
+          repository: RelatorioRepository(context),
+          filtros: filtros,
+        );
+
+        viewModel.init();
+
+        return viewModel;
+      },
+      child: const _RelatorioView(),
+    );
+  }
+}
+
+class _RelatorioView extends StatelessWidget {
+  const _RelatorioView();
+
+  @override
+  Widget build(BuildContext context) {
+    final viewModel = context.watch<RelatorioViewModel>();
+    final themeProvider = context.watch<ThemeProvider>();
 
     return Scaffold(
       appBar: AppBarBack(
         title: '',
-        onBack:  () => Navigator.pop(context),
-        onClose: () =>  Navigator.pop(context),
-        gradient: context.watch<ThemeProvider>().currentGradient, // vem do provider,
+        onBack: () => Navigator.pop(context),
+        onClose: () => Navigator.pop(context),
+        gradient: themeProvider.currentGradient,
       ),
       body: SafeArea(
         child: Padding(
@@ -54,141 +58,83 @@ class _RelatorioPageState extends State<RelatorioPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ///Title
-              Text("Em qual formato você deseja baixar o relatório?",
+
+              /// Título
+              Text(
+                "Em qual formato você deseja baixar o relatório?",
                 style: AppTextStyles.textoSentimentoNegritoWhite(
-                    20, context),),
+                  20,
+                  context,
+                ),
+              ),
 
               const SizedBox(height: 30),
-              ///Radio Pdf
+
+              /// PDF
               RadioTypeRelatorio<TypeFileEnum>(
                 value: TypeFileEnum.pdf,
-                groupValue: _selected,
+                groupValue: viewModel.selected,
                 icon: Icons.picture_as_pdf,
                 title: "PDF",
                 subtitle: "Ideal para visualizar e imprimir",
                 onChanged: (value) {
-                  setState(() {
-                    _selected = value!;
-                  });
+                  if (value != null) {
+                    viewModel.selecionarTipo(value);
+                  }
                 },
               ),
 
               const SizedBox(height: 15),
-              ///Radio Excel
+
+              /// Excel
               RadioTypeRelatorio<TypeFileEnum>(
                 value: TypeFileEnum.excel,
-                groupValue: _selected,
+                groupValue: viewModel.selected,
                 icon: Icons.table_chart,
                 title: "Excel (.xlsx)",
                 subtitle: "Ideal para editar no Excel",
                 onChanged: (value) {
-                  setState(() {
-                    _selected = value!;
-                  });
+                  if (value != null) {
+                    viewModel.selecionarTipo(value);
+                  }
                 },
               ),
-              ///Radio Email
+
+              const SizedBox(height: 15),
+
+              /// Email
               RadioTypeRelatorio<TypeFileEnum>(
                 value: TypeFileEnum.email,
-                groupValue: _selected,
+                groupValue: viewModel.selected,
                 icon: Icons.email_outlined,
                 title: "Email",
                 subtitle: "Ideal para envio de Emails",
                 onChanged: (value) {
-                  setState(() {
-                    _selected = value!;
-                  });
+                  if (value != null) {
+                    viewModel.selecionarTipo(value);
+                  }
                 },
               ),
+
               const Spacer(),
 
-              ///Button Baixar
+              /// Botão
               CustomButton(
                 radios: 20,
                 height: 55,
-                gradient: context
-                    .watch<ThemeProvider>()
-                    .currentGradient,
-                // vem do provider
+                gradient: themeProvider.currentGradient,
                 icon: Icons.file_download,
-                isLoading: _isLoading,
+                isLoading: viewModel.isLoading,
                 onTap: () async {
-                  switch (_selected) {
-                    case TypeFileEnum.pdf:
-                     await baixarPdf();
-                      break;
-                    case TypeFileEnum.excel:
-                      await baixarExcel();
-                      break;
-                    case TypeFileEnum.email:
-                      await enviarEmail();
-                      break;
-                  }
+                  await viewModel.gerarRelatorio();
                 },
-                label: 'Baixar',
+                label: 'Baixar/Enviar',
                 textStyle: AppTextStyles.textLogin,
               ),
-
             ],
           ),
         ),
       ),
     );
-  }
-
-  // Gerar Excel
-  Future<void> baixarExcel() async {
-
-    setState(() {_isLoading = true;});
-   try {
-      await RelatorioApi(context).getRelatorioGastosExcel(filtros!);
-    } finally {
-      if (mounted) {
-        setState(() {_isLoading = false;});
-      }
-    }
-  }
-
-  // Gerar Pdf
-  Future<void> baixarPdf() async {
-
-    setState(() {_isLoading = true;});
-    try {
-      await RelatorioApi(context).getRelatorioGastosPdf(filtros!);
-    } finally {
-      if (mounted) {
-        setState(() {_isLoading = false;});
-      }
-    }
-  }
-
-  // Enviar Email
-  Future<void> enviarEmail() async {
-
-    EmailRequestDTO request = EmailRequestDTO();
-    filtros?.userId = user?.id;
-    request.nomeUsuario = user?.username;
-    request.destinatario = user?.email;
-    request.filters = filtros;
-    request.corpo = '';
-    request.assunto = '';
-    request.remetente = '';
-    request.createdAt = DateTime.now().toIso8601String();
-    request.updatedAt = DateTime.now().toIso8601String();
-    request.file = null;
-
-    setState(() {_isLoading = true;});
-    try {
-      await EmailApi(context).sendEmail(request);
-    } finally {
-      if (mounted) {
-        setState(() {_isLoading = false;});
-      }
-    }
-  }
-  //Carregar User
-  Future<void> _loadingUser() async {
-    user = await Utils.recuperarUser();
   }
 }
