@@ -22,16 +22,10 @@ class RelatorioPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) {
-        final viewModel = RelatorioViewModel(
+      create: (_) => RelatorioViewModel(
           repository: RelatorioRepository(context),
           filtros: filtros,
-        );
-
-        viewModel.init();
-
-        return viewModel;
-      },
+        ),
       child: const _RelatorioView(),
     );
   }
