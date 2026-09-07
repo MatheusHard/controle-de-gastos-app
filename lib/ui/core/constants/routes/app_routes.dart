@@ -4,9 +4,9 @@ import 'package:controle_de_gastos_app/ui/presentation/pages/relatorio/relatorio
 import 'package:flutter/material.dart';
 import '../../../data/dtos/request/get/gasto_request_dto.dart';
 import '../../../data/model/gasto.dart';
-import '../../../presentation/pages/fatura/add_fatura_page.dart';
-import '../../../presentation/pages/fatura/edit_fatura_page.dart';
-import '../../../presentation/pages/fatura/fatura_page.dart';
+import '../../../presentation/pages/fatura/add/add_fatura_page.dart';
+import '../../../presentation/pages/fatura/edit/edit_fatura_page.dart';
+import '../../../presentation/pages/fatura/page/fatura_page.dart';
 import '../../../presentation/pages/home/home_page.dart';
 import '../../../presentation/pages/login/login_page.dart';
 import '../../../presentation/pages/perfil/perfil.dart';

@@ -31,7 +31,7 @@ class GastoApi {
       data: gasto.toJson(),
       options: Options(headers: await Utils.requestToken()),
     );
-    return response.statusCode == 200;
+    return response.statusCode == 200 || response.statusCode == 201;
   }
   //Get All
   Future<List<Gasto>> getList() async {
