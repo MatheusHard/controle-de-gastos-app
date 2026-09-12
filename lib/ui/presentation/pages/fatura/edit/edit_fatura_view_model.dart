@@ -160,6 +160,8 @@ EditFaturaViewModel({
   }) async {
     final request = GastoUpdatedRequestDto();
 
+    _validate();
+
     request.id = gasto?.id;
     request.descricao = descricao;
 
@@ -194,6 +196,13 @@ EditFaturaViewModel({
 
     return request;
   }
+
+  //Valid
+  _validate(){
+    if(gasto?.agendaDePagamento?.id == null) throw Exception("Não adicionar sem Agenda de Pagamento.");
+    if(user?.id == null) throw Exception("Não adicionar sem Usuário.");
+    if(gasto?.id == null) throw Exception("Não adicionar sem Gasto.");
+   }
 
   Future<bool> salvarGasto({
     required String descricao,

@@ -131,6 +131,8 @@ class AddFaturaViewModel extends ChangeNotifier {
 
     final g = GastoCreatedRequestDTO();
 
+    _validate();
+
     g.descricao = descricao;
     g.valor = valor.isNotEmpty ? double.parse(valor) : 0;
     g.vencimento = vencimento.toIso8601String();
@@ -149,6 +151,12 @@ class AddFaturaViewModel extends ChangeNotifier {
     g.pago = isPago;
 
     return g;
+  }
+
+  //Valid
+  _validate(){
+    if(gasto?.agendaDePagamento?.id == null) throw Exception("Não adicionar sem Agenda de Pagamento.");
+    if(user?.id == null) throw Exception("Não adicionar sem Usuário.");
   }
 
   // Salvar gasto
