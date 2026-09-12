@@ -93,19 +93,17 @@ class AddFaturaViewModel extends ChangeNotifier {
 
   // Selecionar imagem da galeria
   Future<void> getImage(ImageSource source) async {
+
     final galleryFile = await _picker.pickImage(
       source: source,
       maxHeight: 480,
       maxWidth: 640,
       imageQuality: 50,
     );
-
     if (galleryFile == null) return;
 
     final originalFile = File(galleryFile.path);
-
-    final compressedBytes =
-        await Utils.compressImageBytes(originalFile);
+    final compressedBytes = await Utils.compressImageBytes(originalFile);
 
     if (compressedBytes != null) {
       _setImagem(originalFile, compressedBytes);
@@ -123,49 +121,31 @@ class AddFaturaViewModel extends ChangeNotifier {
     required String valor,
     required DateTime vencimento,
   }) async {
-    final currentImage =
-        Utils.imageShareNotifier.value ?? imagem;
+    final currentImage = Utils.imageShareNotifier.value ?? imagem;
 
     Uint8List? currentBytes;
 
     if (currentImage != null) {
-      currentBytes =
-          await Utils.compressImageBytes(currentImage);
+      currentBytes = await Utils.compressImageBytes(currentImage);
     }
 
     final g = GastoCreatedRequestDTO();
 
     g.descricao = descricao;
-
-    g.valor = valor.isNotEmpty
-        ? double.parse(valor)
-        : 0;
-
+    g.valor = valor.isNotEmpty ? double.parse(valor) : 0;
     g.vencimento = vencimento.toIso8601String();
-
     g.createdAt = DateTime.now().toIso8601String();
     g.updatedAt = DateTime.now().toIso8601String();
-
-    g.imagemBase64 = currentBytes != null
-        ? await Utils.base64String(currentBytes)
-        : null;
-
-    g.photoName =
-        "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
-
+    g.imagemBase64 = currentBytes != null ? await Utils.base64String(currentBytes) : null;
+    g.photoName = "foto_${user?.id}${DateTime.now().millisecondsSinceEpoch}.jpg";
     g.userId = user?.id;
-
-    g.agendaDePagamentoId =
-        gasto?.agendaDePagamento?.id;
-
+    g.agendaDePagamentoId = gasto?.agendaDePagamento?.id;
     g.deletado = gasto?.deletado ?? false;
-
     g.statusPagamento = isPago
         ? StatusPagamentoEnum.PAGO
         : Utils.isVencido(gasto?.vencimento)
             ? StatusPagamentoEnum.VENCIDO
             : StatusPagamentoEnum.NAO_PAGO;
-
     g.pago = isPago;
 
     return g;
@@ -203,7 +183,7 @@ class AddFaturaViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-
+//_validate()
   // Limpar imagem compartilhada
   void cleanWidgets() {
     Utils.imageShareNotifier.value = null;

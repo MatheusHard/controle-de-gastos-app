@@ -54,6 +54,7 @@ class FaturaViewModel extends ChangeNotifier {
 
   // Carregar fatura atual
   Future<void> _loadingFaturaAtual() async {
+
     final filters = AgendaDePagamentoRequestDTO();
 
     filters.dataInicial = Utils.dateFirstOrLast(true);
@@ -66,14 +67,20 @@ class FaturaViewModel extends ChangeNotifier {
   }
 
   // Buscar ou criar fatura
-  Future<void> _getOrAddFatura(
-    AgendaDePagamentoRequestDTO filters,
-  ) async {
-    final fatura = await agendaDePagamentoRepository.getOneByFilter(filters);
+  Future<void> _getOrAddFatura(AgendaDePagamentoRequestDTO filters) async {
 
+    if(filters.userId == null) throw Exception('Usuário não encontrado.');
+
+    final fatura = await agendaDePagamentoRepository.getOneByFilter(filters);
     if (fatura == null) {
-      faturaAtual = (await agendaDePagamentoRepository.addAgendaDePagamento(await _generateFatura(),))!;
+      final novaFatura = await agendaDePagamentoRepository.addAgendaDePagamento(await _generateFatura(),);
+
+      if (novaFatura == null || novaFatura.id == null) throw Exception('Fatura criada sem ID.');
+      faturaAtual = novaFatura;
+
     } else {
+
+      if (fatura.id == null) throw Exception('Fatura encontrada sem ID.');
       faturaAtual = fatura;
     }
 
