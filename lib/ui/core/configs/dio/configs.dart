@@ -13,12 +13,14 @@ class Configs {
   static Future<Configs> create() async {
       final config = Configs();
       final bool isProd = await Utils.getIsProd();
-      ///URL
+      // URL
       config._dio.options.baseUrl = isProd ? URL_PROD : URL_HOMOLOG;
-      ///Timeout
-      config._dio.options.connectTimeout = const Duration(seconds: 5);
-      ///Receive
-      config._dio.options.receiveTimeout = const Duration(seconds: 3);
+      // Timeout para estabelecer conexão
+      config._dio.options.connectTimeout = const Duration(seconds: 10);
+      // Timeout para enviar os dados
+      config._dio.options.sendTimeout = const Duration(seconds: 30);
+      // Timeout aguardando a resposta do servidor
+      config._dio.options.receiveTimeout = const Duration(seconds: 30);
 
     return config;
   }

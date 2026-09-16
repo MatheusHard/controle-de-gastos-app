@@ -46,7 +46,9 @@ class _FaturaView extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: _buildBody(context, viewModel),
       ),
-      floatingActionButton: CustomFloatingActionButton(
+      floatingActionButton: viewModel.isLoading
+          ? null
+          : CustomFloatingActionButton(
         onPressed: () => _adicionarGasto(context, viewModel),
       ),
     );
