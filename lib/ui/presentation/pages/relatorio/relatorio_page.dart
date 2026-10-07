@@ -25,7 +25,7 @@ class RelatorioPage extends StatelessWidget {
       create: (_) => RelatorioViewModel(
           repository: RelatorioRepository(context),
           filtros: filtros,
-        ),
+        )..init(),
       child: const _RelatorioView(),
     );
   }
