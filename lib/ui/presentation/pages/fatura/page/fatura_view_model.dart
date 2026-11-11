@@ -7,6 +7,7 @@ import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 
 import '../../../../core/constants/enums/status_pagamento_enum.dart';
 import '../../../../core/utils/utils.dart';
+import '../../../../data/dtos/gastos_filtrados_dto.dart';
 import '../../../../data/dtos/request/created/agenda_de_pagameto_created_request_dto.dart';
 import '../../../../data/dtos/request/get/agenda_de_pagamento_request_dto.dart';
 import '../../../../data/model/user.dart';
@@ -26,7 +27,11 @@ class FaturaViewModel extends ChangeNotifier {
 
   User? user;
   AgendaDePagamento faturaAtual = AgendaDePagamento();
-  List<Gasto> listaGastos = [];
+  GastosFiltradosDTO _gastosFiltrados = GastosFiltradosDTO.fromList([]);
+  List<Gasto> get listaGastos => _gastosFiltrados.content;
+  int? get totalPages => _gastosFiltrados.totalPages;
+  int get totalElements => _gastosFiltrados.totalElements;
+  double get totalValor => _gastosFiltrados.totalValor;
   bool isLoading = true;
   String? errorMessage;
 
@@ -123,9 +128,12 @@ class FaturaViewModel extends ChangeNotifier {
         user?.id ?? 0,
       );
 
-      if (sucesso) {
-        listaGastos.removeWhere(
-          (item) => item.id == gasto.id,
+      if (sucesso && listaGastos.any((item) => item.id == gasto.id)) {
+        _gastosFiltrados = GastosFiltradosDTO(
+          content: listaGastos.where((item) => item.id != gasto.id).toList(),
+          totalPages: totalPages,
+          totalElements: totalElements - 1,
+          totalValor: totalValor - (gasto.valor ?? 0),
         );
 
         notifyListeners();
@@ -170,7 +178,7 @@ class FaturaViewModel extends ChangeNotifier {
     filters.deletado = false;
     filters.agendaDePagamentoId = faturaAtual.id;
 
-    listaGastos = await gastoRepository.getListByFilter(filters);
+    _gastosFiltrados = await gastoRepository.getGastosFiltrados(filters);
   }
 
   // Recarregar gastos após adicionar/editar

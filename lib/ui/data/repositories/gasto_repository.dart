@@ -1,4 +1,5 @@
 import 'package:controle_de_gastos_app/ui/data/dtos/request/get/gasto_request_dto.dart';
+import '../dtos/gastos_filtrados_dto.dart';
 import '../dtos/request/created/gasto_created_request_dto.dart';
 import '../dtos/request/updated/gasto_updated_request_dto.dart';
 import '../model/gasto.dart';
@@ -26,5 +27,9 @@ class GastoRepository {
 
   Future<List<Gasto>> getListByFilter(GastoRequestDTO filtros){
     return api.getListByFilter(filtros);
+  }
+
+  Future<GastosFiltradosDTO> getGastosFiltrados(GastoRequestDTO filtros) {
+    return api.getGastosFiltrados(filtros);
   }
 }

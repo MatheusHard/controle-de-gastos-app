@@ -4,7 +4,7 @@ import 'package:controle_de_gastos_app/ui/data/dtos/request/updated/gasto_update
 import 'package:controle_de_gastos_app/ui/data/model/gasto.dart';
 import 'package:dio/dio.dart';
 import '../../../core/configs/dio/configs.dart';
-import '../../dtos/gasto_dto.dart';
+import '../../dtos/gastos_filtrados_dto.dart';
 import '../../dtos/request/get/gasto_request_dto.dart';
 
 class GastoApi {
@@ -47,16 +47,26 @@ class GastoApi {
   }
   //Get All By Filters
   Future<List<Gasto>> getListByFilter(GastoRequestDTO filtros) async {
-    final configs = await Configs.create();
+    return (await getGastosFiltrados(filtros)).content;
+  }
 
-    var response = await configs.dio.get(
+  Future<GastosFiltradosDTO> getGastosFiltrados(GastoRequestDTO filtros) async {
+    final configs = await Configs.create();
+    final response = await configs.dio.get<dynamic>(
       URL + FILTRAR,
       queryParameters: filtros.toJson(),
       options: Options(headers: await Utils.requestToken()),
     );
-    if (response.statusCode == 200) {
-      return (response.data as List).map((json) => Gasto.fromJson(json)).toList();
+    if (response.statusCode != 200) {
+      return GastosFiltradosDTO.fromList([]);
     }
-    return [];
+
+    final data = response.data;
+    if (data is List) {
+      return GastosFiltradosDTO.fromList(
+        data.map((json) => Gasto.fromJson(json)).toList(),
+      );
+    }
+    return GastosFiltradosDTO.fromJson(data as Map<String, dynamic>);
   }
 }

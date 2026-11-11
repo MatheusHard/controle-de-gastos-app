@@ -2,7 +2,6 @@ import 'package:controle_de_gastos_app/ui/data/model/agenda_de_pagamento.dart';
 import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 
 import '../../core/constants/enums/status_pagamento_enum.dart';
-import '../dtos/user_dto.dart';
 
 class Gasto {
   int? id;
@@ -46,15 +45,21 @@ class Gasto {
     vencimento = json['vencimento'];
     descricao = json['descricao'];
     user = json['user'] != null ? User.fromJson(json['user']) : null;
+    if (user == null && (json['userId'] != null || json['username'] != null)) {
+      user = User(id: json['userId'], username: json['username']);
+    }
     deletado = json['deletado'];
     dataInicial = json['dataInicial'];
     dataFinal = json['dataFinal'];
     statusPagamento = json['statusPagamento'] != null
         ? StatusPagamentoEnum.fromString(json['statusPagamento'])
         : null;
-    valor = json['valor'];
+    valor = (json['valor'] as num?)?.toDouble();
     pago = json['pago'];
     agendaDePagamento = json['agendaDePagamento'] != null ? AgendaDePagamento.fromJson(json['agendaDePagamento']) : null;
+    if (agendaDePagamento == null && json['agendaDePagamentoId'] != null) {
+      agendaDePagamento = AgendaDePagamento(id: json['agendaDePagamentoId']);
+    }
     photoName = json['photoName'];
     imagemBase64 = json['imagemBase64'];
   }
