@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:controle_de_gastos_app/ui/data/repositories/gasto_repository.dart';
 import 'package:controle_de_gastos_app/ui/data/service/api/gasto_api.dart';
 import 'package:flutter/material.dart';
@@ -185,15 +183,10 @@ class _AddFaturaViewState extends State<_AddFaturaView> {
                 ),
 
                 // Foto / Galeria
-                ValueListenableBuilder<File?>(
-                  valueListenable: Utils.imageShareNotifier,
-                  builder: (context, file, _) {
-                    return PhotoGalleryNetworkImg(
-                      tirarFoto: viewModel.tirarFoto,
-                      getImage: viewModel.getImage,
-                      imagem: file ?? viewModel.imagem,
-                    );
-                  },
+                SharedPhotoGalleryNetworkImg(
+                  tirarFoto: viewModel.tirarFoto,
+                  getImage: viewModel.getImage,
+                  imagem: viewModel.imagem,
                 ),
 
                 Utils.sizedBox(

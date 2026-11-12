@@ -11,11 +11,14 @@ import 'package:controle_de_gastos_app/ui/data/model/user.dart';
 
 import '../../../../core/constants/enums/status_pagamento_enum.dart';
 import '../../../../core/utils/utils.dart';
+import '../../../../data/service/share/share_service.dart';
 
 
 class AddFaturaViewModel extends ChangeNotifier {
   final GastoRepository gastoRepository;
   final ImagePicker _picker = ImagePicker();
+  final ShareService _shareService = ShareService();
+  bool _disposed = false;
 
 
   User? user;
@@ -26,7 +29,6 @@ class AddFaturaViewModel extends ChangeNotifier {
   bool isEdit = false;
 
   File? imagem;
-  Uint8List? bytes;
 
   String? errorMessage;
 
@@ -39,14 +41,11 @@ class AddFaturaViewModel extends ChangeNotifier {
   Future<void> init() async {
     try {
       user = await Utils.recuperarUser();
-
-      // 🔥 Carrega imagem compartilhada, se existir
-      await _onImageShared();
     } catch (e) {
       errorMessage = 'Erro ao carregar dados: $e';
     }
 
-    notifyListeners();
+    if (!_disposed) notifyListeners();
   }
 
   // Atualizar status de pagamento
@@ -56,22 +55,22 @@ class AddFaturaViewModel extends ChangeNotifier {
   }
 
   // Atualizar imagem selecionada
-  void _setImagem(File file, Uint8List compressedBytes) {
-    Utils.imageShareNotifier.value = null;
-
+  void _setImagem(File file, File? sharedImage) {
+    if (_disposed) return;
     imagem = file;
-    bytes = compressedBytes;
+    _shareService.clearImage(sharedImage);
 
     notifyListeners();
   }
 
   // Tirar foto
   Future<void> tirarFoto() async {
+    final sharedImage = _shareService.image.value;
     final status = await Permission.camera.request();
 
     if (!status.isGranted) {
       errorMessage = 'Permissão de câmera negada';
-      notifyListeners();
+      if (!_disposed) notifyListeners();
       return;
     }
 
@@ -87,13 +86,13 @@ class AddFaturaViewModel extends ChangeNotifier {
         await Utils.compressImageBytes(originalFile);
 
     if (compressedBytes != null) {
-      _setImagem(originalFile, compressedBytes);
+      _setImagem(originalFile, sharedImage);
     }
   }
 
   // Selecionar imagem da galeria
   Future<void> getImage(ImageSource source) async {
-
+    final sharedImage = _shareService.image.value;
     final galleryFile = await _picker.pickImage(
       source: source,
       maxHeight: 480,
@@ -106,7 +105,7 @@ class AddFaturaViewModel extends ChangeNotifier {
     final compressedBytes = await Utils.compressImageBytes(originalFile);
 
     if (compressedBytes != null) {
-      _setImagem(originalFile, compressedBytes);
+      _setImagem(originalFile, sharedImage);
     }
   }
 
@@ -116,17 +115,19 @@ class AddFaturaViewModel extends ChangeNotifier {
   }
 
   // Gerar objeto Gasto
-  Future<GastoCreatedRequestDTO> generateGasto({
+  Future<GastoCreatedRequestDTO> _generateGasto({
     required String descricao,
     required String valor,
     required DateTime vencimento,
+    required File? currentImage,
   }) async {
-    final currentImage = Utils.imageShareNotifier.value ?? imagem;
-
     Uint8List? currentBytes;
 
     if (currentImage != null) {
       currentBytes = await Utils.compressImageBytes(currentImage);
+      if (currentBytes == null) {
+        throw Exception('Não foi possível ler a imagem selecionada.');
+      }
     }
 
     final g = GastoCreatedRequestDTO();
@@ -154,7 +155,7 @@ class AddFaturaViewModel extends ChangeNotifier {
   }
 
   //Valid
-  _validate(){
+  void _validate() {
     if(gasto?.agendaDePagamento?.id == null) throw Exception("Não adicionar sem Agenda de Pagamento.");
     if(user?.id == null) throw Exception("Não adicionar sem Usuário.");
   }
@@ -165,20 +166,28 @@ class AddFaturaViewModel extends ChangeNotifier {
     required String valor,
     required DateTime vencimento,
   }) async {
+    if (_shareService.importingPdf.value) {
+      errorMessage = 'Aguarde o PDF compartilhado abrir antes de salvar.';
+      return false;
+    }
     isLoading = true;
     errorMessage = null;
     notifyListeners();
 
+    final sharedImage = _shareService.image.value;
     try {
-      final request = await generateGasto(
+      final request = await _generateGasto(
         descricao: descricao,
         valor: valor,
         vencimento: vencimento,
+        currentImage: sharedImage ?? imagem,
       );
 
       final sucesso = await gastoRepository.addGasto(request);
 
-      if (!sucesso) {
+      if (sucesso) {
+        _shareService.clearImage(sharedImage);
+      } else {
         errorMessage = 'Não foi possível salvar o gasto.';
       }
 
@@ -188,31 +197,13 @@ class AddFaturaViewModel extends ChangeNotifier {
       return false;
     } finally {
       isLoading = false;
-      notifyListeners();
-    }
-  }
-//_validate()
-  // Limpar imagem compartilhada
-  void cleanWidgets() {
-    Utils.imageShareNotifier.value = null;
-  }
-
-  // Carregar imagem compartilhada
-  Future<void> _onImageShared() async {
-    final file = Utils.imageShareNotifier.value;
-
-    if (file == null) return;
-    await Utils.saveImageShare(file);
-    final compressedBytes = await Utils.compressImageBytes(file);
-    if (compressedBytes != null) {
-      imagem = file;
-      bytes = compressedBytes;
+      if (!_disposed) notifyListeners();
     }
   }
 
   @override
   void dispose() {
-    cleanWidgets();
+    _disposed = true;
     super.dispose();
   }
 }

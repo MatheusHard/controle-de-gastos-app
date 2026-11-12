@@ -10,7 +10,6 @@ import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:share_handler/share_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import '../../data/model/gasto.dart';
@@ -25,7 +24,6 @@ class Utils {
   static String URL_UPLOAD = 'photos/';
   static String URL_IMG_WEB = "images/";
   static String URL_IMG_ANDROID = "assets/images/";
-  static final ValueNotifier<File?> imageShareNotifier = ValueNotifier<File?>(null);
   //Micro-serviços
   static final URL_MS_IMAGEM = "https://ms-imagem.squareweb.app";
   static final URL_MS_IMAGEM_HOMOLOG = "https://ms-imagem.squareweb.app"; //TODO Ficara com url de prod, por enquanto
@@ -409,48 +407,6 @@ class Utils {
       default:
         return '';
       }
-  }
-  //Get Image
-  static Future<void> loadImageShare() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? path = prefs.getString('shared_file_path');
-
-    if (path != null && path.isNotEmpty) {
-      imageShareNotifier.value = File(path);
-    }
-  }
-  //Save Image
-  static Future<void> saveImageShare(File? file) async {
-    final prefs = await SharedPreferences.getInstance();
-    if (file != null) {
-      await prefs.setString('shared_file_path', file.path);
-      // 🔥 atualiza automaticamente a UI
-      imageShareNotifier.value = file;
-    }
-  }
-  //Delete Image
-  static Future<void> deleteImageShare() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('shared_file_path');
-
-    imageShareNotifier.value = null;
-  }
-
-  //Capture Image Share
-  static Future<void> handleSharedMedia(SharedMedia media) async {
-
-    final attachments = media.attachments;
-    if (attachments == null || attachments.isEmpty) return;
-
-    for (final item in attachments) {
-      if (item == null) continue;
-      if (item.path.isNotEmpty) {
-        final file = File(item.path);
-        await saveImageShare(file);
-      } else {
-        print("Arquivo sem path, possível uso de URI");
-      }
-    }
   }
   static double sumTotalGastos(List<Gasto> listaGastos) {
     double valorTotal = listaGastos.fold(0.0, (soma, item) => soma + (item.valor ?? 0),);

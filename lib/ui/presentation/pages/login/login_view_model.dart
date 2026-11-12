@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:share_handler/share_handler.dart';
 
 import '../../../core/utils/utils.dart';
 import '../../../data/model/user.dart';
@@ -27,8 +26,6 @@ class LoginViewModel extends ChangeNotifier {
     await loadUser();
     await loadAmbiente();
     await loadConectado();
-
-    getFileByShare();
 
     notifyListeners();
   }
@@ -98,20 +95,6 @@ class LoginViewModel extends ChangeNotifier {
   void changeAmbiente(bool value) {
     isHomologacao = value;
     notifyListeners();
-  }
-
-  void getFileByShare() {
-    final handler = ShareHandler.instance;
-
-    handler.sharedMediaStream.listen((media) {
-      Utils.handleSharedMedia(media);
-    });
-
-    handler.getInitialSharedMedia().then((media) {
-      if (media != null) {
-        Utils.handleSharedMedia(media);
-      }
-    });
   }
 
   @override

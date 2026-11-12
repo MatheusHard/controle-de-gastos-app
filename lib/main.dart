@@ -2,15 +2,16 @@ import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:controle_de_gastos_app/ui/core/constants/routes/app_routes.dart';
 import 'package:controle_de_gastos_app/ui/core/theme/provider/theme_provider.dart';
 import 'package:controle_de_gastos_app/ui/data/service/notifications/notifications.dart';
+import 'package:controle_de_gastos_app/ui/data/service/share/share_service.dart';
 import 'package:controle_de_gastos_app/ui/data/service/worker/alarm_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:share_handler/share_handler.dart';
 
 @pragma('vm:entry-point')
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  ShareService().init();
 
   ///Serviços
   await Notifications.initNotifications();

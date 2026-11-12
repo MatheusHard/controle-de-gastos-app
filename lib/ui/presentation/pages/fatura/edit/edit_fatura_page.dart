@@ -209,7 +209,7 @@ class _EditFaturaViewState extends State<_EditFaturaView> {
                 inactiveColor: Colors.red,
               ),
 
-              PhotoGalleryNetworkImg(
+              SharedPhotoGalleryNetworkImg(
                 tirarFoto: viewModel.tirarFoto,
                 getImage: viewModel.getImage,
                 imagem: viewModel.imagem,

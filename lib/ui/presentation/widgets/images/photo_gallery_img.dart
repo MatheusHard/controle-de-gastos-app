@@ -5,7 +5,65 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../core/constants/imgs/img_url.dart';
 import '../../../core/utils/utils.dart';
+import '../../../data/service/share/share_service.dart';
 import '../appbar/app_bar_header_photo.dart';
+
+class SharedPhotoGalleryNetworkImg extends StatelessWidget {
+  final VoidCallback tirarFoto;
+  final ValueChanged<ImageSource> getImage;
+  final File? imagem;
+  final String? url;
+
+  const SharedPhotoGalleryNetworkImg({
+    super.key,
+    required this.tirarFoto,
+    required this.getImage,
+    this.imagem,
+    this.url,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final shareService = ShareService();
+    return Column(
+      children: [
+        ValueListenableBuilder<bool>(
+          valueListenable: shareService.importingPdf,
+          builder: (context, importing, _) => importing
+              ? const Text('Abrindo PDF compartilhado…')
+              : const SizedBox.shrink(),
+        ),
+        ValueListenableBuilder<String?>(
+          valueListenable: shareService.error,
+          builder: (context, error, _) {
+            if (error == null) return const SizedBox.shrink();
+            return Text(
+              error,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            );
+          },
+        ),
+        ValueListenableBuilder<File?>(
+          valueListenable: shareService.image,
+          builder: (context, sharedImage, _) {
+            return Column(
+              children: [
+                if (shareService.isPdfPreview(sharedImage))
+                  const Text('PDF · Apenas a primeira página será salva'),
+                PhotoGalleryNetworkImg(
+                  tirarFoto: tirarFoto,
+                  getImage: getImage,
+                  imagem: sharedImage ?? imagem,
+                  url: url,
+                ),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
 
 class PhotoGalleryNetworkImg extends StatefulWidget {
   final VoidCallback tirarFoto;
@@ -14,12 +72,12 @@ class PhotoGalleryNetworkImg extends StatefulWidget {
   final String? url;
 
   const PhotoGalleryNetworkImg({
-    Key? key,
+    super.key,
     required this.tirarFoto,
     required this.getImage,
     this.imagem,
     this.url,
-  }) : super(key: key);
+  });
 
   @override
   State<PhotoGalleryNetworkImg> createState() => _PhotoGalleryImgState();
