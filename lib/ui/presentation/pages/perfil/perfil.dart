@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:controle_de_gastos_app/ui/core/theme/provider/theme_provider.dart';
-import 'package:controle_de_gastos_app/ui/core/theme/styles/app_text_styles.dart';
 import 'package:controle_de_gastos_app/ui/core/utils/utils.dart';
 import 'package:controle_de_gastos_app/ui/presentation/widgets/appbar/app_bar_back.dart';
 import '../../../core/constants/imgs/img_url.dart';
@@ -80,7 +79,9 @@ class _PerfilView extends StatelessWidget {
           //Gradients disponíveis
           ListTileThemeGradients(
             gradients: viewModel.gradients.map((entry) => entry.value).toList(),
-            selectedIndex: viewModel.selectedIndex ?? 0,
+            selectedIndex: viewModel.gradients.indexWhere(
+              (entry) => entry.value == themeProvider.currentGradient,
+            ),
             onGradientSelected: (index) {
               final themeProvider = context.read<ThemeProvider>();
               viewModel.selecionarGradiente(

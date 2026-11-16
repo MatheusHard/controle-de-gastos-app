@@ -7,6 +7,7 @@ import 'package:controle_de_gastos_app/ui/data/service/worker/alarm_manager.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @pragma('vm:entry-point')
 Future<void> main() async {
@@ -17,10 +18,11 @@ Future<void> main() async {
   await Notifications.initNotifications();
   await AndroidAlarmManager.initialize();
   await AlarmManager.initialize();
+  final preferences = await SharedPreferences.getInstance();
 
   runApp(
     ChangeNotifierProvider(
-      create: (_) => ThemeProvider(),
+      create: (_) => ThemeProvider(preferences),
       child: const MyApp(),
     ),
   );
@@ -32,8 +34,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = context.watch<ThemeProvider>();
-
     return MaterialApp(
       title: 'Controle de Gastos',
       debugShowCheckedModeBanner: false,
