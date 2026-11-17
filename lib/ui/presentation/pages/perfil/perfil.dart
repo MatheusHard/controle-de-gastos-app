@@ -78,7 +78,7 @@ class _PerfilView extends StatelessWidget {
 
           //Gradients disponíveis
           ListTileThemeGradients(
-            gradients: viewModel.gradients.map((entry) => entry.value).toList(),
+            gradients: viewModel.gradients,
             selectedIndex: viewModel.gradients.indexWhere(
               (entry) => entry.value == themeProvider.currentGradient,
             ),

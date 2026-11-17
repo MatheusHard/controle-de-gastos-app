@@ -13,9 +13,9 @@ class ThemeProvider extends ChangeNotifier {
         AppGradients.blackPurpleGradient;
   }
 
-  LinearGradient _currentGradient = AppGradients.blackPurpleGradient;
-  LinearGradient get currentGradient => _currentGradient;
-  Future<void> setGradient(LinearGradient gradient) async {
+  Gradient _currentGradient = AppGradients.blackPurpleGradient;
+  Gradient get currentGradient => _currentGradient;
+  Future<void> setGradient(Gradient gradient) async {
     final name = AppGradients.getAllGradients().entries
         .firstWhere((entry) => entry.value == gradient)
         .key;

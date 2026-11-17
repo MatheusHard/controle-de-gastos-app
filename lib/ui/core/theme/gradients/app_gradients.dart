@@ -6,6 +6,7 @@ import '../../constants/colors/app_colors.dart';
 
 class AppGradients {
 
+
   static const boxPetGradient = LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
@@ -106,22 +107,66 @@ static const sol =
     transform: GradientRotation(pi / 4),
   );
 
+  static const  SweepGradient coloride = SweepGradient(
+    colors: [
+      Colors.red,
+      Colors.yellow,
+      Colors.blue,
+      Colors.green,
+      Colors.red,
+    ],
+    stops: <double>[0.0, 0.25, 0.5, 0.75, 1.0],
+    tileMode: TileMode.clamp,
+  );
+
+  static const transparentGradient = LinearGradient(
+    colors: [
+      Colors.transparent,
+      Colors.transparent,
+    ],
+  );
+  //Comuns colors:
+  static const amarelo = LinearGradient(
+    colors: [
+      Colors.yellow,
+      Colors.yellow,
+    ],
+  );
+  static const verde = LinearGradient(
+    colors: [
+      Colors.green,
+      Colors.green,
+    ],
+  );
+  static const azul = LinearGradient(
+    colors: [
+      Colors.blue,
+      Colors.blue,
+    ],
+  );
+
   /// Função que retorna todos os gradientes com seus nomes
-  static Map<String, LinearGradient> getAllGradients() {
+  static Map<String, Gradient> getAllGradients() {
     return {
-      "Box Pet Gradient": boxPetGradient,
-      "Button Sentimento": buttonSentimento,
-      "Red Color": redColor,
-      "Pet Fêmea": petFemea,
-      "Red Gradient": redGradient,
-      "Login Gradient": loginGradient,
-      "Linear": linear,
-      "Sol": sol,
-      "Black Gradient": blackGradient,
-      "Dark Blue Gradient": darkBlueGradient,
-      "Black Purple Gradient": blackPurpleGradient,
+      "Preto translúcido": boxPetGradient,
+      "Azul violeta": buttonSentimento,
+      "Rosa suave": redColor,
+      "Rosa e pêssego": petFemea,
+      "Vermelho intenso": redGradient,
+      "Azul e ciano": loginGradient,
+      "Azul e lilás": linear,
+      "Pôr do sol": sol,
+      "Preto e grafite": blackGradient,
+      "Azul petróleo": darkBlueGradient,
+      "Preto e roxo": blackPurpleGradient,
+      "Arco-íris": coloride,
+      "Transparente": transparentGradient,
+      "Amarelo": amarelo,
+      "Azul": azul,
+      "Verde": verde
     };
   }
+
 
 
 }

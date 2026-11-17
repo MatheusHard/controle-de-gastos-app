@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
 
 class ListTileThemeGradients extends StatelessWidget {
-  final List<Gradient> gradients;
+  final List<MapEntry<String, Gradient>> gradients;
   final int selectedIndex;
   final ValueChanged<int> onGradientSelected;
 
@@ -16,16 +16,11 @@ class ListTileThemeGradients extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTileTheme(
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 0,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
       child: ExpansionTile(
         title: Text(
           'Cores disponíveis',
-          style: AppTextStyles.textoSentimentoNegritoWhite(
-            27,
-            context,
-          ),
+          style: AppTextStyles.textoSentimentoNegritoWhite(27, context),
         ),
         children: [
           SizedBox(
@@ -33,11 +28,11 @@ class ListTileThemeGradients extends StatelessWidget {
             child: GridView.builder(
               padding: const EdgeInsets.all(8),
               itemCount: gradients.length,
-              gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
+                mainAxisExtent: 110,
               ),
               itemBuilder: (context, index) {
                 final gradient = gradients[index];
@@ -48,17 +43,34 @@ class ListTileThemeGradients extends StatelessWidget {
                   onTap: () {
                     onGradientSelected(index);
                   },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: gradient,
-                      borderRadius: BorderRadius.circular(12),
-                      border: isSelected
-                          ? Border.all(
-                              color: Colors.green,
-                              width: 3,
-                            )
-                          : null,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(
+                        height: 34,
+                        child: Center(
+                          child: Text(
+                            gradient.key,
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: gradient.value,
+                            borderRadius: BorderRadius.circular(12),
+                            border: isSelected
+                                ? Border.all(color: Colors.green, width: 3)
+                                : null,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 );
               },
@@ -69,4 +81,3 @@ class ListTileThemeGradients extends StatelessWidget {
     );
   }
 }
-
