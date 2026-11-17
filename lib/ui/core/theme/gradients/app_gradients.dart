@@ -160,10 +160,7 @@ static const sol =
       "Azul petróleo": darkBlueGradient,
       "Preto e roxo": blackPurpleGradient,
       "Arco-íris": coloride,
-      "Transparente": transparentGradient,
-      "Amarelo": amarelo,
-      "Azul": azul,
-      "Verde": verde
+      "Transparente": transparentGradient
     };
   }
 

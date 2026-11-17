@@ -1,10 +1,34 @@
 import 'package:controle_de_gastos_app/ui/core/theme/gradients/app_gradients.dart';
 import 'package:controle_de_gastos_app/ui/core/theme/provider/theme_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  test('restores a custom color and allows returning to a gradient', () async {
+    SharedPreferences.setMockInitialValues({});
+    final preferences = await SharedPreferences.getInstance();
+    final provider = ThemeProvider(preferences);
+    addTearDown(provider.dispose);
+
+    await provider.setColor(const Color(0xFF127ABC));
+    final restored = ThemeProvider(preferences);
+    addTearDown(restored.dispose);
+    expect(restored.customColor, const Color(0xFF127ABC));
+    expect(restored.currentGradient.colors, [
+      const Color(0xFF127ABC),
+      const Color(0xFF127ABC),
+    ]);
+
+    await restored.setGradient(AppGradients.blackPurpleGradient);
+    expect(restored.customColor, isNull);
+    final restarted = ThemeProvider(preferences);
+    addTearDown(restarted.dispose);
+    expect(restarted.currentGradient, AppGradients.blackPurpleGradient);
+    expect(restarted.customColor, isNull);
+  });
 
   test('uses the default gradient when no preference exists', () async {
     SharedPreferences.setMockInitialValues({});

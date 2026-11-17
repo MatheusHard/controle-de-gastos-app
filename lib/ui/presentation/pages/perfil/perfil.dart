@@ -18,9 +18,7 @@ class PerfilPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => PerfilViewModel(
-        repository: PerfilRepository(),
-      )..init(),
+      create: (_) => PerfilViewModel(repository: PerfilRepository())..init(),
       child: const _PerfilView(),
     );
   }
@@ -31,7 +29,6 @@ class _PerfilView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final viewModel = context.watch<PerfilViewModel>();
     final themeProvider = context.watch<ThemeProvider>();
 
@@ -43,56 +40,57 @@ class _PerfilView extends StatelessWidget {
         gradient: themeProvider.currentGradient,
       ),
 
-      body:
-      PerfilBody(
-      isLoading: viewModel.isLoading,
-      errorMessage: viewModel.errorMessage,
-      onRetry: viewModel.carregarUsuario,
-      child: Column(
-        children: [
+      body: PerfilBody(
+        isLoading: viewModel.isLoading,
+        errorMessage: viewModel.errorMessage,
+        onRetry: viewModel.carregarUsuario,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Imagem User
+              UserHeader(
+                title: 'Dados de Usuário',
+                image: ImgUrl.user,
+                imageSize: 90,
+                titleFontSize: 22,
+              ),
 
-          // Imagem User
-          UserHeader(
-            title: 'Dados de Usuário',
-            image: ImgUrl.user,
-            imageSize: 90,
-            titleFontSize: 22,
+              Utils.sizedBox(altura: 20.0),
+
+              // Usuario
+              PerfilText(
+                description: 'Usuario: ${viewModel.user?.username ?? ""}',
+                fontSize: 27,
+              ),
+
+              Utils.sizedBox(altura: 20.0),
+              // Email
+              PerfilText(
+                description: 'E-mail: ${viewModel.user?.email ?? ""}',
+                fontSize: 27,
+              ),
+
+              Utils.sizedBox(altura: 20.0),
+
+              //Gradients disponíveis
+              ListTileThemeGradients(
+                gradients: viewModel.gradients,
+                customColor: themeProvider.customColor,
+                onColorSelected: themeProvider.setColor,
+                selectedIndex: themeProvider.customColor != null
+                    ? -1
+                    : viewModel.gradients.indexWhere(
+                        (entry) => entry.value == themeProvider.currentGradient,
+                      ),
+                onGradientSelected: (index) {
+                  final themeProvider = context.read<ThemeProvider>();
+                  viewModel.selecionarGradiente(index, themeProvider);
+                },
+              ),
+            ],
           ),
-
-          Utils.sizedBox(altura: 20.0),
-
-          // Usuario
-          PerfilText(
-              description: 'Usuario: ${viewModel.user?.username ?? ""}',
-              fontSize: 27
-          ),
-
-          Utils.sizedBox(altura: 20.0),
-          // Email
-          PerfilText(
-              description: 'E-mail: ${viewModel.user?.email ?? ""}',
-              fontSize: 27
-          ),
-
-          Utils.sizedBox(altura: 20.0),
-
-          //Gradients disponíveis
-          ListTileThemeGradients(
-            gradients: viewModel.gradients,
-            selectedIndex: viewModel.gradients.indexWhere(
-              (entry) => entry.value == themeProvider.currentGradient,
-            ),
-            onGradientSelected: (index) {
-              final themeProvider = context.read<ThemeProvider>();
-              viewModel.selecionarGradiente(
-                index,
-                themeProvider,
-              );
-            },
-          ),
-        ],
+        ),
       ),
-    ),
     );
   }
 }

@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/styles/app_text_styles.dart';
+import 'custom_color_picker.dart';
 
 class ListTileThemeGradients extends StatelessWidget {
   final List<MapEntry<String, Gradient>> gradients;
   final int selectedIndex;
   final ValueChanged<int> onGradientSelected;
+  final Color? customColor;
+  final ValueChanged<Color> onColorSelected;
 
   const ListTileThemeGradients({
     super.key,
     required this.gradients,
     required this.selectedIndex,
     required this.onGradientSelected,
+    required this.customColor,
+    required this.onColorSelected,
   });
 
   @override
@@ -75,6 +80,10 @@ class ListTileThemeGradients extends StatelessWidget {
                 );
               },
             ),
+          ),
+          CustomColorPicker(
+            selectedColor: customColor,
+            onColorSelected: onColorSelected,
           ),
         ],
       ),
